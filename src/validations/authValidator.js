@@ -97,7 +97,7 @@ exports.validationForgotField = [
       }
       return true;
     }),
-  validateRegisterRequest
+  validateRegisterRequest,
 ];
 
 exports.validationVerifyOTP = [
@@ -131,6 +131,69 @@ exports.validationVerifyOTP = [
       req.body.phone = req.body.email_phone;
     }
     delete req.body.email_phone;
+    next();
+  },
+];
+
+exports.validateNewPassword = [
+  body("new_password").notEmpty().isLength({ min: 8 }).withMessage("New password is required and min 8 characters"),
+  body("confirm_password").notEmpty().isLength({ min: 8 }).withMessage("Confirm password is required"),
+  body("confirm_password")
+    .custom((value, { req }) => value === req.body.new_password)
+    .withMessage("Confirm password does not match with new password"),
+  body("reset_token").notEmpty().withMessage("Reset token should be provided"),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const errArray = errors.array();
+      return next(new ErrorHandler(400, "Validation failed for new password", validErrorName.VALIDATION_FAILED, errArray));
+    }
+    // detect email vs phone and map to new fields
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailRegex.test(req.body.email_phone)) {
+      req.isEmail = true;
+      req.body.email = req.body.email_phone;
+    } else {
+      req.isEmail = false;
+      req.body.phone = req.body.email_phone;
+    }
+    delete req.body.email_phone;
+    next();
+  },
+];
+
+exports.validateSendOtp = [
+  body("email_phone")
+    .notEmpty()
+    .withMessage("Email or Phone number is required")
+    .custom((value) => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const phoneRegex = /^[0-9]{7,15}$/; // digits only, 7–15 length
+
+      if (!emailRegex.test(value) && !phoneRegex.test(value)) {
+        throw new ErrorHandler(400, "Invalid Email or Phone number");
+      }
+      return true;
+    }),
+
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const errArray = errors.array();
+      return next(new ErrorHandler(400, "Validation failed", validErrorName.VALIDATION_FAILED, errArray));
+    }
+
+    // detect email vs phone and map to new fields
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailRegex.test(req.body.email_phone)) {
+      req.isEmail = true;
+      req.body.email = req.body.email_phone;
+    } else {
+      req.isEmail = false;
+      req.body.phone = req.body.email_phone;
+    }
+    delete req.body.email_phone;
+
     next();
   },
 ];

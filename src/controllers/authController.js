@@ -1,10 +1,9 @@
 const ErrorHandler = require("../utils/errorHandler");
 const { validErrorName, emailPhone, status, userRole } = require("../utils/staticExport");
-const { Users } = require("../models");
+const { Users, BlacklistTokens } = require("../models");
 const { responseHandler, hashedPasswordCnv, comparePasswords } = require("../utils/helper");
 const { beginEmailPhoneVerification, verifyingOTP, loginDetailsForToken } = require("../services/auth.service");
 const { signAccess, resetToken } = require("../config/jwt");
-const e = require("express");
 
 const register = async (req, res, next) => {
   try {
@@ -120,7 +119,7 @@ const forgotPassword = async (req, res, next) => {
 
     const userExist = await Users.findOne({
       where: { ...(email ? { email } : { phone }) },
-      attributes: ["id", "email", "phone", "status", "is_email_verified", "is_phone_verified"],
+      attributes: ["id", "email", "phone", "status", "is_email_verified", "is_phone_verified", "role"],
     });
 
     if (!userExist) return next(new ErrorHandler(404, `User not found with this ${email ? "email" : "phone number"}`, validErrorName.USER_NOT_FOUND));
@@ -156,7 +155,7 @@ const forgotPasswordVerifyOTP = async (req, res, next) => {
 
     if (!user) return next(new ErrorHandler(404, `User not found with this ${email ? "email" : "phone number"}.`, validErrorName.USER_NOT_FOUND));
 
-    const type = email ? emailPhone.EMAIL : emailPhone.PHONE_NUMBER;
+    const type = email ? emailPhone.EMAIL : emailPhone.PHONE;
 
     const isOtpValid = await verifyingOTP(user.id, otp, type);
 
@@ -167,7 +166,7 @@ const forgotPasswordVerifyOTP = async (req, res, next) => {
       user.is_email_verified = true;
       await user.save();
     }
-    if (type === emailPhone.PHONE_NUMBER && !user.is_phone_verified) {
+    if (type === emailPhone.PHONE && !user.is_phone_verified) {
       user.is_phone_verified = true;
       await user.save();
     }
@@ -180,7 +179,7 @@ const forgotPasswordVerifyOTP = async (req, res, next) => {
 
 const createNewPassword = async (req, res, next) => {
   try {
-    const { new_password } = req.body;
+    const { new_password, reset_token } = req.body;
     if (!req.resetUserData) return next(new ErrorHandler(400, "Reset token not valid or expired", validErrorName.VERIFICATION_FAILED));
 
     const user = await Users.findOne({
@@ -198,10 +197,37 @@ const createNewPassword = async (req, res, next) => {
     const hashPw = await hashedPasswordCnv(new_password);
     user.password = hashPw;
     await user.save();
+    await BlacklistTokens.create({
+      access_token: reset_token,
+    });
     responseHandler(res, 200, "Password reset successfully! Please login with new password");
   } catch (error) {
     next(error);
   }
 };
 
-module.exports = { register, verifyingOTPController, loginUser, forgotPassword, forgotPasswordVerifyOTP, createNewPassword };
+const resendOTP = async (req, res, next) => {
+  try {
+    const { email, phone } = req.body;
+    const msg = req.isEmail ? "email" : "phone number";
+    if (!email && !phone) return next(new ErrorHandler(400, `Please provide ${msg}.`, validErrorName.INVALID_REQUEST));
+    
+    const user = await Users.findOne({
+      attributes: ["id", "email", "phone"],
+      where: { ...(email ? { email } : { phone }) },
+    });
+    if (!user) return next(new ErrorHandler(404, `User not found with this ${msg}.`, validErrorName.USER_NOT_FOUND));
+    
+    if (email) {
+      await beginEmailPhoneVerification(email, user.id, emailPhone.EMAIL);
+    } else {
+      // otp =  otp for aws sns or any other method
+      await beginEmailPhoneVerification(phone, user.id, emailPhone.PHONE);
+    }
+    responseHandler(res, 201, `OTP sent successfully, Please verify your ${msg}`, { user });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { register, verifyingOTPController, loginUser, forgotPassword, forgotPasswordVerifyOTP, createNewPassword, resendOTP };

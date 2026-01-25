@@ -25,8 +25,6 @@ const hashedPasswordCnv = async (password) => {
 
 const comparePasswords = async (password, hashedPassword) => {
   const isPasswordValid = await bcrypt.compare(password, hashedPassword);
-  console.log(isPasswordValid);
-  
   return isPasswordValid;
 };
 module.exports = { responseHandler, generateOTP, hashedPasswordCnv, comparePasswords };
