@@ -4,7 +4,7 @@ require("dotenv").config();
 const cors = require("cors");
 const connectToDB = require("./src/config/database");
 const error = require("./src/middlewares/error");
-const ErrorHandler = require("./src/utils/errorHandler");
+const ErrorHandler = require("./src/utils/ErrorHandler");
 const PORT = process.env.PORT || 2000;
 app.use(express.json());
 app.use(express.urlencoded());

@@ -1,4 +1,4 @@
-const ErrorHandler = require("../utils/errorHandler");
+const ErrorHandler = require("../utils/ErrorHandler");
 const { validErrorName, emailPhone, status, userRole } = require("../utils/staticExport");
 const { Users, BlacklistTokens } = require("../models");
 const { responseHandler, hashedPasswordCnv, comparePasswords } = require("../utils/helper");
