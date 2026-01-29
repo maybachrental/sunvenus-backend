@@ -1,15 +1,7 @@
 const { body, validationResult } = require("express-validator");
-const ErrorHandler = require("../utils/errorHandler");
+const ErrorHandler = require("../utils/ErrorHandler");
 const { validErrorName } = require("../utils/staticExport");
 
-const validateRequestBody = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const arrArr = errors.array();
-    return next(new ErrorHandler(400, "Validation Error", validErrorName.VALIDATION_FAILED, arrArr));
-  }
-  next();
-};
 
 const validateRegisterRequest = (req, res, next) => {
   const errors = validationResult(req);

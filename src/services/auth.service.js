@@ -1,7 +1,7 @@
 const { generateOTP } = require("../utils/helper");
 const { sendEmailVerification } = require("./mail.service");
 const { UserOtps } = require("../models");
-const ErrorHandler = require("../utils/errorHandler");
+const ErrorHandler = require("../utils/ErrorHandler");
 const { validErrorName } = require("../utils/staticExport");
 
 const OTP_EXPIRY_MINUTES = process.env.OTP_EXPIRY_MINUTES;

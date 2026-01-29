@@ -27,4 +27,24 @@ const comparePasswords = async (password, hashedPassword) => {
   const isPasswordValid = await bcrypt.compare(password, hashedPassword);
   return isPasswordValid;
 };
-module.exports = { responseHandler, generateOTP, hashedPasswordCnv, comparePasswords };
+
+const getPagination = (pageNumber = 1, pageSize = 10) => {
+  const page = Math.max(parseInt(pageNumber, 10) || 1, 1);
+  const limit = Math.max(parseInt(pageSize, 10) || 10, 1);
+  const offset = (page - 1) * limit;
+
+  return {
+    limit,
+    offset,
+    page,
+    pageSize: limit,
+  };
+};
+
+function generateBookingCode() {
+  const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+  const rand = Math.floor(100 + Math.random() * 900);
+  return `MBX-${date}-${rand}`;
+}
+
+module.exports = { responseHandler, generateOTP, hashedPasswordCnv, comparePasswords, getPagination, generateBookingCode };
