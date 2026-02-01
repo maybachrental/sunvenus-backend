@@ -1,0 +1,19 @@
+<%- include('../../partials/head') %>
+
+    <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+        <div class="app-wrapper">
+
+            <%- include('../../partials/navbar') %>
+
+                <%- include('../../partials/sidebar') %>
+
+                    <!-- 🔥 ONLY THIS PART CHANGES -->
+                    <main class="app-main">
+                        <%- body %>
+                    </main>
+
+                    <%- include('../../partials/footer') %>
+
+        </div>
+
+        <%- include('../../partials/scripts') %>
