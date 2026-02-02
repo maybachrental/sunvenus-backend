@@ -14,12 +14,12 @@ const checkAndCreateBooking = async (req, res, next) => {
         new ErrorHandler(400, "Oops! You are late, Car is no longer available. Please select another Car.", validErrorName.CAR_ALREADY_BOOKED),
       );
     }
-    // const booking = await Bookings.create({
-    //   car_id,
-    //   pickup_datetime,
-    //   drop_datetime,
-    //   booking_status: "CONFIRMED",
-    // });
+    const booking = await Bookings.create({
+      car_id,
+      pickup_datetime: pickupDateTime,
+      drop_datetime: dropDateTime,
+      booking_status: "CONFIRMED",
+    });
     responseHandler(res, 201, "Booking created", booking);
   } catch (err) {
     next(err);

@@ -11,7 +11,9 @@ const fetchAllCars = async (req, res, next) => {
     const condition = buildCarWhere(req.query);
     const { limit, offset, page } = getPagination(req.query.page || 1);
     const order = buildCarSort(sort_by);
-    const total = await Cars.count();
+    const total = await Cars.count({
+      where: { is_active: true },
+    });
 
     const fetchCars = await Cars.findAll({
       where: condition,
@@ -86,25 +88,27 @@ const checkCarAvailability = async (req, res, next) => {
 
     const availableCars = await Cars.findAndCountAll({
       distinct: true,
+      subQuery: false, // ⭐ prevents broken ORDER BY subquery
       where: {
-        // location: pickup_location,
-        // is_active: true,
+        is_active: true,
         id: { [Op.notIn]: carIds },
       },
       include: [
         {
           model: CarsPricings,
           where: { duration_hours, is_outstation },
+          required: true,
           attributes: {
             exclude: ["created_at", "updated_at"],
           },
         },
-        { model: CarCategories, attributes: ["category"] },
-        { model: FuelTypes, attributes: ["fuel"] },
+        { model: CarCategories, attributes: ["category"], required: false },
+        { model: FuelTypes, attributes: ["fuel"], required: false },
       ],
+      order,
       limit,
       offset,
-      order: [["created_at", "DESC"]],
+      logging: false,
     });
 
     const totalPages = Math.ceil(availableCars.count / limit);
@@ -119,7 +123,26 @@ const checkCarAvailability = async (req, res, next) => {
   }
 };
 
-module.exports = { fetchAllCars, checkCarAvailability };
+const fetchCarDetails = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!id) return next(new ErrorHandler(404, "Car id not found"));
+
+    const carInfo = await Cars.findOne({
+      where: { id },
+      attributes: {
+        exclude: ["created_at", "updated_at"],
+      },
+      include: [{ model: CarsPricings }, { model: CarCategories }, { model: FuelTypes }],
+    });
+
+    responseHandler(res, 200, "Car Information", { carInfo });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { fetchAllCars, checkCarAvailability, fetchCarDetails };
 
 // const availableCars = await Cars.findAll({
 //   where: {

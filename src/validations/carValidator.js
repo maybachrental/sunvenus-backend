@@ -13,10 +13,7 @@ const validateRequestBody = (req, res, next) => {
 
 exports.validateCarAvailabilityBody = [
   body("pickup_location").trim().notEmpty().withMessage("Pickup location is required"),
-  body("trip_type")
-    .isArray({ min: 1 })
-    .isIn([...tripType])
-    .withMessage("Trip Type is required"),
+  body("trip_type").trim().notEmpty().isIn([...tripType]).withMessage(`Trip Type is required, Values should be > ${tripType}`),
   body("drop_location").trim().notEmpty().withMessage("Drop location is required"),
   body("pickup_date").notEmpty().withMessage("Pickup date is required").isISO8601().withMessage("Pickup date must be valid YYYY-MM-DD"),
   body("pickup_time")

@@ -1,7 +1,9 @@
 const { Op, literal } = require("sequelize");
 
 const buildCarWhere = ({ category_id, fuel_type_id, car_name, brand, model, color }) => {
-  const where = {};
+  const where = {
+    is_active: true,
+  };
 
   if (category_id) {
     where.category_id = category_id;
@@ -22,18 +24,6 @@ const buildCarWhere = ({ category_id, fuel_type_id, car_name, brand, model, colo
       [Op.like]: `%${brand}%`,
     };
   }
-
-  //   if (model) {
-  //     where.model = {
-  //       [Op.iLike]: `%${model}%`,
-  //     };
-  //   }
-
-  //   if (color) {
-  //     where.color = {
-  //       [Op.iLike]: `%${color}%`,
-  //     };
-  //   }
 
   return where;
 };

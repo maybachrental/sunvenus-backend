@@ -2,48 +2,33 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("cars", {
+    await queryInterface.createTable("car_images", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      name: {
-        type: Sequelize.STRING,
-      },
-      brand: {
-        type: Sequelize.STRING,
-      },
-      model: {
-        type: Sequelize.STRING,
-      },
-      color: {
-        type: Sequelize.STRING,
-      },
-      seating_capacity: {
-        type: Sequelize.INTEGER,
-      },
-      category_id: {
+      car_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: "car_categories",
+          model: "cars",
           key: "id",
         },
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+        allowNull: false,
       },
-      transmission: Sequelize.ENUM("MANUAL", "AUTOMATIC"),
-      fuel_type_id: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "fuel_types",
-          key: "id",
-        },
-        onDelete: "CASCADE",
+      image_name: {
+        type: Sequelize.STRING,
+        allowNull: false,
       },
-      is_active: {
+      image_path: {
+        type: Sequelize.TEXT,
+      },
+      is_primary: {
         type: Sequelize.BOOLEAN,
-        defaultValue: true,
+        defaultValue: false,
       },
       created_at: {
         allowNull: false,
@@ -58,6 +43,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("cars");
+    await queryInterface.dropTable("car_images");
   },
 };

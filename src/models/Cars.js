@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       transmission: DataTypes.ENUM("MANUAL", "AUTOMATIC"),
       fuel_type_id: DataTypes.INTEGER,
+      is_active: DataTypes.BOOLEAN,
     },
     {
       sequelize,
