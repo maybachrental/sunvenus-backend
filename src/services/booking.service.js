@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { Bookings } = require("../models");
 
 const isCarAvailable = async (car_id, pickupDateTime, dropDateTime) => {

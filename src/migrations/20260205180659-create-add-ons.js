@@ -2,30 +2,26 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("booking_add_ons", {
+    await queryInterface.createTable("add_ons", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      charges: {
-        type: Sequelize.DECIMAL(10, 2),
-        allowNull: false,
-      },
-      booking_id: {
-        type: Sequelize.BIGINT,
-        allowNull: false,
-        references: {
-          model: "bookings",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
-      },
-      add_on_type: {
+      type: {
         type: Sequelize.STRING,
-        allowNull: false,
+      },
+      price: {
+        type: Sequelize.DECIMAL,
+      },
+      duration: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      extra: {
+        type: Sequelize.STRING,
+        allowNull: true,
       },
       created_at: {
         allowNull: false,
@@ -40,6 +36,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("booking_add_ons");
+    await queryInterface.dropTable("add_ons");
   },
 };

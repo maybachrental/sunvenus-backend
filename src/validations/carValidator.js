@@ -13,7 +13,11 @@ const validateRequestBody = (req, res, next) => {
 
 exports.validateCarAvailabilityBody = [
   body("pickup_location").trim().notEmpty().withMessage("Pickup location is required"),
-  body("trip_type").trim().notEmpty().isIn([...tripType]).withMessage(`Trip Type is required, Values should be > ${tripType}`),
+  body("trip_type")
+    .trim()
+    .notEmpty()
+    .isIn([...tripType])
+    .withMessage(`Trip Type is required, Values should be > ${tripType}`),
   body("drop_location").trim().notEmpty().withMessage("Drop location is required"),
   body("pickup_date").notEmpty().withMessage("Pickup date is required").isISO8601().withMessage("Pickup date must be valid YYYY-MM-DD"),
   body("pickup_time")
@@ -21,8 +25,9 @@ exports.validateCarAvailabilityBody = [
     .withMessage("Pickup time is required")
     .matches(/^([01]\d|2[0-3]):([0-5]\d)$/)
     .withMessage("Pickup time must be HH:mm"),
-  body("drop_date").notEmpty().withMessage("Drop date is required").isISO8601().withMessage("Drop date must be valid YYYY-MM-DD"),
+  body("drop_date").optional().notEmpty().withMessage("Drop date is required").isISO8601().withMessage("Drop date must be valid YYYY-MM-DD"),
   body("drop_time")
+    .optional()
     .notEmpty()
     .withMessage("Drop time is required")
     .matches(/^([01]\d|2[0-3]):([0-5]\d)$/)

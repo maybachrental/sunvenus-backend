@@ -1,12 +1,187 @@
 <div class="app-content-header">
-    <div class="container-fluid">
-        <h3>Dashboard</h3>
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <h3 class="mb-0 fw-bold">Maybach Rental Dashboard</h3>
+        <span class="text-muted">Admin Panel</span>
     </div>
 </div>
 
 <div class="app-content">
     <div class="container-fluid">
-        <!-- dashboard widgets -->
+
+        <!-- KPI Cards -->
+        <div class="row">
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-primary-subtle">
+                    <div class="inner text-black">
+                        <h3>
+                            <%= stats.totalBookings %>
+                        </h3>
+                        <p>Total Bookings</p>
+                    </div>
+                    <div class="icon">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner text-white">
+                        <h3>₹ <%= stats.totalRevenue %>
+                        </h3>
+                        <p>Total Revenue</p>
+                    </div>
+                    <div class="icon">
+                        <i class="bi bi-currency-rupee"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>
+                            <%= stats.totalUsers %>
+                        </h3>
+                        <p>Registered Users</p>
+                    </div>
+                    <div class="icon">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-primary bg-opacity-75">
+                    <div class="inner text-white">
+                        <h3>
+                            <%= stats.totalCars %>
+                        </h3>
+                        <p>Active Cars</p>
+                    </div>
+                    <div class="icon">
+                        <i class="bi bi-car-front-fill"></i>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Booking Status + Top Cars -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Booking Status Overview</h3>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Upcoming</span>
+                                <span class="badge bg-primary">
+                                    <%= bookingStats.upcoming %>
+                                </span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Ongoing</span>
+                                <span class="badge bg-success">
+                                    <%= bookingStats.ongoing %>
+                                </span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Completed</span>
+                                <span class="badge bg-secondary">
+                                    <%= bookingStats.completed %>
+                                </span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Cancelled</span>
+                                <span class="badge bg-danger">
+                                    <%= bookingStats.cancelled %>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card card-dark">
+                    <div class="card-header">
+                        <h3 class="card-title">Top Rented Cars</h3>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-striped mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Car</th>
+                                    <th>Bookings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% topCars.forEach(car=> { %>
+                                    <tr>
+                                        <td>
+                                            <%= car.name %>
+                                        </td>
+                                        <td><span class="badge bg-dark">
+                                                <%= car.bookings %>
+                                            </span></td>
+                                    </tr>
+                                    <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Bookings -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-dark">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Bookings</h3>
+                    </div>
+
+                    <div class="card-body table-responsive p-0">
+                        <table class="table table-hover text-nowrap">
+                            <thead>
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>User</th>
+                                    <th>Car</th>
+                                    <th>Pickup Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% recentBookings.forEach(booking=> { %>
+                                    <tr>
+                                        <td>#<%= booking.id %>
+                                        </td>
+                                        <td>
+                                            <%= booking.user %>
+                                        </td>
+                                        <td>
+                                            <%= booking.car %>
+                                        </td>
+                                        <td>
+                                            <%= booking.pickupDate %>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-<%= booking.statusColor %>">
+                                                <%= booking.status %>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
-  
