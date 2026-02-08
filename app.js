@@ -7,19 +7,57 @@ const error = require("./src/middlewares/error");
 const ErrorHandler = require("./src/utils/ErrorHandler");
 const path = require("path");
 const PORT = process.env.PORT || 2000;
+const session = require("express-session");
+const flash = require("connect-flash");
+const { helperMessage } = require("./src/middlewares/adminAuth");
+const cookieParser = require("cookie-parser");
+
 // json Conversion
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(cookieParser());
+
 
 // DB connection
 connectToDB();
+
+// session
+app.use(
+  session({
+    name: "admin.sid",
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    secure: process.env.NODE_ENV === "production",
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 2 * 60 * 60 * 1000, // 2 hours in milliseconds
+      httpOnly: true,
+      secure: false, // true if using HTTPS
+    },
+  }),
+);
+
+// flash
+app.use(flash());
+
+app.use((req, res, next) => {
+  res.locals.flash = {
+    success: req.flash("success"),
+    error: req.flash("error"),
+    info: req.flash("info"),
+  };
+  next();
+});
+
+app.use(helperMessage);
 
 // View engine
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "src", "views"));
 app.use(require("express-ejs-layouts"));
 app.set("layout", "layout/admin/layout");
+
 // Static files
 app.use("/adminlte", express.static(path.join(__dirname, "./node_modules/admin-lte")));
 app.use("/bootstrap", express.static(path.join(__dirname, "./node_modules/bootstrap")));
@@ -29,7 +67,7 @@ app.use(express.static(path.join(__dirname, "/public")));
 // APIS
 app.get("/", (req, res) => res.json("Welcome to maybach API!"));
 app.use("/api", require("./src/routes/index"));
-app.use("/admin",require("./src/routes/admin/adminRoutes"))
+app.use("/admin", require("./src/routes/admin/adminRoutes"));
 
 // middlewaare for all
 app.use((req, res, next) => {

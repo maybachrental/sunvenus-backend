@@ -12,6 +12,7 @@ module.exports = {
     migrationStorageTableName: "sequelize_migrations",
     seederStorage: "sequelize",
     seederStorageTableName: "sequelize_seeders",
+    logging: false,
   },
   test: {
     username: "root",

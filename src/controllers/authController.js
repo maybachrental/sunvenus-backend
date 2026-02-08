@@ -8,13 +8,21 @@ const { signAccess, resetToken } = require("../config/jwt");
 const register = async (req, res, next) => {
   try {
     const { name, email, phone, password } = req.body;
-    if (!name || !password || (!email && !phone)) return next(new ErrorHandler(400, "Fields missing in request body", validErrorName.INVALID_REQUEST));
+    if (!name || !password || (!email && !phone))
+      return next(new ErrorHandler(400, "Fields missing in request body", validErrorName.INVALID_REQUEST));
     const isExistingUser = await Users.findOne({
       attributes: ["id", "email", "phone", "deleted_at"],
       where: { ...(email ? { email } : { phone }) },
       paranoid: false,
     });
-    if (isExistingUser && isExistingUser.deleted_at) return next(new ErrorHandler(400, `This account was previously deleted. Please contact support to reactivate your account.`, validErrorName.USER_ALREADY_EXISTS));
+    if (isExistingUser && isExistingUser.deleted_at)
+      return next(
+        new ErrorHandler(
+          400,
+          `This account was previously deleted. Please contact support to reactivate your account.`,
+          validErrorName.USER_ALREADY_EXISTS,
+        ),
+      );
 
     const msg = req.isEmail ? "email" : "phone number";
     if (isExistingUser) return next(new ErrorHandler(400, `User already exists with this ${msg}.`, validErrorName.USER_ALREADY_EXISTS));
@@ -79,11 +87,14 @@ const loginUser = async (req, res, next) => {
     });
     if (!userExist) return next(new ErrorHandler(404, `User not found with this ${email ? email : phone}`, validErrorName.USER_NOT_FOUND));
 
-    if (userExist.status !== status.ACTIVE) return next(new ErrorHandler(403, "Access Denied, Please connect with our support team", validErrorName.ACCESS_DENIED));
+    if (userExist.status !== status.ACTIVE)
+      return next(new ErrorHandler(403, "Access Denied, Please connect with our support team", validErrorName.ACCESS_DENIED));
 
-    if (userExist.role === userRole.ADMIN) return next(new ErrorHandler(403, "Access Denied. You cannot login with these credential", validErrorName.ACCESS_DENIED));
+    if (userExist.role === userRole.ADMIN)
+      return next(new ErrorHandler(403, "Access Denied. You cannot login with these credential", validErrorName.ACCESS_DENIED));
 
-    if (!userExist.password || userExist.password === null || userExist.password === "") return next(new ErrorHandler(400, "Invalid password.", validErrorName.INVALID_PASSWORD));
+    if (!userExist.password || userExist.password === null || userExist.password === "")
+      return next(new ErrorHandler(400, "Invalid password.", validErrorName.INVALID_PASSWORD));
 
     const isMatched = await comparePasswords(password, userExist.password);
     if (!isMatched) return next(new ErrorHandler(400, "Invalid password.", validErrorName.INVALID_PASSWORD));
@@ -126,7 +137,8 @@ const forgotPassword = async (req, res, next) => {
 
     if (userExist.status !== status.ACTIVE) return next(new ErrorHandler(403, "Access Denied, Please contact support", validErrorName.ACCESS_DENIED));
 
-    if (userExist.role !== userRole.USER) return next(new ErrorHandler(403, "Access Denied. You cannot login with these credential", validErrorName.ACCESS_DENIED));
+    if (userExist.role !== userRole.USER)
+      return next(new ErrorHandler(403, "Access Denied. You cannot login with these credential", validErrorName.ACCESS_DENIED));
 
     // Send OTP for password reset
     if (email) {
@@ -211,13 +223,13 @@ const resendOTP = async (req, res, next) => {
     const { email, phone } = req.body;
     const msg = req.isEmail ? "email" : "phone number";
     if (!email && !phone) return next(new ErrorHandler(400, `Please provide ${msg}.`, validErrorName.INVALID_REQUEST));
-    
+
     const user = await Users.findOne({
       attributes: ["id", "email", "phone"],
       where: { ...(email ? { email } : { phone }) },
     });
     if (!user) return next(new ErrorHandler(404, `User not found with this ${msg}.`, validErrorName.USER_NOT_FOUND));
-    
+
     if (email) {
       await beginEmailPhoneVerification(email, user.id, emailPhone.EMAIL);
     } else {
