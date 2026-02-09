@@ -12,9 +12,6 @@ module.exports = {
       name: {
         type: Sequelize.STRING,
       },
-      brand: {
-        type: Sequelize.STRING,
-      },
       model: {
         type: Sequelize.STRING,
       },
@@ -23,6 +20,15 @@ module.exports = {
       },
       seating_capacity: {
         type: Sequelize.INTEGER,
+      },
+      brand_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "brands",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+        allowNull: false,
       },
       category_id: {
         type: Sequelize.INTEGER,
