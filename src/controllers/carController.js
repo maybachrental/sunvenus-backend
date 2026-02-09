@@ -1,9 +1,9 @@
 const { Op } = require("sequelize");
 const { buildCarWhere, buildCarSort } = require("../dbHelpers/conditionBuilder");
-const { Cars, CarsPricings, CarCategories, FuelTypes, Bookings, AddOns } = require("../models");
+const { Cars, CarsPricings, CarCategories, FuelTypes, Bookings, AddOns, Brands } = require("../models");
 const { responseHandler, getPagination } = require("../utils/helper");
 const ErrorHandler = require("../utils/ErrorHandler");
-const { validErrorName, tripType } = require("../utils/staticExport");
+const { validErrorName } = require("../utils/staticExport");
 const { isCarAvailable } = require("../services/booking.service");
 
 const fetchAllCars = async (req, res, next) => {
@@ -44,6 +44,18 @@ const fetchAllCars = async (req, res, next) => {
       totalPages,
       currentPage: page,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const fetchAllBrands = async (req, res, next) => {
+  try {
+    const brands = await Brands.findAll({
+      attributes: ["brand_name", "brand_img", "id"],
+      raw: true,
+    });
+    responseHandler(res, 200, "Fetched Brands", { brands });
   } catch (error) {
     next(error);
   }
@@ -243,7 +255,7 @@ const fetchEstimatePrice = async (req, res, next) => {
   }
 };
 
-module.exports = { fetchAllCars, checkCarAvailability, fetchCarDetails, fetchSingleCarForBooking, fetchEstimatePrice };
+module.exports = { fetchAllCars, checkCarAvailability, fetchCarDetails, fetchSingleCarForBooking, fetchEstimatePrice, fetchAllBrands };
 
 // const availableCars = await Cars.findAll({
 //   where: {
