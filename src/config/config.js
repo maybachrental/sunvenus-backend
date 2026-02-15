@@ -8,6 +8,12 @@ module.exports = {
     host: process.env.DEV_HOSTNAME,
     dialect: process.env.DB_DIALECT,
     port: process.env.DEV_PORT,
+    pool: {
+      max: 20, // Increase this value
+      min: 0,
+      acquire: 30000, // Timeout to acquire connection in milliseconds
+      idle: 10000,
+    },
     migrationStorage: "sequelize",
     migrationStorageTableName: "sequelize_migrations",
     seederStorage: "sequelize",
