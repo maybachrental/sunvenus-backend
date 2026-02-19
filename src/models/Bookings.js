@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       booking_code: {
         type: DataTypes.STRING(30),
-        allowNull: false,
+        allowNull: true,
         unique: true,
       },
 
@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
       },
 
       booking_type: {
-        type: DataTypes.ENUM("LOCAL", "OUTSTATION", "AIRPORT", "OTHER"),
+        type: DataTypes.ENUM("LOCAL", "ROUND_TRIP", "AIRPORT", "OTHER"),
       },
 
       pickup_location: {
@@ -48,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
 
       drop_location: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
 
       pickup_datetime: {
@@ -111,6 +111,12 @@ module.exports = (sequelize, DataTypes) => {
       updatedAt: "updated_at",
       deletedAt: "deleted_at",
       paranoid: true,
+      hooks: {
+        async afterCreate(booking, options) {
+          const code = `BK-${booking.id.toString().padStart(6, "0")}`;
+          await booking.update({ booking_code: code }, { transaction: options.transaction });
+        },
+      },
       indexes: [
         {
           name: "idx_car_datetime",
@@ -123,5 +129,6 @@ module.exports = (sequelize, DataTypes) => {
       ],
     },
   );
+  
   return Bookings;
 };

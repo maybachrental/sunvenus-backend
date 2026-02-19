@@ -36,8 +36,17 @@ const status = {
   ACTIVE: "ACTIVE",
   BLOCKED: "BLOCKED",
 };
-const tripType = ["LOCAL", "OUTSTATION", "AIRPORT"];
+const tripType = ["LOCAL", "ROUND_TRIP", "AIRPORT"];
 
+const tripTypes = {
+  LOCAL: "LOCAL",
+  ROUND_TRIP: "ROUND_TRIP",
+  AIRPORT: "AIRPORT",
+};
+const paymentToBe = {
+  PAY_NOW: "PAY_NOW",
+  PAY_LATER: "PAY_LATER",
+};
 
 module.exports = {
   userRole,
@@ -45,4 +54,6 @@ module.exports = {
   emailPhone,
   status,
   tripType,
+  tripTypes,
+  paymentToBe,
 };

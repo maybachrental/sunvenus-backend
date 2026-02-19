@@ -11,7 +11,7 @@ module.exports = {
       },
       booking_code: {
         type: Sequelize.STRING(30),
-        allowNull: false,
+        allowNull: true,
         unique: true,
       },
 
@@ -43,7 +43,7 @@ module.exports = {
       },
 
       booking_type: {
-        type: Sequelize.ENUM("LOCAL", "OUTSTATION", "AIRPORT", "OTHER"),
+        type: Sequelize.ENUM("LOCAL", "ROUND_TRIP", "AIRPORT", "OTHER"),
       },
 
       pickup_location: {
@@ -53,7 +53,7 @@ module.exports = {
 
       drop_location: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
 
       pickup_datetime: {

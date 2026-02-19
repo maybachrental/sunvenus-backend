@@ -6,7 +6,7 @@ const {
   fetchEstimatePrice,
   fetchAllBrands,
 } = require("../controllers/carController");
-const { validateCarAvailabilityBody } = require("../validations/carValidator");
+const { validateCarAvailabilityBody, validateSelectedCarData } = require("../validations/carValidator");
 
 const router = require("express").Router();
 
@@ -18,7 +18,7 @@ router.post("/check-availability", validateCarAvailabilityBody, checkCarAvailabi
 
 router.get("/fetch-single/:id", fetchCarDetails);
 
-router.get("/fetch-car/:id/book", fetchSingleCarForBooking);
+router.get("/fetch-car/:car_id/book", validateSelectedCarData, fetchSingleCarForBooking);
 
 router.post("/estimate-price", fetchEstimatePrice);
 
