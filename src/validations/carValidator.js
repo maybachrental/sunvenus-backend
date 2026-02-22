@@ -85,8 +85,21 @@ exports.validateSelectedCarData = [
 
 exports.validateCreateBooking = [
   body("car_id").trim().notEmpty().withMessage("car id is required"),
+  body("full_pick_address").optional().trim().notEmpty().withMessage("Full Pick Address is required"),
+  body("full_drop_address").optional().trim().notEmpty().withMessage("Full Drop Address is required"),
   body("pickup_location").trim().notEmpty().withMessage("Pickup location is required"),
   body("drop_location").optional().trim().notEmpty().withMessage("Drop location is required"),
+  body("phone")
+    .optional()
+    .trim()
+    .notEmpty()
+    .custom((value) => {
+      const phoneRegex = /^[0-9]{7,15}$/; // digits only, 7–15 length
+      if (!phoneRegex.test(value)) {
+        throw new ErrorHandler(400, "Valid Phone Number is required");
+      }
+      return true;
+    }),
   body("airport_type").optional().trim().notEmpty().withMessage("Airport Type is required"),
   body("extra").optional().isArray({ min: 1 }).withMessage("extra"),
   body("total_price").notEmpty().isNumeric().withMessage("Total Price is required"),
