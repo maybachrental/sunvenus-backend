@@ -5,13 +5,21 @@ const buildCarWhere = ({ category_id, fuel_type_id, car_name, brand, model, colo
     is_active: true,
   };
 
+  // / Convert comma-separated string to array
   if (category_id) {
-    where.category_id = category_id;
+    const categoryArray = category_id.split(",").map(id => id.trim());
+    where.category_id = {
+      [Op.in]: categoryArray,
+    };
   }
 
   if (fuel_type_id) {
-    where.fuel_type_id = fuel_type_id;
+    const fuelTypeArray = fuel_type_id.split(",").map(id => id.trim());
+    where.fuel_type_id = {
+      [Op.in]: fuelTypeArray,
+    };
   }
+
 
   if (car_name) {
     where.name = {
@@ -26,7 +34,7 @@ const buildCarWhere = ({ category_id, fuel_type_id, car_name, brand, model, colo
   }
 
   return where;
-};
+};;
 
 const buildCarSort = (sort_by) => {
   switch (sort_by) {
