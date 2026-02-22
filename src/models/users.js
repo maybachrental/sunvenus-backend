@@ -62,6 +62,10 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: false,
       },
 
+      google_sub_id: {
+        type: DataTypes.STRING,
+      },
+
       status: {
         type: DataTypes.ENUM("ACTIVE", "BLOCKED"),
         defaultValue: "ACTIVE",

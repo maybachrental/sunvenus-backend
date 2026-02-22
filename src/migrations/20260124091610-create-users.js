@@ -65,6 +65,10 @@ module.exports = {
         defaultValue: "ACTIVE",
       },
 
+      google_sub_id: {
+        type: Sequelize.STRING,
+      },
+
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

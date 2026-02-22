@@ -5,7 +5,10 @@ const { responseHandler, hashedPasswordCnv, comparePasswords } = require("../uti
 const { beginEmailPhoneVerification, verifyingOTP, loginDetailsForToken } = require("../services/auth.service");
 const { signAccess, resetToken } = require("../config/jwt");
 const { OAuth2Client } = require("google-auth-library");
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const client = new OAuth2Client({
+  client_id: process.env.GOOGLE_CLIENT_ID,
+  client_secret: process.env.GOOGLE_CLIENT_SECRET,
+});
 
 const register = async (req, res, next) => {
   try {
@@ -246,18 +249,63 @@ const resendOTP = async (req, res, next) => {
 
 const googleLogin = async (req, res, next) => {
   try {
-    const { token } = req.body;
-    if (!token || token === "") {
-      throw new ErrorHandler(404, "Token not found", validErrorName.INVALID_REQUEST);
-    }
+    const { id_token } = req.body;
+
     const ticket = await client.verifyIdToken({
-      idToken: token,
+      idToken: id_token,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
-
     const payload = ticket.getPayload();
-    console.log(payload);
-    responseHandler(res, 200, "Google auth success", payload);
+    const data = {
+      email: payload.email,
+      name: payload.name,
+      // picture: payload.picture,
+      is_email_verified: true,
+      auth_provider: "GOOGLE",
+      google_sub_id: payload.sub,
+    };
+
+    if (!data.email || !data.name) {
+      throw new ErrorHandler(400, "Something went wrong");
+    }
+    let isExistingUser = await Users.findOne({
+      attributes: ["email", "phone", "id", "is_email_verified", "name", "role", "status", "deleted_at"],
+      where: { email: data.email },
+      paranoid: false,
+    });
+    let newUser = null;
+    if (!isExistingUser) {
+      newUser = await Users.create(data);
+    } else {
+      if (isExistingUser && isExistingUser.deleted_at)
+        return next(
+          new ErrorHandler(
+            400,
+            `This account was previously deleted. Please contact support to reactivate your account.`,
+            validErrorName.USER_ALREADY_EXISTS,
+          ),
+        );
+      if (isExistingUser.status !== status.ACTIVE)
+        return next(new ErrorHandler(403, "Access Denied, Please connect with our support team", validErrorName.ACCESS_DENIED));
+
+      if (isExistingUser.role === userRole.ADMIN)
+        return next(new ErrorHandler(403, "Access Denied. You cannot login with these credential", validErrorName.ACCESS_DENIED));
+    }
+
+    const id = newUser ? newUser.id : isExistingUser.id;
+    const userData = await Users.findOne({
+      attributes: ["email", "phone", "id", "is_email_verified", "name", "role", "status"],
+      where: { id },
+    });
+    if (!userData.is_email_verified) {
+      userData.is_email_verified = true;
+      await userData.save();
+    }
+    const insertionDataForJWT = loginDetailsForToken(userData, data.email);
+    const accessToken = signAccess(insertionDataForJWT);
+    
+    const message = newUser ? `Welcome to Sunvenus Luxury, ${userData.name}!` : `Welcome back, ${userData.name}!`;
+    responseHandler(res, 200, message, { user: userData, accessToken, isUserVerified: true });
   } catch (error) {
     next(error);
   }
