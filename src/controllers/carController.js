@@ -85,9 +85,22 @@ const fetchPremiumCars = async (req, res, next) => {
         { model: CarCategories, attributes: ["category"] },
         { model: FuelTypes, attributes: ["fuel"] },
       ],
+      limit: 7,
       order: [["order_by", "ASC"]],
     });
-    responseHandler(res, 200, "Feteh Cars", { fetchCars });
+    const bgColors = ["#EAD5D3", "#B2A8D5", "#92DFCF", "#48467D", "#f8dd9f", "#B2A8D5", "#92DFCF", "#48467D"];
+    const updatedCars =
+      fetchCars && fetchCars.length > 0
+        ? fetchCars.map((item, i) => {
+            const itemJson = item.toJSON();
+            return {
+              ...itemJson,
+              bgColor: bgColors[i] || "#92DFCF",
+            };
+          })
+        : [];
+
+    responseHandler(res, 200, "Feteh Cars", { fetchCars: updatedCars });
   } catch (error) {
     next(error);
   }
