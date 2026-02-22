@@ -51,6 +51,14 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         defaultValue: true,
       },
+      is_premium: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
+      order_by: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

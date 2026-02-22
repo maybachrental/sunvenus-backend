@@ -9,13 +9,29 @@ const { triptypeCondition } = require("../services/car.service");
 
 const fetchAllCars = async (req, res, next) => {
   try {
-    const { sort_by = "created_at", duration_hours = 8 } = req.query;
+    const { sort_by = "created_at", duration_hours = 8, min_price, max_price } = req.query;
     const condition = buildCarWhere(req.query);
     const { limit, offset, page } = getPagination(req.query.page || 1);
     const order = buildCarSort(sort_by);
     const total = await Cars.count({
       where: { is_active: true },
     });
+    // Build pricing filter dynamically
+    const pricingWhere = {
+      duration_hours,
+    };
+
+    if (min_price || max_price) {
+      pricingWhere.base_price = {};
+
+      if (min_price) {
+        pricingWhere.base_price[Op.gte] = Number(min_price);
+      }
+
+      if (max_price) {
+        pricingWhere.base_price[Op.lte] = Number(max_price);
+      }
+    }
 
     const fetchCars = await Cars.findAll({
       where: condition,
@@ -24,7 +40,8 @@ const fetchAllCars = async (req, res, next) => {
       include: [
         {
           model: CarsPricings,
-          where: { duration_hours },
+          where: pricingWhere,
+          required: true,
           attributes: {
             exclude: ["created_at", "updated_at"],
           },
@@ -45,6 +62,32 @@ const fetchAllCars = async (req, res, next) => {
       totalPages,
       currentPage: page,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const fetchPremiumCars = async (req, res, next) => {
+  try {
+    const fetchCars = await Cars.findAll({
+      where: { is_premium: true },
+      distinct: true,
+      subQuery: false,
+      include: [
+        {
+          model: CarsPricings,
+          required: true,
+          limit: 1,
+          attributes: {
+            exclude: ["created_at", "updated_at"],
+          },
+        },
+        { model: CarCategories, attributes: ["category"] },
+        { model: FuelTypes, attributes: ["fuel"] },
+      ],
+      order: [["order_by", "ASC"]],
+    });
+    responseHandler(res, 200, "Feteh Cars", { fetchCars });
   } catch (error) {
     next(error);
   }
@@ -201,41 +244,18 @@ const fetchEstimatePrice = async (req, res, next) => {
 
     const estimated_price = await calculatePricingLogic(car_id, trip_type, duration_hours, included_km, extra);
 
-    
-
     responseHandler(res, 200, "Estimated Price", { estimatePrice: estimated_price });
   } catch (error) {
     next(error);
   }
 };
 
-module.exports = { fetchAllCars, checkCarAvailability, fetchCarDetails, fetchSingleCarForBooking, fetchEstimatePrice, fetchAllBrands };
-
-// const availableCars = await Cars.findAll({
-//   where: {
-//     location: pickup_location,
-//     is_active: true,
-//   },
-
-//   include: [
-//     {
-//       model: Bookings,
-//       required: false, // LEFT JOIN
-//       where: {
-//         booking_status: {
-//           [Op.in]: ["CONFIRMED", "ONGOING"],
-//         },
-//         pickup_datetime: {
-//           [Op.lt]: dropDateTime,
-//         },
-//         drop_datetime: {
-//           [Op.gt]: pickupDateTime,
-//         },
-//       },
-//     },
-//   ],
-
-//   having: Sequelize.literal("COUNT(bookings.id) = 0"),
-
-//   group: ["Car.id"],
-// });
+module.exports = {
+  fetchAllCars,
+  checkCarAvailability,
+  fetchCarDetails,
+  fetchSingleCarForBooking,
+  fetchEstimatePrice,
+  fetchAllBrands,
+  fetchPremiumCars,
+};

@@ -5,12 +5,15 @@ const {
   fetchSingleCarForBooking,
   fetchEstimatePrice,
   fetchAllBrands,
+  fetchPremiumCars,
 } = require("../controllers/carController");
 const { validateCarAvailabilityBody, validateSelectedCarData } = require("../validations/carValidator");
 
 const router = require("express").Router();
 
 router.get("/fetch-cars", fetchAllCars);
+
+router.get("/fetch-premium-cars", fetchPremiumCars);
 
 router.get("/fetch-brands", fetchAllBrands);
 
