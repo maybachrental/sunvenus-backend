@@ -1,6 +1,23 @@
-const { register, verifyingOTPController, loginUser, forgotPassword, forgotPasswordVerifyOTP, createNewPassword, resendOTP } = require("../controllers/authController");
+const {
+  register,
+  verifyingOTPController,
+  loginUser,
+  forgotPassword,
+  forgotPasswordVerifyOTP,
+  createNewPassword,
+  resendOTP,
+  googleLogin,
+} = require("../controllers/authController");
 const { checkIsTokenBlacklist } = require("../middlewares/authMiddleware");
-const { validateRegisterBody, validateVerifyOTP, validateLoginBody, validationForgotField, validationVerifyOTP, validateNewPassword, validateSendOtp } = require("../validations/authValidator");
+const {
+  validateRegisterBody,
+  validateVerifyOTP,
+  validateLoginBody,
+  validationForgotField,
+  validationVerifyOTP,
+  validateNewPassword,
+  validateSendOtp,
+} = require("../validations/authValidator");
 
 const router = require("express").Router();
 
@@ -17,5 +34,7 @@ router.post("/forgot/verify-otp", validationVerifyOTP, forgotPasswordVerifyOTP);
 router.post("/create-new-password", validateNewPassword, checkIsTokenBlacklist, createNewPassword);
 
 router.post("/resend-otp", validateSendOtp, resendOTP);
+
+router.post("/google-login", googleLogin);
 
 module.exports = router;

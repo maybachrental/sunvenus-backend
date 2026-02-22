@@ -3,7 +3,7 @@ const { Bookings, CarsPricings, AddOns } = require("../models");
 const ErrorHandler = require("../utils/ErrorHandler");
 const { tripTypes } = require("../utils/staticExport");
 
-const isCarAvailable = async (car_id, pickupDateTime, dropDateTime) => {
+const isCarAvailable = async (car_id, pickupDateTime, dropDateTime, transaction = null) => {
   if (pickupDateTime >= dropDateTime) {
     return next(new ErrorHandler(400, "Drop date/time must be after pickup date/time", validErrorName.INVALID_REQUEST));
   }
@@ -14,6 +14,10 @@ const isCarAvailable = async (car_id, pickupDateTime, dropDateTime) => {
       pickup_datetime: { [Op.lt]: dropDateTime },
       drop_datetime: { [Op.gt]: pickupDateTime },
     },
+    ...(transaction && {
+      lock: transaction.LOCK.UPDATE,
+      transaction,
+    }),
   });
 
   return !existingBooking; // true if available

@@ -48,6 +48,24 @@ const paymentToBe = {
   PAY_LATER: "PAY_LATER",
 };
 
+const bookingStatus = {
+  PENDING_PAYMENT: "PENDING_PAYMENT",
+  CONFIRMED: "CONFIRMED",
+  ONGOING: "ONGOING",
+  COMPLETED: "COMPLETED",
+  CANCELLED: "CANCELLED",
+};
+
+const paymentStatus = {
+  PENDING: "PENDING",
+  PAID: "PAID",
+  FAILED: "FAILED",
+  REFUNDED: "REFUNDED",
+  UNPAID: "UNPAID",
+  EXPIRED: "EXPIRED", // only for transaction table
+  SUCCESS: "SUCCESS", // only for transaction table
+};
+
 module.exports = {
   userRole,
   validErrorName,
@@ -56,4 +74,6 @@ module.exports = {
   tripType,
   tripTypes,
   paymentToBe,
+  bookingStatus,
+  paymentStatus,
 };

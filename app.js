@@ -12,7 +12,13 @@ const flash = require("connect-flash");
 const { helperMessage } = require("./src/middlewares/adminAuth");
 const cookieParser = require("cookie-parser");
 
+app.use((req, res, next) => {
+  res.set("Cache-Control", "no-store");
+  next();
+});
+
 // json Conversion
+app.use("/webhooks", express.raw({ type: "application/json" }), require("./src/routes/webhookRoutes"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());

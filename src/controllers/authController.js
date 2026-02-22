@@ -4,6 +4,8 @@ const { Users, BlacklistTokens } = require("../models");
 const { responseHandler, hashedPasswordCnv, comparePasswords } = require("../utils/helper");
 const { beginEmailPhoneVerification, verifyingOTP, loginDetailsForToken } = require("../services/auth.service");
 const { signAccess, resetToken } = require("../config/jwt");
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const register = async (req, res, next) => {
   try {
@@ -242,4 +244,23 @@ const resendOTP = async (req, res, next) => {
   }
 };
 
-module.exports = { register, verifyingOTPController, loginUser, forgotPassword, forgotPasswordVerifyOTP, createNewPassword, resendOTP };
+const googleLogin = async (req, res, next) => {
+  try {
+    const { token } = req.body;
+    if (!token || token === "") {
+      throw new ErrorHandler(404, "Token not found", validErrorName.INVALID_REQUEST);
+    }
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    console.log(payload);
+    responseHandler(res, 200, "Google auth success", payload);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { register, verifyingOTPController, loginUser, forgotPassword, forgotPasswordVerifyOTP, createNewPassword, resendOTP, googleLogin };

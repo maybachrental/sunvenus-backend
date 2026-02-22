@@ -42,7 +42,7 @@ module.exports = {
         allowNull: true,
       },
 
-      booking_type: {
+      trip_type: {
         type: Sequelize.ENUM("LOCAL", "ROUND_TRIP", "AIRPORT", "OTHER"),
       },
 
@@ -105,7 +105,10 @@ module.exports = {
         type: Sequelize.ENUM("PENDING_PAYMENT", "CONFIRMED", "ONGOING", "COMPLETED", "CANCELLED"),
         defaultValue: "PENDING_PAYMENT",
       },
-
+      booking_type: {
+        type: Sequelize.ENUM("PAY_NOW", "PAY_LATER"),
+        allowNull: false,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

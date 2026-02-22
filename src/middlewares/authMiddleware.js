@@ -11,7 +11,7 @@ async function checkIsTokenBlacklist(req, res, next) {
     }
     const isBlacklisted = await BlacklistTokens.findOne({ where: { access_token: reset_token } });
     if (isBlacklisted) return next(new ErrorHandler(401, "Unauthorized: This token is blacklisted", validErrorName.BLACKLISTED_TOKEN));
-    
+
     const data = verifyResetToken(reset_token);
     req.resetUserData = data;
     return next();
@@ -24,10 +24,11 @@ async function authenicateUser(req, res, next) {
   try {
     const authHeader = req.headers.authorization;
     const token = authHeader.split(" ")[1];
-    
+
     if (!authHeader || !token) return next(new ErrorHandler(401, "Access token missing", validErrorName.UNAUTHORIZED_USER));
-    
-    const isBlacklisted = await BlacklistTokens.findOne({ access_token:token });
+
+    const isBlacklisted = await BlacklistTokens.findOne({ where: { access_token: token } });
+
     if (isBlacklisted) return next(new ErrorHandler(401, "Unauthorized: Token has been revoked", validErrorName.UNAUTHORIZED_USER));
 
     const payload = verifyAccess(token);

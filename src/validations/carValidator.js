@@ -90,6 +90,9 @@ exports.validateCreateBooking = [
   body("airport_type").optional().trim().notEmpty().withMessage("Airport Type is required"),
   body("extra").optional().isArray({ min: 1 }).withMessage("extra"),
   body("total_price").notEmpty().isNumeric().withMessage("Total Price is required"),
-  body("is_payment").notEmpty().isIn(["PAY_NOW", "PAY_LATER"]).withMessage("Total Price is required"),
+  body("booking_type")
+    .notEmpty()
+    .isIn(["PAY_NOW", "PAY_LATER"])
+    .withMessage("Payment Type is required and can be " + ["PAY_NOW", "PAY_LATER"]),
   validateRequestBody,
 ];

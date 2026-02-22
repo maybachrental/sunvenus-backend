@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
 
-      booking_type: {
+      trip_type: {
         type: DataTypes.ENUM("LOCAL", "ROUND_TRIP", "AIRPORT", "OTHER"),
       },
 
@@ -100,6 +100,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM("PENDING_PAYMENT", "CONFIRMED", "ONGOING", "COMPLETED", "CANCELLED"),
         defaultValue: "PENDING_PAYMENT",
       },
+      booking_type: {
+        type: DataTypes.ENUM("PAY_NOW", "PAY_LATER"),
+        allowNull: false,
+      },
     },
     {
       sequelize,
@@ -113,7 +117,9 @@ module.exports = (sequelize, DataTypes) => {
       paranoid: true,
       hooks: {
         async afterCreate(booking, options) {
-          const code = `BK-${booking.id.toString().padStart(6, "0")}`;
+          const timePart = Date.now().toString(36).toUpperCase().slice(-4);
+          const idPart = booking.id.toString(36).toUpperCase().padStart(4, "0").slice(-4);
+          const code = `BK${timePart}${idPart}`;
           await booking.update({ booking_code: code }, { transaction: options.transaction });
         },
       },
@@ -129,6 +135,6 @@ module.exports = (sequelize, DataTypes) => {
       ],
     },
   );
-  
+
   return Bookings;
 };
