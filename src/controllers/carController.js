@@ -250,6 +250,19 @@ const fetchEstimatePrice = async (req, res, next) => {
   }
 };
 
+const fetchFilterData = async (req, res, next) => {
+  try {
+    const fetchCategories = await CarCategories.findAll({
+      attributes: ["category", "id"],
+    });
+    const fetchFuelTypes = await FuelTypes.findAll({
+      attributes: ["fuel", "id"],
+    });
+    responseHandler(res, 200, "Fetched Data", { categories: fetchCategories, fuelTypes: fetchFuelTypes });
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   fetchAllCars,
   checkCarAvailability,
@@ -258,4 +271,5 @@ module.exports = {
   fetchEstimatePrice,
   fetchAllBrands,
   fetchPremiumCars,
+  fetchFilterData,
 };
