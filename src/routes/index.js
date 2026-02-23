@@ -6,5 +6,6 @@ router.use("/cars", require("./carRoutes"));
 
 router.use("/booking", require("./bookingRoutes"));
 
+router.use("/fetch", require("./fetchRoutes"));
 
 module.exports = router;
