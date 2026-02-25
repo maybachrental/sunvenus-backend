@@ -292,6 +292,7 @@ const fetchEstimatePrice = async (req, res, next) => {
       destinations = null,
       pickup_datetime,
       drop_datetime = null,
+      discounts = null,
     } = req.body;
     if (!car_id) return next(new ErrorHandler(404, "Car id not found"));
     if (!trip_type) return next(new ErrorHandler(404, "Trip Type not found"));
@@ -309,6 +310,7 @@ const fetchEstimatePrice = async (req, res, next) => {
       destinations,
       pickup_datetime,
       drop_datetime,
+      discounts,
     );
 
     responseHandler(res, 200, "Estimated Price", { estimatePrice: estimated_price });

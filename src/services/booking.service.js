@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { Bookings, CarsPricings, AddOns } = require("../models");
+const { Bookings, CarsPricings, AddOns, Discounts } = require("../models");
 const ErrorHandler = require("../utils/ErrorHandler");
 const { tripTypes, validErrorName } = require("../utils/staticExport");
 const { roundTripPriceCalculate } = require("./car.service");
@@ -25,7 +25,17 @@ const isCarAvailable = async (car_id, pickupDateTime, dropDateTime, transaction 
   return !existingBooking; // true if available
 };
 
-const calculatePricingLogic = async (car_id, trip_type, duration_hours, included_km, addOn = [], destinations, pickup_datetime, drop_datetime) => {
+const calculatePricingLogic = async (
+  car_id,
+  trip_type,
+  duration_hours,
+  included_km,
+  addOn = [],
+  destinations,
+  pickup_datetime,
+  drop_datetime,
+  discounts = [],
+) => {
   const whereQuery = {
     car_id: car_id,
     is_outstation: trip_type === tripTypes.ROUND_TRIP ? true : false,
@@ -46,35 +56,72 @@ const calculatePricingLogic = async (car_id, trip_type, duration_hours, included
   const carPricing = await CarsPricings.findOne({
     where: whereQuery,
   });
-  
 
   if (!carPricing) throw new ErrorHandler(404, "Pricing information not found for the specified duration and trip type");
 
-  const carPrices = roundTripPriceCalculate(trip_type, drop_datetime, pickup_datetime, carPricing, distanceData);
-  // const carPrices = carPricing.get({ plain: true });
+  const carPricesJson = carPricing.get({ plain: true });
+  const carPrices = roundTripPriceCalculate(trip_type, drop_datetime, pickup_datetime, carPricesJson, distanceData);
   const extraJson = addOn ? addOn : [];
+  const discountJson = discounts ? discounts : [];
+  console.log();
 
-  const ids = extraJson.map((e) => {
+  const addOnIds = extraJson.map((e) => {
     return e.id;
   });
-
-  const fetchAddOns = await AddOns.findAll({
-    attributes: ["id", "price", "type", "duration"],
-    where: { id: { [Op.in]: ids } },
-    raw: true,
+  const discountIds = discountJson.map((e) => {
+    return e.id;
   });
   const estimated_price = {
     ...carPrices,
-    addOn: [],
+    addOns: [],
+    discounts: [],
     total_price: carPrices.base_price,
   };
-  if (fetchAddOns) {
-    estimated_price.addOn = [...fetchAddOns];
-    fetchAddOns.forEach((element) => {
-      estimated_price.total_price += typeof element.price === "string" ? Number(element.price) : element.price;
+
+  if (discountIds.length > 0) {
+    const fetchDiscounts = await Discounts.findAll({
+      attributes: ["id", "code", "value", "type", "expiry_date"],
+      where: { id: { [Op.in]: discountIds } },
+      raw: true,
     });
+    if (fetchDiscounts) {
+      estimated_price.discounts = [...fetchDiscounts];
+      fetchDiscounts.forEach((el) => {
+        estimated_price.total_price = calculateDiscount(estimated_price.total_price, el.type, el.value);
+      });
+    }
+  }
+  if (addOnIds.length > 0) {
+    const fetchAddOns = await AddOns.findAll({
+      attributes: ["id", "price", "type", "duration"],
+      where: { id: { [Op.in]: addOnIds } },
+      raw: true,
+    });
+
+    if (fetchAddOns) {
+      estimated_price.addOn = [...fetchAddOns];
+      fetchAddOns.forEach((element) => {
+        estimated_price.total_price += typeof element.price === "string" ? Number(element.price) : element.price;
+      });
+    }
   }
   return estimated_price;
+};
+const calculateDiscount = (total_price, discountType, discountValue) => {
+  const price = Number(total_price) || 0;
+  const value = Number(discountValue) || 0;
+  if (price <= 0 || value <= 0) {
+    return price;
+  }
+  let finalPrice = price;
+  if (discountType === "PERCENTAGE") {
+    const discountAmount = (price * value) / 100;
+    finalPrice = price - discountAmount;
+  } else if (discountType === "FLAT") {
+    finalPrice = price - value;
+  }
+  // Prevent negative price
+  return Math.max(0, Math.round(finalPrice));
 };
 
 module.exports = { isCarAvailable, calculatePricingLogic };

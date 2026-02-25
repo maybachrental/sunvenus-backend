@@ -46,13 +46,12 @@ const roundTripPriceCalculate = (trip_type, drop_datetime, pickup_datetime, cars
 
       if (trip_type === tripTypes.ROUND_TRIP) {
         const { totalHours, totalKms } = getTotalKmsAndHourRoundTrip(pickup_datetime, drop_datetime, distanceData?.[0]?.distanceMeters);
-
         basePrice = Math.max(Number(e.extra_hour_charge || 0) * totalHours, Number(e.extra_km_charge || 0) * totalKms);
       }
 
       return {
         ...e,
-        base_price: basePrice,
+        base_price: Number(basePrice.toFixed(2)),
       };
     });
 

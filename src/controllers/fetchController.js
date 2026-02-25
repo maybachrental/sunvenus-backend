@@ -1,6 +1,6 @@
 const { googleDistanceApi } = require("../services/external/google.service");
 const { responseHandler } = require("../utils/helper");
-const { AddOns, Discount, Brands, CarCategories, FuelTypes } = require("../models");
+const { AddOns, Discounts, Brands, CarCategories, FuelTypes } = require("../models");
 const fetchDistanceMatrix = async (req, res, next) => {
   try {
     const results = await googleDistanceApi(req.body);
@@ -20,7 +20,7 @@ const fetchAddOnsAndDiscount = async (req, res, next) => {
     const addOns = await AddOns.findAll({
       attributes: ["id", "type", "price", "duration", "extra"],
     });
-    const discounts = await Discount.findAll({
+    const discounts = await Discounts.findAll({
       attributes: ["id", "code", "value", "type", "expiry_date"],
     });
     responseHandler(res, 200, "Fetched", { discounts, addOns });

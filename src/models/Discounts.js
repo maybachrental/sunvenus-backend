@@ -1,7 +1,7 @@
 "use strict";
-const { Model } = require("sequelize");
+const { Model, Op } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Discount extends Model {
+  class Discounts extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -10,8 +10,13 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
+    // Optional helper method
+    isExpired() {
+      if (!this.expiry_date) return false;
+      return new Date(this.expiry_date) < new Date();
+    }
   }
-  Discount.init(
+  Discounts.init(
     {
       code: DataTypes.STRING,
       type: DataTypes.ENUM("PERCENTAGE", "FLAT"),
@@ -20,13 +25,19 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "Discount",
+      modelName: "Discounts",
       tableName: "discounts",
       underscored: true,
       timestamps: true,
       createdAt: "created_at",
       updatedAt: "updated_at",
+      // ✅ AUTO FILTER
+      defaultScope: {
+        where: {
+          [Op.or]: [{ expiry_date: null }, { expiry_date: { [Op.gt]: new Date() } }],
+        },
+      },
     },
   );
-  return Discount;
+  return Discounts;
 };
