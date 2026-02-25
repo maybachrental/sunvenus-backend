@@ -5,7 +5,8 @@ const { responseHandler, getPagination } = require("../utils/helper");
 const ErrorHandler = require("../utils/ErrorHandler");
 const { validErrorName, tripTypes } = require("../utils/staticExport");
 const { isCarAvailable, calculatePricingLogic } = require("../services/booking.service");
-const { triptypeCondition } = require("../services/car.service");
+const { triptypeCondition, roundTripPriceCalculate } = require("../services/car.service");
+const { googleDistanceApi } = require("../services/external/google.service");
 
 const fetchAllCars = async (req, res, next) => {
   try {
@@ -106,24 +107,21 @@ const fetchPremiumCars = async (req, res, next) => {
   }
 };
 
-const fetchAllBrands = async (req, res, next) => {
-  try {
-    const brands = await Brands.findAll({
-      attributes: ["brand_name", "brand_img", "id"],
-      raw: true,
-    });
-    responseHandler(res, 200, "Fetched Brands", { brands });
-  } catch (error) {
-    next(error);
-  }
-};
-
 const checkCarAvailability = async (req, res, next) => {
   try {
-    const { trip_type, pickup_datetime, drop_datetime = null, duration_hours = 8, sort_by = "newest", included_km = 80 } = req.body;
+    const {
+      trip_type,
+      pickup_datetime,
+      drop_datetime = null,
+      duration_hours = 8,
+      sort_by = "newest",
+      included_km = 80,
+      origin,
+      destinations,
+    } = req.body;
 
     if (!trip_type || !pickup_datetime) {
-      return next(new ErrorHandler(400, "All fields are required", validErrorName.INVALID_PASSWORD));
+      return next(new ErrorHandler(400, "All fields are required", validErrorName.INVALID_REQUEST));
     }
     const pickupDateTime = new Date(pickup_datetime);
     const dropDateTime = triptypeCondition(trip_type, pickupDateTime, duration_hours, drop_datetime);
@@ -133,8 +131,11 @@ const checkCarAvailability = async (req, res, next) => {
     if (pickupDateTime >= dropDateTime) {
       return next(new ErrorHandler(400, "Drop date/time must be after pickup date/time", validErrorName.INVALID_REQUEST));
     }
-
     const is_outstation = trip_type === tripTypes.ROUND_TRIP ? true : false;
+
+    if (is_outstation && !destinations && !destinations.length === 1) {
+      return next(new ErrorHandler(400, "Locations are missing", validErrorName.INVALID_REQUEST));
+    }
 
     const bookedCarIds = await Bookings.findAll({
       attributes: ["car_id"],
@@ -145,6 +146,13 @@ const checkCarAvailability = async (req, res, next) => {
       },
       group: ["car_id"],
     });
+    let distanceData = null;
+    if (is_outstation) {
+      distanceData = await googleDistanceApi({
+        origin: "19.151394734760515, 72.83544517289523", // garage cordinates
+        destinations,
+      });
+    }
 
     const carIds = bookedCarIds.map((b) => b.car_id);
     const { limit, offset, page } = getPagination(req.query.page || 1);
@@ -175,8 +183,33 @@ const checkCarAvailability = async (req, res, next) => {
     });
 
     const totalPages = Math.ceil(availableCars.count / limit);
+    const priceData = (availableCars?.rows || [])
+      .map((e) => {
+        if (!e) return null;
+
+        const jsonData = typeof e.toJSON === "function" ? e.toJSON() : e;
+
+        if (!jsonData) return null;
+
+        const CarsPricings = Array.isArray(jsonData.CarsPricings) ? jsonData.CarsPricings : [];
+
+        let newCarPricing;
+
+        try {
+          newCarPricing = roundTripPriceCalculate(trip_type, drop_datetime, pickup_datetime, CarsPricings, distanceData);
+        } catch (err) {
+          // Let pricing error bubble up if needed
+          throw err;
+        }
+
+        return {
+          ...jsonData,
+          CarsPricings: newCarPricing,
+        };
+      })
+      .filter(Boolean); // remove null entries
     responseHandler(res, 200, "Car fetched", {
-      cars: availableCars.rows,
+      cars: priceData,
       totalCars: availableCars.count,
       totalPages,
       currentPage: page,
@@ -250,12 +283,33 @@ const fetchSingleCarForBooking = async (req, res, next) => {
 
 const fetchEstimatePrice = async (req, res, next) => {
   try {
-    const { duration_hours = 8, included_km = 80, trip_type, extra = null, car_id } = req.body;
-
+    const {
+      duration_hours = 8,
+      included_km = 80,
+      trip_type,
+      addOn = null,
+      car_id,
+      destinations = null,
+      pickup_datetime,
+      drop_datetime = null,
+    } = req.body;
     if (!car_id) return next(new ErrorHandler(404, "Car id not found"));
     if (!trip_type) return next(new ErrorHandler(404, "Trip Type not found"));
+    if (!pickup_datetime) return next(new ErrorHandler(404, "Pick up time is required"));
+    if (trip_type === tripTypes.ROUND_TRIP && !drop_datetime) {
+      return next(new ErrorHandler(404, "Round trip data missing"));
+    }
 
-    const estimated_price = await calculatePricingLogic(car_id, trip_type, duration_hours, included_km, extra);
+    const estimated_price = await calculatePricingLogic(
+      car_id,
+      trip_type,
+      duration_hours,
+      included_km,
+      addOn,
+      destinations,
+      pickup_datetime,
+      drop_datetime,
+    );
 
     responseHandler(res, 200, "Estimated Price", { estimatePrice: estimated_price });
   } catch (error) {
@@ -263,26 +317,11 @@ const fetchEstimatePrice = async (req, res, next) => {
   }
 };
 
-const fetchFilterData = async (req, res, next) => {
-  try {
-    const fetchCategories = await CarCategories.findAll({
-      attributes: ["category", "id"],
-    });
-    const fetchFuelTypes = await FuelTypes.findAll({
-      attributes: ["fuel", "id"],
-    });
-    responseHandler(res, 200, "Fetched Data", { categories: fetchCategories, fuelTypes: fetchFuelTypes });
-  } catch (error) {
-    next(error);
-  }
-};
 module.exports = {
   fetchAllCars,
   checkCarAvailability,
   fetchCarDetails,
   fetchSingleCarForBooking,
   fetchEstimatePrice,
-  fetchAllBrands,
   fetchPremiumCars,
-  fetchFilterData,
 };

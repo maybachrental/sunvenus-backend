@@ -1,60 +1,10 @@
-const axios = require("axios");
-const ErrorHandler = require("../utils/ErrorHandler");
-const { validErrorName } = require("../utils/staticExport");
-
+const { googleDistanceApi } = require("../services/external/google.service");
+const { responseHandler } = require("../utils/helper");
+const { AddOns, Discount, Brands, CarCategories, FuelTypes } = require("../models");
 const fetchDistanceMatrix = async (req, res, next) => {
   try {
-    const { origin, destinations, mode = "driving", units = "metric" } = req.body;
-
-    if (!origin || !destinations || !Array.isArray(destinations) || destinations.length === 0) {
-      throw new ErrorHandler(400, "Origin and destinations array are required", validErrorName.INVALID_REQUEST);
-    }
-
-    // Convert destinations array into pipe-separated string
-    const formattedDestinations = destinations.join("|");
-
-    const response = await axios.get(process.env.GOOGLE_DISTANCE_MATRIX_URL, {
-      params: {
-        origins: origin,
-        destinations: formattedDestinations,
-        mode,
-        units,
-        departure_time: "now", // Enables traffic-aware durations
-        key: process.env.GOOGLE_API_KEY,
-      },
-      timeout: 5000,
-    });
-
-    if (response.data.status !== "OK") {
-      throw new Error(response.data.error_message || "Google API error");
-    }
-
-    const elements = response.data.rows[0].elements;
-
-    const results = elements.map((element, index) => {
-      if (element.status !== "OK") {
-        return {
-          destination: destinations[index],
-          error: element.status,
-        };
-      }
-
-      return {
-        destination: destinations[index],
-        distanceText: element.distance.text,
-        distanceMeters: element.distance.value,
-        durationText: element.duration.text,
-        durationSeconds: element.duration.value,
-        durationInTrafficText: element.duration_in_traffic?.text || null,
-        durationInTrafficSeconds: element.duration_in_traffic?.value || null,
-      };
-    });
-
-    return res.status(200).json({
-      success: true,
-      origin,
-      results,
-    });
+    const results = await googleDistanceApi(req.body);
+    return responseHandler(res, 200, "Fetch Distance", { results });
   } catch (error) {
     console.error("Distance Matrix Error:", error.response?.data || error.message);
     return res.status(500).json({
@@ -65,4 +15,44 @@ const fetchDistanceMatrix = async (req, res, next) => {
   }
 };
 
-module.exports = { fetchDistanceMatrix };
+const fetchAddOnsAndDiscount = async (req, res, next) => {
+  try {
+    const addOns = await AddOns.findAll({
+      attributes: ["id", "type", "price", "duration", "extra"],
+    });
+    const discounts = await Discount.findAll({
+      attributes: ["id", "code", "value", "type", "expiry_date"],
+    });
+    responseHandler(res, 200, "Fetched", { discounts, addOns });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const fetchAllBrands = async (req, res, next) => {
+  try {
+    const brands = await Brands.findAll({
+      attributes: ["brand_name", "brand_img", "id"],
+      raw: true,
+    });
+    responseHandler(res, 200, "Fetched Brands", { brands });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const fetchFilterData = async (req, res, next) => {
+  try {
+    const fetchCategories = await CarCategories.findAll({
+      attributes: ["category", "id"],
+    });
+    const fetchFuelTypes = await FuelTypes.findAll({
+      attributes: ["fuel", "id"],
+    });
+    responseHandler(res, 200, "Fetched Data", { categories: fetchCategories, fuelTypes: fetchFuelTypes });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { fetchDistanceMatrix, fetchAddOnsAndDiscount, fetchAllBrands, fetchFilterData };
