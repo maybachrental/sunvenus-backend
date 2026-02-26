@@ -73,7 +73,7 @@ const calculatePricingLogic = async (
   });
   const estimated_price = {
     ...carPrices,
-    addOns: [],
+    addOn: [],
     discounts: [],
     total_price: carPrices.base_price,
   };

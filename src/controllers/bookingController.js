@@ -19,9 +19,11 @@ const checkAndCreateBooking = async (req, res, next) => {
       trip_type,
       duration_hours,
       included_km,
-      extra = [],
       total_price,
       booking_type,
+      addOn = [],
+      destinations = null,
+      discounts = [],
     } = req.body;
 
     if (!pickup_location || !pickup_datetime || !trip_type) {
@@ -38,7 +40,17 @@ const checkAndCreateBooking = async (req, res, next) => {
       throw new ErrorHandler(400, "Car is no longer available.", validErrorName.CAR_ALREADY_BOOKED);
     }
 
-    const estimated_price = await calculatePricingLogic(car_id, trip_type, duration_hours, included_km, extra);
+    const estimated_price = await calculatePricingLogic(
+      car_id,
+      trip_type,
+      duration_hours,
+      included_km,
+      addOn,
+      destinations,
+      pickup_datetime,
+      drop_datetime,
+      discounts,
+    );
 
     if (estimated_price.total_price !== total_price) {
       throw new ErrorHandler(400, "Price mismatch. Reload page.");
