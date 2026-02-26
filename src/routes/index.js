@@ -8,4 +8,6 @@ router.use("/booking", require("./bookingRoutes"));
 
 router.use("/fetch", require("./fetchRoutes"));
 
+router.use("/web", require("./webRoutes"));
+
 module.exports = router;
