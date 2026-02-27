@@ -11,7 +11,15 @@ module.exports = {
     await queryInterface.bulkInsert(
       "car_categories",
 
-      [{ category: "Hatchback" }, { category: "Luxury Sedan" }, { category: "Luxury SUV" }, { category: "Compact SUV" }, { category: "Convertible" }, { category: "Limousine" }],
+      [
+        { category: "Hatchback" },
+        { category: "Luxury Sedan" },
+        { category: "Luxury SUV" },
+        { category: "Compact SUV" },
+        { category: "Convertible" },
+        { category: "Limousine" },
+        { category: "Luxury Minivan" },
+      ],
       {},
     );
   },
@@ -21,7 +29,7 @@ module.exports = {
      * Add commands to revert seed here.
      *
      * Example:
-    */
+     */
     await queryInterface.bulkDelete("car_categories", null, {});
   },
 };
