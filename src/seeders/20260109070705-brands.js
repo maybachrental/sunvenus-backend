@@ -22,6 +22,18 @@ module.exports = {
           brand_name: "maybach",
           brand_img: "maybach.png",
         },
+        {
+          brand_name: "mercedes",
+          brand_img: "mercedes.png",
+        },
+        {
+          brand_name: "toyota",
+          brand_img: "toyota.png",
+        },
+        {
+          brand_name: "range rover",
+          brand_img: "rangerover.png",
+        },
       ],
       {},
     );
