@@ -36,6 +36,24 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         defaultValue: true,
       },
+      public_id: {
+        type: DataTypes.TEXT,
+      },
+      file_type: {
+        type: DataTypes.ENUM("IMAGE", "VIDEO"),
+        defaultValue: "IMAGE",
+      },
+      image_url: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+          const publicId = this.getDataValue("public_id");
+          const imageExt = this.getDataValue("image_name");
+          const ext = imageExt.split(".")[1];
+          if (!cloudName || !publicId) return null;
+          return `https://res.cloudinary.com/${cloudName}/image/upload/${publicId}.${ext}`;
+        },
+      },
     },
     {
       sequelize,

@@ -34,6 +34,13 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         defaultValue: true,
       },
+      public_id: {
+        type: Sequelize.TEXT,
+      },
+      file_type: {
+        type: Sequelize.ENUM("IMAGE", "VIDEO"),
+        defaultValue: "IMAGE",
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

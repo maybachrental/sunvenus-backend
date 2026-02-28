@@ -1,6 +1,6 @@
 const { Op } = require("sequelize");
 const { buildCarWhere, buildCarSort } = require("../dbHelpers/conditionBuilder");
-const { Cars, CarsPricings, CarCategories, FuelTypes, Bookings, AddOns, Brands } = require("../models");
+const { Cars, CarsPricings, CarCategories, FuelTypes, Bookings, CarImages } = require("../models");
 const { responseHandler, getPagination } = require("../utils/helper");
 const ErrorHandler = require("../utils/ErrorHandler");
 const { validErrorName, tripTypes } = require("../utils/staticExport");
@@ -49,6 +49,12 @@ const fetchAllCars = async (req, res, next) => {
         },
         { model: CarCategories, attributes: ["category"] },
         { model: FuelTypes, attributes: ["fuel"] },
+        {
+          model: CarImages,
+          attributes: {
+            exclude: ["created_at", "updated_at", "car_id", "image_path"],
+          },
+        },
       ],
       limit,
       offset,
@@ -78,13 +84,20 @@ const fetchPremiumCars = async (req, res, next) => {
         {
           model: CarsPricings,
           required: true,
-          limit: 1,
+          where: { duration_hours: 8 },
           attributes: {
             exclude: ["created_at", "updated_at"],
           },
         },
         { model: CarCategories, attributes: ["category"] },
         { model: FuelTypes, attributes: ["fuel"] },
+        {
+          model: CarImages,
+          seperate: true,
+          attributes: {
+            exclude: ["created_at", "updated_at", "car_id", "image_path"],
+          },
+        },
       ],
       limit: 7,
       order: [["order_by", "ASC"]],
@@ -133,6 +146,18 @@ const checkCarAvailability = async (req, res, next) => {
     }
     const is_outstation = trip_type === tripTypes.ROUND_TRIP ? true : false;
 
+    const pricingWhere = {};
+
+    if (is_outstation) {
+      pricingWhere.is_outstation = is_outstation;
+    } else {
+      pricingWhere.duration_hours = duration_hours;
+      pricingWhere.included_km = included_km;
+      pricingWhere.is_outstation = false;
+
+    }
+
+
     if (is_outstation && !destinations && !destinations.length === 1) {
       return next(new ErrorHandler(400, "Locations are missing", validErrorName.INVALID_REQUEST));
     }
@@ -167,7 +192,7 @@ const checkCarAvailability = async (req, res, next) => {
       include: [
         {
           model: CarsPricings,
-          where: is_outstation ? { is_outstation } : { duration_hours, is_outstation, included_km },
+          where: pricingWhere,
           required: true,
           attributes: {
             exclude: ["created_at", "updated_at"],
@@ -175,6 +200,12 @@ const checkCarAvailability = async (req, res, next) => {
         },
         { model: CarCategories, attributes: ["category"], required: false },
         { model: FuelTypes, attributes: ["fuel"], required: false },
+        {
+          model: CarImages,
+          attributes: {
+            exclude: ["created_at", "updated_at", "car_id", "image_path"],
+          },
+        },
       ],
       order,
       limit,
@@ -229,7 +260,18 @@ const fetchCarDetails = async (req, res, next) => {
       attributes: {
         exclude: ["created_at", "updated_at"],
       },
-      include: [{ model: CarsPricings }, { model: CarCategories }, { model: FuelTypes }],
+      include: [
+        { model: CarsPricings },
+        { model: CarCategories },
+        { model: FuelTypes },
+        {
+          model: CarImages,
+          seperate: true,
+          attributes: {
+            exclude: ["created_at", "updated_at", "car_id", "image_path"],
+          },
+        },
+      ],
     });
 
     responseHandler(res, 200, "Car Information", { carInfo });
