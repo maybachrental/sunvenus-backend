@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.belongsTo(models.Cars, {
+        foreignKey: "car_id",
+        onDelete: "CASCADE",
+      });
     }
   }
   CarImages.init(
@@ -27,6 +31,10 @@ module.exports = (sequelize, DataTypes) => {
       is_primary: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
+      },
+      with_bg: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
       },
     },
     {
