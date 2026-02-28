@@ -86,8 +86,6 @@ module.exports = {
           extra_hour_charge: Array.isArray(config.extraHour) ? config.extraHour[index] : config.extraHour,
           extra_km_charge: Array.isArray(config.extraKm) ? config.extraKm[index] : config.extraKm,
           is_outstation: pkg.outstation,
-          createdAt: new Date(),
-          updatedAt: new Date(),
         });
       });
     });
