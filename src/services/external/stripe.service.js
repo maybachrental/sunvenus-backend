@@ -43,4 +43,4 @@ const createCheckoutSession = async (data) => {
 };
 
 
-module.exports = { createCheckoutSession };
+module.exports = { createCheckoutSession, stripe };

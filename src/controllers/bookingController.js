@@ -1,14 +1,14 @@
+const { Op } = require("sequelize");
 const { Bookings, sequelize, Transactions } = require("../models");
 const { isCarAvailable, calculatePricingLogic } = require("../services/booking.service");
 const { triptypeCondition } = require("../services/car.service");
-const { createCheckoutSession } = require("../services/external/stripe.service");
+const { createCheckoutSession, stripe } = require("../services/external/stripe.service");
 const ErrorHandler = require("../utils/ErrorHandler");
 const { responseHandler } = require("../utils/helper");
 const { validErrorName, paymentToBe, bookingStatus, paymentStatus } = require("../utils/staticExport");
 
 const checkAndCreateBooking = async (req, res, next) => {
   const transaction = await sequelize.transaction();
-
   try {
     const {
       car_id,
@@ -26,20 +26,60 @@ const checkAndCreateBooking = async (req, res, next) => {
       discounts = [],
     } = req.body;
 
+    const userId = req.user.id;
+    const now = new Date();
+    const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
+
     if (!pickup_location || !pickup_datetime || !trip_type) {
-      throw new ErrorHandler(400, "All fields are required", validErrorName.INVALID_REQUEST);
+      throw new ErrorHandler(400, "All fields are required", validErrorName.BAD_REQUEST);
     }
 
     const pickupDateTime = new Date(pickup_datetime);
     const dropDateTime = triptypeCondition(trip_type, pickupDateTime, duration_hours, drop_datetime);
 
-    // IMPORTANT: Lock rows to prevent race condition
-    const available = await isCarAvailable(car_id, pickupDateTime, dropDateTime, transaction);
+    // 1️ CHECK EXISTING RESERVATION
+    let existing = await Bookings.findOne({
+      where: {
+        car_id,
+        user_id: userId,
+        booking_status: bookingStatus.PENDING_PAYMENT,
+        created_at: { [Op.gt]: fifteenMinutesAgo },
+      },
+      transaction,
+      lock: transaction.LOCK.UPDATE,
+    });
 
-    if (!available) {
-      throw new ErrorHandler(400, "Car is no longer available.", validErrorName.CAR_ALREADY_BOOKED);
+    if (existing) {
+      const timePassed = Date.now() - new Date(existing.created_at).getTime();
+      const timeLeft = 15 * 60 * 1000 - timePassed;
+
+      if (existing.stripe_session_id) {
+        const session = await stripe.checkout.sessions.retrieve(existing.stripe_session_id);
+
+        if (session.status === "open" && timeLeft > 3 * 60 * 1000) {
+          await transaction.commit();
+          return responseHandler(res, 200, "Session Reused", {
+            url: existing.checkout_url,
+          });
+        }
+
+        // Expire old session if still open
+        if (session.status === "open") {
+          await stripe.checkout.sessions.expire(existing.stripe_session_id);
+        }
+      }
+
+      // Mark as expired
+      await existing.update({ booking_status: bookingStatus.CANCELLED,payment_status:paymentStatus.UNPAID }, { transaction });
     }
 
+    // 2️ CHECK IF OTHER USER HAS RESERVED
+    const available = await isCarAvailable(car_id, pickupDateTime, dropDateTime, transaction);
+    if (!available) {
+      throw new ErrorHandler(400, "Sorry! This Car has been reserved. Please select another car.");
+    }
+
+    // 3️ PRICE VALIDATION
     const estimated_price = await calculatePricingLogic(
       car_id,
       trip_type,
@@ -56,6 +96,7 @@ const checkAndCreateBooking = async (req, res, next) => {
       throw new ErrorHandler(400, "Price mismatch. Reload page.");
     }
 
+    // CREATE RESERVED BOOKING
     const booking = await Bookings.create(
       {
         car_id,
@@ -67,10 +108,8 @@ const checkAndCreateBooking = async (req, res, next) => {
         booking_hours: duration_hours,
         included_km,
         base_price: estimated_price.base_price,
-        extra_hour_price: estimated_price.extra_hour_price,
-        extra_km_price: estimated_price.extra_km_price,
         total_price: estimated_price.total_price,
-        user_id: req.user.id,
+        user_id: userId,
         booking_type,
         booking_status: booking_type === paymentToBe.PAY_LATER ? bookingStatus.CONFIRMED : bookingStatus.PENDING_PAYMENT,
         payment_status: paymentStatus.PENDING,
@@ -78,16 +117,11 @@ const checkAndCreateBooking = async (req, res, next) => {
       { transaction },
     );
 
-    // PAY_LATER flow
-
+    // PAY_LATER
     if (booking_type === paymentToBe.PAY_LATER) {
       await transaction.commit();
-
       return responseHandler(res, 201, "Booking Confirmed", { booking });
     }
-
-    // PAY_NOW flow
-
     const txn = await Transactions.create(
       {
         currency: "INR",
@@ -99,11 +133,9 @@ const checkAndCreateBooking = async (req, res, next) => {
       },
       { transaction },
     );
+    await transaction.commit(); // Commit BEFORE Stripe
 
-    await transaction.commit(); // ✅ Commit DB FIRST
-
-    // Now call Stripe OUTSIDE transaction
-
+    // 5️ CREATE STRIPE SESSION
     const stripeResponse = await createCheckoutSession({
       amount: estimated_price.total_price,
       booking_id: booking.id,
@@ -113,17 +145,11 @@ const checkAndCreateBooking = async (req, res, next) => {
       transaction_id: txn.id,
     });
 
-    if (!stripeResponse.success) {
-      // Mark booking failed instead of rollback
-      await booking.update({
-        booking_status: bookingStatus.CANCELLED,
-        payment_status: paymentStatus.FAILED,
-      });
-
-      throw new ErrorHandler(400, "Payment initialization failed. Please Try Again");
-    }
-
-    // Update transaction with stripe session
+    // Update booking with session
+    await booking.update({
+      stripe_session_id: stripeResponse.session.id,
+      checkout_url: stripeResponse.url,
+    });
     await txn.update({
       stripe_session_id: stripeResponse.session.id,
       status: "SESSION_CREATED",
@@ -131,8 +157,7 @@ const checkAndCreateBooking = async (req, res, next) => {
     });
 
     return responseHandler(res, 200, "Payment Initiated", {
-      id: stripeResponse.session.id,
-      url: stripeResponse.url,
+      ...stripeResponse,
     });
   } catch (err) {
     if (!transaction.finished) {

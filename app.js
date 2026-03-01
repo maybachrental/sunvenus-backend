@@ -11,6 +11,7 @@ const session = require("express-session");
 const flash = require("connect-flash");
 const { helperMessage } = require("./src/middlewares/adminAuth");
 const cookieParser = require("cookie-parser");
+const startPendingBookingCleanup = require("./src/cronJobs/cancelBookings");
 
 app.use((req, res, next) => {
   res.set("Cache-Control", "no-store");
@@ -69,6 +70,9 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "src", "views"));
 app.use(require("express-ejs-layouts"));
 app.set("layout", "layout/admin/layout");
+
+// cron jobs
+startPendingBookingCleanup()
 
 // Static files
 app.use("/adminlte", express.static(path.join(__dirname, "./node_modules/admin-lte")));

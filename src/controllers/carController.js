@@ -154,9 +154,7 @@ const checkCarAvailability = async (req, res, next) => {
       pricingWhere.duration_hours = duration_hours;
       pricingWhere.included_km = included_km;
       pricingWhere.is_outstation = false;
-
     }
-
 
     if (is_outstation && !destinations && !destinations.length === 1) {
       return next(new ErrorHandler(400, "Locations are missing", validErrorName.INVALID_REQUEST));
@@ -291,7 +289,7 @@ const fetchSingleCarForBooking = async (req, res, next) => {
     }
     const pickupDateTime = new Date(pickup_datetime);
     const dropDateTime = triptypeCondition(trip_type, pickupDateTime, duration_hours, drop_datetime);
-    const available = await isCarAvailable(car_id, pickupDateTime, dropDateTime);
+    const available = await isCarAvailable(car_id, pickupDateTime, dropDateTime, null, true);
     if (!available) {
       return next(
         new ErrorHandler(400, "Oops! You are late, Car is no longer available. Please select another Car.", validErrorName.CAR_ALREADY_BOOKED),

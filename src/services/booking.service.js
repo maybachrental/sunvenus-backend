@@ -5,14 +5,18 @@ const { tripTypes, validErrorName } = require("../utils/staticExport");
 const { roundTripPriceCalculate } = require("./car.service");
 const { googleDistanceApi } = require("./external/google.service");
 
-const isCarAvailable = async (car_id, pickupDateTime, dropDateTime, transaction = null) => {
+const isCarAvailable = async (car_id, pickupDateTime, dropDateTime, transaction = null, checkForCompleted = false) => {
   if (pickupDateTime >= dropDateTime) {
     return next(new ErrorHandler(400, "Drop date/time must be after pickup date/time", validErrorName.INVALID_REQUEST));
+  }
+  let bookingStatus = ["CONFIRMED", "ONGOING", "PENDING_PAYMENT"];
+  if (checkForCompleted) {
+    bookingStatus = ["CONFIRMED", "ONGOING"];
   }
   const existingBooking = await Bookings.findOne({
     where: {
       car_id,
-      booking_status: { [Op.in]: ["CONFIRMED", "ONGOING", "PENDING_PAYMENT"] },
+      booking_status: { [Op.in]: bookingStatus },
       pickup_datetime: { [Op.lt]: dropDateTime },
       drop_datetime: { [Op.gt]: pickupDateTime },
     },

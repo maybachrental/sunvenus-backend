@@ -109,6 +109,10 @@ module.exports = {
         type: Sequelize.ENUM("PAY_NOW", "PAY_LATER"),
         allowNull: false,
       },
+      stripe_session_id: {
+        type: Sequelize.STRING,
+      },
+      checkout_url: Sequelize.TEXT,
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

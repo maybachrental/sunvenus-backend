@@ -30,6 +30,9 @@ const verifyUserAndUpdatePhone = async (req, res, next) => {
       attributer: ["id", "email", "role", "is_email_verified", "status", "phone"],
       where: { id },
     });
+    if (!user) {
+      return next(new ErrorHandler(401, "Please login again",validErrorName.USER_NOT_FOUND));
+    }
     if (user.role !== userRole.USER) return next(new ErrorHandler(400, "Access Denied, Due to invalid account role", validErrorName.ACCESS_DENIED));
     if (user.status !== status.ACTIVE)
       return next(new ErrorHandler(400, "Access Denied, User account is inactive.Please connect with the admin", validErrorName.ACCESS_DENIED));
