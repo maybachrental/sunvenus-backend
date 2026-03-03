@@ -47,4 +47,24 @@ function generateBookingCode() {
   return `MBX-${date}-${rand}`;
 }
 
-module.exports = { responseHandler, generateOTP, hashedPasswordCnv, comparePasswords, getPagination, generateBookingCode };
+const extractPublicId = (cloudinaryUrl) => {
+  if (!cloudinaryUrl || typeof cloudinaryUrl !== "string") return null;
+
+  try {
+    const url = new URL(cloudinaryUrl);
+    const parts = url.pathname.split("/");
+    const uploadIndex = parts.indexOf("upload");
+    if (uploadIndex === -1) return null;
+    let startIndex = uploadIndex + 1;
+    if (/^v\d+$/.test(parts[startIndex])) {
+      startIndex += 1;
+    }
+    const withExtension = parts.slice(startIndex).join("/");
+    const publicId = withExtension.replace(/\.[^/.]+$/, "");
+    return publicId || null;
+  } catch {
+    return null;
+  }
+};
+
+module.exports = { responseHandler, generateOTP, hashedPasswordCnv, comparePasswords, getPagination, generateBookingCode, extractPublicId };

@@ -1,0 +1,54 @@
+<div class="app-content-header">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <h3 class="mb-0 fw-bold">Blogs</h3>
+        <a href="/admin/blogs/create" class="btn btn-dark">+ Create Blog</a>
+    </div>
+</div>
+
+<div class="app-content">
+    <div class="container-fluid">
+
+        <div class="card card-dark">
+            <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Published</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% blogs?.forEach(b=> { %>
+                            <tr>
+                                <td>
+                                    <%= b.id %>
+                                </td>
+                                <td>
+                                    <%= b.title %>
+                                </td>
+                                <td>
+                                    <span class="badge bg-<%= b.status === 'published' ? 'success' : 'warning' %>">
+                                        <%= b.status %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <%= b.published_at || '-' %>
+                                </td>
+                                <td>
+                                    <a href="/admin/blogs/show/<%= b.id %>" class="btn btn-sm btn-info">View</a>
+                                    <a href="/admin/blogs/update?id=<%= b.id %>" class="btn btn-sm btn-primary">Edit</a>
+                                    <a href="/admin/blogs/delete/<%= b.id %>" onclick="return confirm('Delete?')"
+                                        class="btn btn-sm btn-danger">Delete</a>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>

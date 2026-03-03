@@ -19,7 +19,7 @@ class CloudinaryService {
   }
 
   // Upload
-  static async upload(file, folder = "uploads", options = {}) {
+  static async uploadFile(file, folder = "uploads", options = {}) {
     const { resourceType = "auto", overwrite = false, useUUID = true, publicId = null, transformations = {} } = options;
 
     this.validateFile(file, resourceType === "auto" ? "image" : resourceType);

@@ -79,7 +79,8 @@ const loginAdmin = async (req, res) => {
       email: adminUser.email,
       name: adminUser.name,
     });
-
+    console.log(accessToken);
+    
     res.cookie("admin_access_token", accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

@@ -1,0 +1,38 @@
+<div class="app-content-header">
+    <div class="container-fluid">
+        <h3 class="fw-bold">
+            <%= blog.title %>
+        </h3>
+    </div>
+</div>
+
+<div class="app-content">
+    <div class="container-fluid">
+
+        <img src="<%= blog.hero_image %>" class="img-fluid mb-4">
+
+        <% blog.sections.forEach(section=> { %>
+            <% if(section.section_type==='text' ){ %>
+                <div><%- section.content %></div>
+                <% } %>
+
+                    <% if(section.section_type==='image' ){ %>
+                        <img src="<%= section.image_url %>" class="img-fluid my-3">
+                        <% } %>
+                            <% }) %>
+
+                                <div class="row mt-4">
+                                    <% blog.features.forEach(f=> { %>
+                                        <div class="col-md-4">
+                                            <h5>
+                                                <%= f.title %>
+                                            </h5>
+                                            <p>
+                                                <%= f.description %>
+                                            </p>
+                                        </div>
+                                        <% }) %>
+                                </div>
+
+    </div>
+</div>

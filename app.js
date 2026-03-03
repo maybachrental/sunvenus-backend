@@ -72,7 +72,7 @@ app.use(require("express-ejs-layouts"));
 app.set("layout", "layout/admin/layout");
 
 // cron jobs
-startPendingBookingCleanup()
+startPendingBookingCleanup();
 
 // Static files
 app.use("/adminlte", express.static(path.join(__dirname, "./node_modules/admin-lte")));
@@ -84,7 +84,7 @@ app.use(express.static(path.join(__dirname, "/public")));
 app.get("/", (req, res) => res.json("Welcome to maybach API!"));
 app.use("/api", require("./src/routes/index"));
 app.use("/admin", require("./src/routes/admin/adminRoutes"));
-
+app.get("/.well-known/appspecific/com.chrome.devtools.json", (req, res) => res.status(200));
 // middlewaare for all
 app.use((req, res, next) => {
   next(new ErrorHandler(404, "The requested URL was not found on this server."));

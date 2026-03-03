@@ -15,6 +15,8 @@
         --warning: #f59e0b;
         --warning-soft: rgba(245, 158, 11, 0.1);
         --danger-soft: rgba(239, 68, 68, 0.08);
+        --info: #0ea5e9;
+        --info-soft: rgba(14, 165, 233, 0.08);
         --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
         --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
         --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.05);
@@ -69,6 +71,80 @@
     .cb-header .breadcrumb a {
         color: var(--accent);
         text-decoration: none;
+    }
+
+    .cb-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-left: auto;
+    }
+
+    .cb-btn-preview {
+        background: var(--info-soft);
+        border: 1.5px solid rgba(14, 165, 233, 0.25);
+        color: var(--info);
+        border-radius: var(--radius-sm);
+        padding: 8px 16px;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .cb-btn-preview:hover {
+        background: rgba(14, 165, 233, 0.14);
+    }
+
+    /* ── Update Banner ── */
+    .cb-update-banner {
+        background: linear-gradient(135deg, rgba(108, 99, 255, 0.06) 0%, rgba(139, 92, 246, 0.06) 100%);
+        border: 1.5px solid rgba(108, 99, 255, 0.15);
+        border-radius: var(--radius);
+        padding: 16px 20px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .cb-update-banner-icon {
+        font-size: 28px;
+        flex-shrink: 0;
+    }
+
+    .cb-update-banner-text h4 {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--accent);
+        margin-bottom: 2px;
+    }
+
+    .cb-update-banner-text p {
+        font-size: 12px;
+        color: var(--muted);
+    }
+
+    .cb-update-banner-meta {
+        margin-left: auto;
+        text-align: right;
+        flex-shrink: 0;
+    }
+
+    .cb-update-banner-meta span {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+    }
+
+    .cb-update-banner-meta strong {
+        font-size: 12px;
+        color: var(--text);
     }
 
     /* ── Layout ── */
@@ -210,6 +286,61 @@
         border-right: 5px solid transparent;
         border-top: 6px solid var(--muted);
         pointer-events: none;
+    }
+
+    /* ── Current Image Display ── */
+    .cb-current-image {
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 12px;
+    }
+
+    .cb-current-image img {
+        width: 100%;
+        max-height: 220px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .cb-current-image-bar {
+        padding: 10px 14px;
+        background: var(--surface2);
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12px;
+    }
+
+    .cb-current-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.25);
+        color: var(--accent3);
+        border-radius: 6px;
+        padding: 3px 9px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .cb-change-img-btn {
+        background: var(--accent-soft);
+        border: 1.5px solid rgba(108, 99, 255, 0.2);
+        color: var(--accent);
+        border-radius: 7px;
+        padding: 5px 12px;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+    }
+
+    .cb-change-img-btn:hover {
+        background: rgba(108, 99, 255, 0.14);
     }
 
     /* ── Tag Select ── */
@@ -372,57 +503,20 @@
         }
     }
 
-    /* ── Section Items ── */
-    .cb-section-item {
-        background: var(--surface2);
-        border: 1.5px solid var(--border);
-        border-radius: 12px;
-        padding: 18px;
-        margin-bottom: 12px;
-        animation: cbSlideIn 0.18s ease;
+    .cb-tag-dropdown::-webkit-scrollbar {
+        width: 5px;
     }
 
-    @keyframes cbSlideIn {
-        from {
-            opacity: 0;
-            transform: translateY(-6px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    .cb-tag-dropdown::-webkit-scrollbar-track {
+        background: transparent;
     }
 
-    @keyframes cbFadeOut {
-        to {
-            opacity: 0;
-            transform: translateY(-5px);
-        }
+    .cb-tag-dropdown::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
     }
 
-    .cb-section-head {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 13px;
-    }
-
-    .cb-section-num {
-        background: var(--accent);
-        color: white;
-        width: 25px;
-        height: 25px;
-        border-radius: 50%;
-        font-size: 11px;
-        font-weight: 800;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-    }
-
-    /* ── Image Upload Picker ── */
+    /* ── Image Drop Zone ── */
     .cb-image-picker {
         display: none;
         margin-top: 10px;
@@ -534,41 +628,110 @@
         background: rgba(239, 68, 68, 0.14);
     }
 
-    /* Upload progress */
-    .cb-upload-progress {
-        display: none;
-        margin-top: 10px;
+    /* ── Section Items ── */
+    .cb-section-item {
         background: var(--surface2);
-        border-radius: 8px;
-        padding: 12px 14px;
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 18px;
+        margin-bottom: 12px;
+        animation: cbSlideIn 0.18s ease;
+    }
+
+    @keyframes cbSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-6px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes cbFadeOut {
+        to {
+            opacity: 0;
+            transform: translateY(-5px);
+        }
+    }
+
+    .cb-section-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 13px;
+    }
+
+    .cb-section-num {
+        background: var(--accent);
+        color: white;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        font-size: 11px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    /* Section existing image badge */
+    .cb-section-existing {
+        background: rgba(16, 185, 129, 0.08);
+        border: 1.5px solid rgba(16, 185, 129, 0.2);
+        border-radius: 10px;
+        padding: 10px 14px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .cb-section-existing-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .cb-section-existing img {
+        width: 52px;
+        height: 52px;
+        object-fit: cover;
+        border-radius: 7px;
         border: 1px solid var(--border);
     }
 
-    .cb-upload-progress.show {
+    .cb-section-existing-text span {
         display: block;
-    }
-
-    .cb-progress-label {
-        font-size: 12px;
+        font-size: 11px;
         color: var(--muted);
-        margin-bottom: 6px;
-        display: flex;
-        justify-content: space-between;
     }
 
-    .cb-progress-bar-track {
-        height: 5px;
-        background: var(--border);
-        border-radius: 99px;
-        overflow: hidden;
+    .cb-section-existing-text strong {
+        font-size: 12px;
+        color: var(--accent3);
     }
 
-    .cb-progress-bar-fill {
-        height: 100%;
-        background: linear-gradient(90deg, var(--accent), #8b5cf6);
-        border-radius: 99px;
-        width: 0%;
-        transition: width 0.2s ease;
+    .cb-replace-btn {
+        background: var(--accent-soft);
+        border: 1.5px solid rgba(108, 99, 255, 0.2);
+        color: var(--accent);
+        border-radius: 7px;
+        padding: 5px 12px;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+        flex-shrink: 0;
+    }
+
+    .cb-replace-btn:hover {
+        background: rgba(108, 99, 255, 0.14);
     }
 
     /* ── Feature Items ── */
@@ -713,6 +876,31 @@
         opacity: 0.8;
     }
 
+    /* ── Delete Post Button ── */
+    .cb-btn-delete-post {
+        width: 100%;
+        background: var(--danger-soft);
+        border: 1.5px solid rgba(239, 68, 68, 0.25);
+        color: var(--danger);
+        padding: 13px;
+        font-size: 14px;
+        font-weight: 700;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .cb-btn-delete-post:hover {
+        background: rgba(239, 68, 68, 0.14);
+        border-color: var(--danger);
+    }
+
     /* ── Empty States ── */
     .cb-empty {
         text-align: center;
@@ -769,7 +957,126 @@
         opacity: 1;
     }
 
-    /* ── Toast Notification ── */
+    /* ── Confirm Delete Modal ── */
+    .cb-modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(26, 29, 46, 0.55);
+        backdrop-filter: blur(4px);
+        z-index: 900;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.22s, visibility 0.22s;
+    }
+
+    .cb-modal-overlay.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .cb-modal {
+        background: var(--surface);
+        border-radius: 18px;
+        padding: 32px;
+        max-width: 420px;
+        width: 90%;
+        box-shadow: var(--shadow-lg);
+        transform: translateY(16px) scale(0.97);
+        transition: transform 0.22s;
+        text-align: center;
+    }
+
+    .cb-modal-overlay.show .cb-modal {
+        transform: translateY(0) scale(1);
+    }
+
+    .cb-modal-icon {
+        font-size: 44px;
+        margin-bottom: 12px;
+    }
+
+    .cb-modal h4 {
+        font-size: 18px;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 8px;
+    }
+
+    .cb-modal p {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.6;
+        margin-bottom: 24px;
+    }
+
+    .cb-modal-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .cb-modal-cancel {
+        flex: 1;
+        background: var(--surface2);
+        border: 1.5px solid var(--border);
+        color: var(--text);
+        border-radius: 10px;
+        padding: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+        transition: background 0.15s;
+    }
+
+    .cb-modal-cancel:hover {
+        background: var(--border);
+    }
+
+    .cb-modal-confirm {
+        flex: 1;
+        background: var(--danger);
+        border: none;
+        color: white;
+        border-radius: 10px;
+        padding: 12px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+        transition: background 0.15s;
+    }
+
+    .cb-modal-confirm:hover {
+        background: #dc2626;
+    }
+
+    /* ── Changed indicator ── */
+    .cb-changed-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--warning);
+        display: inline-block;
+        margin-left: 6px;
+        animation: cbPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes cbPulse {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.4;
+        }
+    }
+
+    /* ── Toast ── */
     .cb-toast {
         position: fixed;
         bottom: 30px;
@@ -807,31 +1114,68 @@
         background: linear-gradient(135deg, var(--accent), #7c3aed);
     }
 
-    /* Scrollbar */
-    .cb-tag-dropdown::-webkit-scrollbar {
-        width: 5px;
+    /* Loading skeleton */
+    .cb-skeleton {
+        background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
+        background-size: 200% 100%;
+        animation: cbShimmer 1.4s infinite;
+        border-radius: 6px;
+        height: 46px;
     }
 
-    .cb-tag-dropdown::-webkit-scrollbar-track {
-        background: transparent;
-    }
+    @keyframes cbShimmer {
+        0% {
+            background-position: 200% 0;
+        }
 
-    .cb-tag-dropdown::-webkit-scrollbar-thumb {
-        background: var(--border);
-        border-radius: 3px;
+        100% {
+            background-position: -200% 0;
+        }
     }
 </style>
-<!-- ════════════════════════════════════════ PAGE ════════════════════════════════════════ -->
+
 
 <!-- Toast -->
 <div class="cb-toast" id="cb-toast"></div>
 
+<!-- Delete Confirmation Modal -->
+<div class="cb-modal-overlay" id="cb-delete-modal">
+    <div class="cb-modal">
+        <div class="cb-modal-icon">🗑️</div>
+        <h4>Delete Blog Post?</h4>
+        <p>This action is permanent and cannot be undone. The post, all its sections, and associated images will be
+            removed forever.</p>
+        <div class="cb-modal-actions">
+            <button class="cb-modal-cancel" onclick="cbCloseDeleteModal()">Cancel</button>
+            <button class="cb-modal-confirm" id="cb-confirm-delete-btn" onclick="cbConfirmDelete()">Yes, Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Header ── -->
 <div class="cb-header">
-    <h3>Create <span>Blog Post</span></h3>
-    <span class="breadcrumb"><a href="/admin">Admin</a> / New Blog</span>
+    <h3>Update <span>Blog Post</span></h3>
+    <div class="cb-header-actions">
+        <a href="#" class="cb-btn-preview" id="cb-preview-link" target="_blank">👁 Preview</a>
+        <span class="breadcrumb"><a href="/admin">Admin</a> / <a href="/admin/blogs">Blogs</a> / Edit</span>
+    </div>
 </div>
 
 <div class="cb-content">
+
+    <!-- ── Update Banner ── -->
+    <div class="cb-update-banner">
+        <div class="cb-update-banner-icon">✏️</div>
+        <div class="cb-update-banner-text">
+            <h4>Editing Existing Post</h4>
+            <p>Changes will be saved to the existing post. Unsaved changes are shown with a <span
+                    style="color:var(--warning);font-weight:700;">●</span> indicator.</p>
+        </div>
+        <div class="cb-update-banner-meta">
+            <span>Last updated</span>
+            <strong id="cb-last-updated">—</strong>
+        </div>
+    </div>
 
     <!-- ── Basic Info ── -->
     <div class="cb-card">
@@ -839,37 +1183,58 @@
             <span class="cb-card-title">
                 <span class="dot" style="background:#6c63ff"></span>Basic Information
             </span>
+            <span id="cb-basic-changed" style="display:none;font-size:11px;color:var(--warning);font-weight:700;">●
+                Unsaved changes</span>
         </div>
         <div class="cb-card-body">
             <div class="cb-field">
                 <label class="cb-label">Title <span class="req">*</span></label>
                 <input type="text" id="cb-title" class="cb-control" placeholder="Enter a compelling blog title..."
-                    required>
+                    required oninput="cbMarkChanged('cb-basic-changed')">
             </div>
+
             <div class="cb-field">
                 <label class="cb-label">Hero Image <span class="req">*</span></label>
-                <!-- Hero image uses same picker component -->
-                <div class="cb-drop-zone" id="hero-drop" ondragover="cbDragOver(event, 'hero-drop')"
-                    ondragleave="cbDragLeave('hero-drop')"
-                    ondrop="cbDrop(event, 'hero-input', 'hero-preview', 'hero-drop')">
-                    <input type="file" id="hero-input" accept="image/*"
-                        onchange="cbHandleFileSelect(this, 'hero-preview')">
-                    <div class="cb-drop-icon">🖼️</div>
-                    <div class="cb-drop-text">
-                        <strong>Click to upload</strong> or drag & drop hero image<br>
-                        PNG, JPG, WEBP — max 5MB
+
+                <!-- Current hero image display -->
+                <div class="cb-current-image" id="hero-current">
+                    <img src="" alt="Current hero image" id="hero-current-img">
+                    <div class="cb-current-image-bar">
+                        <span class="cb-current-label">✓ Current Image</span>
+                        <button type="button" class="cb-change-img-btn" onclick="cbShowHeroReplace()">🔄 Replace
+                            Image</button>
                     </div>
                 </div>
-                <div class="cb-img-preview" id="hero-preview">
-                    <img src="" alt="Hero preview">
-                    <div class="cb-img-preview-bar">
-                        <span class="cb-img-name" id="hero-name">—</span>
-                        <span class="cb-img-size" id="hero-size">—</span>
-                        <button type="button" class="cb-img-remove"
-                            onclick="cbRemoveImage('hero-input','hero-preview')">✕ Remove</button>
+
+                <!-- Replace picker (hidden by default) -->
+                <div id="hero-replace-area" style="display:none;">
+                    <div class="cb-drop-zone" id="hero-drop" ondragover="cbDragOver(event, 'hero-drop')"
+                        ondragleave="cbDragLeave('hero-drop')"
+                        ondrop="cbDrop(event, 'hero-input', 'hero-preview', 'hero-drop')">
+                        <input type="file" id="hero-input" accept="image/*"
+                            onchange="cbHandleFileSelect(this, 'hero-preview')">
+                        <div class="cb-drop-icon">🖼️</div>
+                        <div class="cb-drop-text">
+                            <strong>Click to upload</strong> or drag & drop new hero image<br>
+                            PNG, JPG, WEBP — max 5MB
+                        </div>
+                    </div>
+                    <div class="cb-img-preview" id="hero-preview">
+                        <img src="" alt="Hero preview">
+                        <div class="cb-img-preview-bar">
+                            <span class="cb-img-name" id="hero-name">—</span>
+                            <span class="cb-img-size" id="hero-size">—</span>
+                            <button type="button" class="cb-img-remove" onclick="cbCancelHeroReplace()">✕
+                                Cancel</button>
+                        </div>
+                    </div>
+                    <div style="margin-top:8px;">
+                        <button type="button" class="cb-change-img-btn" onclick="cbCancelHeroReplace()"
+                            style="font-size:12px;">← Keep current image</button>
                     </div>
                 </div>
             </div>
+
             <div class="cb-grid-2">
                 <div class="cb-field">
                     <label class="cb-label">Tags</label>
@@ -885,7 +1250,8 @@
                 <div class="cb-field">
                     <label class="cb-label">Status</label>
                     <div class="cb-select-wrap">
-                        <select id="cb-status" class="cb-control" style="cursor:pointer;">
+                        <select id="cb-status" class="cb-control" style="cursor:pointer;"
+                            onchange="cbMarkChanged('cb-basic-changed')">
                             <option value="draft">Draft</option>
                             <option value="published">Published</option>
                         </select>
@@ -910,9 +1276,7 @@
             </div>
         </div>
         <div class="cb-card-footer">
-            <button type="button" class="cb-btn cb-btn-add-section" onclick="cbAddSection()">
-                + Add Section
-            </button>
+            <button type="button" class="cb-btn cb-btn-add-section" onclick="cbAddSection()">+ Add Section</button>
             <span style="font-size:11px;color:var(--muted)">Text or image blocks</span>
         </div>
     </div>
@@ -932,9 +1296,8 @@
             </div>
         </div>
         <div class="cb-card-footer">
-            <button type="button" class="cb-btn cb-btn-add-feature" id="cb-add-feat-btn" onclick="cbAddFeature()">
-                + Add Feature
-            </button>
+            <button type="button" class="cb-btn cb-btn-add-feature" id="cb-add-feat-btn" onclick="cbAddFeature()">+ Add
+                Feature</button>
             <span style="font-size:11px;color:var(--muted)">Minimum 2 · Maximum 3</span>
         </div>
     </div>
@@ -967,14 +1330,38 @@
         </div>
     </div>
 
+    <!-- ── Action Buttons ── -->
     <button type="button" class="cb-btn-save" id="cb-save-btn" onclick="cbSubmitForm()">
         <span class="btn-spinner"></span>
-        <span class="btn-text">💾 Save Blog Post</span>
+        <span class="btn-text">✏️ Update Blog Post</span>
+    </button>
+
+    <button type="button" class="cb-btn-delete-post" onclick="cbOpenDeleteModal()">
+        🗑️ Delete This Blog Post
     </button>
 
 </div>
 
 <script>
+    // ════════════════════════════════════════
+    // CONFIG — set blog ID from server/template
+    // ════════════════════════════════════════
+    // In a real app, inject this from your backend:
+    // e.g. const BLOG_ID = "{{ blog.id }}";
+    const BLOG_ID = window.__BLOG_ID__ || getUrlParam('id') || '123';
+
+    function getUrlParam(name) {
+        return new URLSearchParams(window.location.search).get(name);
+    }
+
+    // ════════════════════════════════════════
+    // CHANGED TRACKER
+    // ════════════════════════════════════════
+    function cbMarkChanged(indicatorId) {
+        const el = document.getElementById(indicatorId);
+        if (el) el.style.display = 'inline';
+    }
+
     // ════════════════════════════════════════
     // IMAGE PICKER UTILITIES
     // ════════════════════════════════════════
@@ -987,53 +1374,47 @@
     function cbHandleFileSelect(input, previewId) {
         const file = input.files[0];
         if (!file) return;
-        if (file.size > 5 * 1024 * 1024) {
-            cbToast('Image must be under 5MB', 'error');
-            input.value = '';
-            return;
-        }
+        if (file.size > 5 * 1024 * 1024) { cbToast('Image must be under 5MB', 'error'); input.value = ''; return; }
         const preview = document.getElementById(previewId);
         const img = preview.querySelector('img');
         const reader = new FileReader();
         reader.onload = e => {
             img.src = e.target.result;
             preview.classList.add('show');
-            // Update name/size if they exist (hero picker)
             const nameEl = document.getElementById(previewId.replace('-preview', '-name'));
             const sizeEl = document.getElementById(previewId.replace('-preview', '-size'));
             if (nameEl) nameEl.textContent = file.name;
             if (sizeEl) sizeEl.textContent = cbFormatBytes(file.size);
+            cbMarkChanged('cb-basic-changed');
         };
         reader.readAsDataURL(file);
     }
 
-    function cbRemoveImage(inputId, previewId) {
-        document.getElementById(inputId).value = '';
-        const preview = document.getElementById(previewId);
-        preview.classList.remove('show');
-        preview.querySelector('img').src = '';
-    }
-
-    function cbDragOver(e, zoneId) {
-        e.preventDefault();
-        document.getElementById(zoneId).classList.add('drag-over');
-    }
-    function cbDragLeave(zoneId) {
-        document.getElementById(zoneId).classList.remove('drag-over');
-    }
+    function cbDragOver(e, zoneId) { e.preventDefault(); document.getElementById(zoneId).classList.add('drag-over'); }
+    function cbDragLeave(zoneId) { document.getElementById(zoneId).classList.remove('drag-over'); }
     function cbDrop(e, inputId, previewId, zoneId) {
         e.preventDefault();
         document.getElementById(zoneId).classList.remove('drag-over');
         const file = e.dataTransfer.files[0];
-        if (!file || !file.type.startsWith('image/')) {
-            cbToast('Please drop an image file', 'error');
-            return;
-        }
+        if (!file || !file.type.startsWith('image/')) { cbToast('Please drop an image file', 'error'); return; }
         const input = document.getElementById(inputId);
         const dt = new DataTransfer();
         dt.items.add(file);
         input.files = dt.files;
         cbHandleFileSelect(input, previewId);
+    }
+
+    // ── Hero replace toggle ──
+    function cbShowHeroReplace() {
+        document.getElementById('hero-current').style.display = 'none';
+        document.getElementById('hero-replace-area').style.display = 'block';
+    }
+    function cbCancelHeroReplace() {
+        document.getElementById('hero-input').value = '';
+        document.getElementById('hero-preview').classList.remove('show');
+        document.getElementById('hero-preview').querySelector('img').src = '';
+        document.getElementById('hero-replace-area').style.display = 'none';
+        document.getElementById('hero-current').style.display = 'block';
     }
 
     // ════════════════════════════════════════
@@ -1092,6 +1473,7 @@
             else window._cbSelectedTags.push({ id, name });
             cbRenderChips();
             cbRenderTagOptions(document.getElementById('cb-tag-search').value);
+            cbMarkChanged('cb-basic-changed');
         };
         window.cbCreateTag = function (name) {
             const formatted = name.charAt(0).toUpperCase() + name.slice(1);
@@ -1101,11 +1483,13 @@
             document.getElementById('cb-tag-search').value = '';
             cbRenderChips();
             cbRenderTagOptions('');
+            cbMarkChanged('cb-basic-changed');
         };
         window.cbRemoveTag = function (id) {
             window._cbSelectedTags = window._cbSelectedTags.filter(t => t.id !== id);
             cbRenderChips();
             if (window._cbDropdownOpen) cbRenderTagOptions(document.getElementById('cb-tag-search').value);
+            cbMarkChanged('cb-basic-changed');
         };
         function cbRenderChips() {
             const display = document.getElementById('cb-tag-display');
@@ -1138,18 +1522,41 @@
         document.addEventListener('click', function (e) {
             if (!document.getElementById('cb-tag-wrapper').contains(e.target)) cbCloseTagDropdown();
         });
+
+        // Seed sample tags
+        window._cbAllTags = [
+            { id: 1, name: 'Technology' }, { id: 2, name: 'Design' }, { id: 3, name: 'Business' },
+            { id: 4, name: 'Tutorial' }, { id: 5, name: 'Frontend' }, { id: 6, name: 'Backend' },
+            { id: 7, name: 'AI' }, { id: 8, name: 'UX' }
+        ];
     })();
 
     // ════════════════════════════════════════
-    // SECTIONS  (TEXT / IMAGE)
+    // SECTIONS (TEXT / IMAGE)
     // ════════════════════════════════════════
-    window._cbSectionFiles = {}; // { [sectionId]: File }
+    window._cbSectionFiles = {};     // { [domId]: File } — new file uploads
+    window._cbSectionExisting = {};  // { [domId]: { url, public_id } } — existing image data
+    window._cbSectionDbIds = {};     // { [domId]: number } — db record id (for updates)
+    window._cbFeatureDbIds = {};     // { [domId]: number } — db record id (for updates)
 
-    function cbAddSection() {
+    // 25002500 Guaranteed unique ID counters (never collide even in fast loops) 25002500
+    window._cbUidSection = 0;
+    window._cbUidFeature = 0;
+
+    function cbAddSection(prefill) {
         const container = document.getElementById('cb-sections-container');
         document.getElementById('cb-sections-empty').style.display = 'none';
-        const id = 'cbsec-' + Date.now();
+        const id = 'cbsec-' + (++window._cbUidSection);
         const num = container.querySelectorAll('.cb-section-item').length + 1;
+        // Support both API shape (section_type) and manual shape (type)
+        const type = (prefill && (prefill.section_type || prefill.type)) || 'TEXT';
+        const textContent = (prefill && prefill.content) || '';
+        const existingImageUrl = (prefill && prefill.image_url) || null;
+        const existingPublicId = (prefill && prefill.image_public_id) || null;
+
+        // Store db id if this is an existing record
+        if (prefill && prefill.id) window._cbSectionDbIds[id] = prefill.id;
+        if (existingImageUrl) window._cbSectionExisting[id] = { url: existingImageUrl, public_id: existingPublicId };
 
         const div = document.createElement('div');
         div.className = 'cb-section-item';
@@ -1159,54 +1566,76 @@
             <div class="cb-section-num">${num}</div>
             <div class="cb-select-wrap" style="flex:1;">
                 <select class="cb-control" style="cursor:pointer;" onchange="cbToggleSectionType(this, '${id}')">
-                    <option value="TEXT">📝 Text</option>
-                    <option value="IMAGE">🖼️ Image</option>
+                    <option value="TEXT" ${type === 'TEXT' ? 'selected' : ''}>📝 Text</option>
+                    <option value="IMAGE" ${type === 'IMAGE' ? 'selected' : ''}>🖼️ Image</option>
                 </select>
             </div>
             <button type="button" class="cb-btn-delete" onclick="cbDeleteSection('${id}')">🗑 Delete</button>
         </div>
 
         <!-- TEXT FIELD -->
-        <div class="cb-sec-text-field" id="${id}-text">
-            <textarea class="cb-control" data-section-id="${id}" data-field="text" placeholder="Write your content here… HTML is supported." rows="4"></textarea>
+        <div class="cb-sec-text-field" id="${id}-text" style="display:${type === 'IMAGE' ? 'none' : 'block'}">
+            <textarea class="cb-control" data-section-id="${id}" data-field="text"
+                placeholder="Write your content here… HTML is supported." rows="4"
+                oninput="cbMarkChanged('cb-basic-changed')">${textContent}</textarea>
         </div>
 
         <!-- IMAGE PICKER -->
-        <div class="cb-image-picker" id="${id}-image">
-            <div class="cb-drop-zone" id="${id}-dropzone"
-                ondragover="cbDragOver(event, '${id}-dropzone')"
-                ondragleave="cbDragLeave('${id}-dropzone')"
-                ondrop="cbDropSection(event, '${id}')">
-                <input type="file" id="${id}-file" accept="image/*" onchange="cbHandleSectionImage(this, '${id}')">
-                <div class="cb-drop-icon">📁</div>
-                <div class="cb-drop-text">
-                    <strong>Click to upload</strong> or drag & drop<br>
-                    PNG, JPG, WEBP — max 5MB
+        <div class="cb-image-picker ${type === 'IMAGE' ? 'active' : ''}" id="${id}-image">
+            ${existingImageUrl ? `
+            <!-- Existing image -->
+            <div class="cb-section-existing" id="${id}-existing">
+                <div class="cb-section-existing-info">
+                    <img src="${existingImageUrl}" alt="Current section image" onerror="this.src='https://placehold.co/52x52/e4e7ef/7b82a0?text=IMG'">
+                    <div class="cb-section-existing-text">
+                        <span>Current image</span>
+                        <strong>✓ Saved</strong>
+                    </div>
                 </div>
+                <button type="button" class="cb-replace-btn" onclick="cbShowSectionReplace('${id}')">🔄 Replace</button>
             </div>
-            <!-- Preview -->
-            <div class="cb-img-preview" id="${id}-imgpreview">
-                <img src="" alt="Preview">
-                <div class="cb-img-preview-bar">
-                    <span class="cb-img-name" id="${id}-imgname">—</span>
-                    <span class="cb-img-size" id="${id}-imgsize">—</span>
-                    <button type="button" class="cb-img-remove" onclick="cbRemoveSectionImage('${id}')">✕ Remove</button>
+            ` : ''}
+
+            <!-- Drop zone (hidden if existing, shown if new or replacing) -->
+            <div id="${id}-new-area" style="display:${existingImageUrl ? 'none' : 'block'}">
+                <div class="cb-drop-zone" id="${id}-dropzone"
+                    ondragover="cbDragOver(event, '${id}-dropzone')"
+                    ondragleave="cbDragLeave('${id}-dropzone')"
+                    ondrop="cbDropSection(event, '${id}')">
+                    <input type="file" id="${id}-file" accept="image/*" onchange="cbHandleSectionImage(this, '${id}')">
+                    <div class="cb-drop-icon">📁</div>
+                    <div class="cb-drop-text">
+                        <strong>Click to upload</strong> or drag & drop<br>
+                        PNG, JPG, WEBP — max 5MB
+                    </div>
                 </div>
-            </div>
-            <!-- Upload progress -->
-            <div class="cb-upload-progress" id="${id}-progress">
-                <div class="cb-progress-label">
-                    <span>Uploading…</span>
-                    <span id="${id}-pct">0%</span>
+                <div class="cb-img-preview" id="${id}-imgpreview">
+                    <img src="" alt="Preview">
+                    <div class="cb-img-preview-bar">
+                        <span class="cb-img-name" id="${id}-imgname">—</span>
+                        <span class="cb-img-size" id="${id}-imgsize">—</span>
+                        <button type="button" class="cb-img-remove" onclick="cbRemoveSectionImage('${id}')">✕ Remove</button>
+                    </div>
                 </div>
-                <div class="cb-progress-bar-track">
-                    <div class="cb-progress-bar-fill" id="${id}-bar"></div>
-                </div>
+                ${existingImageUrl ? `<div style="margin-top:8px;"><button type="button" class="cb-change-img-btn" onclick="cbCancelSectionReplace('${id}')">← Keep current</button></div>` : ''}
             </div>
         </div>
     `;
         container.appendChild(div);
         cbUpdateSectionCount();
+    }
+
+    function cbShowSectionReplace(id) {
+        document.getElementById(`${id}-existing`).style.display = 'none';
+        document.getElementById(`${id}-new-area`).style.display = 'block';
+    }
+    function cbCancelSectionReplace(id) {
+        document.getElementById(`${id}-file`).value = '';
+        const preview = document.getElementById(`${id}-imgpreview`);
+        if (preview) { preview.classList.remove('show'); preview.querySelector('img').src = ''; }
+        delete window._cbSectionFiles[id];
+        document.getElementById(`${id}-new-area`).style.display = 'none';
+        document.getElementById(`${id}-existing`).style.display = 'flex';
     }
 
     function cbToggleSectionType(select, id) {
@@ -1215,16 +1644,12 @@
         const imgPicker = document.getElementById(`${id}-image`);
         if (isImage) imgPicker.classList.add('active');
         else imgPicker.classList.remove('active');
+        cbMarkChanged('cb-basic-changed');
     }
-
     function cbHandleSectionImage(input, id) {
         const file = input.files[0];
         if (!file) return;
-        if (file.size > 5 * 1024 * 1024) {
-            cbToast('Image must be under 5MB', 'error');
-            input.value = '';
-            return;
-        }
+        if (file.size > 5 * 1024 * 1024) { cbToast('Image must be under 5MB', 'error'); input.value = ''; return; }
         window._cbSectionFiles[id] = file;
         const reader = new FileReader();
         reader.onload = e => {
@@ -1233,10 +1658,10 @@
             preview.classList.add('show');
             document.getElementById(`${id}-imgname`).textContent = file.name;
             document.getElementById(`${id}-imgsize`).textContent = cbFormatBytes(file.size);
+            cbMarkChanged('cb-basic-changed');
         };
         reader.readAsDataURL(file);
     }
-
     function cbRemoveSectionImage(id) {
         document.getElementById(`${id}-file`).value = '';
         const preview = document.getElementById(`${id}-imgpreview`);
@@ -1244,41 +1669,36 @@
         preview.querySelector('img').src = '';
         delete window._cbSectionFiles[id];
     }
-
     function cbDropSection(e, id) {
         e.preventDefault();
         document.getElementById(`${id}-dropzone`).classList.remove('drag-over');
         const file = e.dataTransfer.files[0];
-        if (!file || !file.type.startsWith('image/')) {
-            cbToast('Please drop an image file', 'error');
-            return;
-        }
+        if (!file || !file.type.startsWith('image/')) { cbToast('Please drop an image file', 'error'); return; }
         const input = document.getElementById(`${id}-file`);
         const dt = new DataTransfer();
         dt.items.add(file);
         input.files = dt.files;
         cbHandleSectionImage(input, id);
     }
-
     function cbDeleteSection(id) {
         const el = document.getElementById(id);
         if (!el) return;
         el.style.animation = 'cbFadeOut 0.18s ease forwards';
         delete window._cbSectionFiles[id];
+        delete window._cbSectionExisting[id];
+        delete window._cbSectionDbIds[id];
         setTimeout(() => {
             el.remove();
             cbUpdateSectionCount();
             cbRenumberSections();
-            if (!document.querySelector('.cb-section-item'))
-                document.getElementById('cb-sections-empty').style.display = 'block';
+            if (!document.querySelector('.cb-section-item')) document.getElementById('cb-sections-empty').style.display = 'block';
         }, 180);
+        cbMarkChanged('cb-basic-changed');
     }
-
     function cbUpdateSectionCount() {
         const n = document.querySelectorAll('.cb-section-item').length;
         document.getElementById('cb-sec-count').textContent = `${n} section${n !== 1 ? 's' : ''}`;
     }
-
     function cbRenumberSections() {
         document.querySelectorAll('.cb-section-item .cb-section-num').forEach((el, i) => el.textContent = i + 1);
     }
@@ -1286,9 +1706,7 @@
     // ════════════════════════════════════════
     // FEATURES
     // ════════════════════════════════════════
-    function cbGetFeatureCount() {
-        return document.querySelectorAll('.cb-feature-item').length;
-    }
+    function cbGetFeatureCount() { return document.querySelectorAll('.cb-feature-item').length; }
     function cbUpdateFeaturesUI() {
         const n = cbGetFeatureCount();
         const badge = document.getElementById('cb-feat-count');
@@ -1297,11 +1715,15 @@
         document.getElementById('cb-add-feat-btn').disabled = n >= 3;
         if (n === 0) document.getElementById('cb-features-empty').style.display = 'block';
     }
-    function cbAddFeature() {
+    function cbAddFeature(prefill) {
         if (cbGetFeatureCount() >= 3) return;
         document.getElementById('cb-features-empty').style.display = 'none';
-        const id = 'cbfeat-' + Date.now();
+        const id = 'cbfeat-' + (++window._cbUidFeature);
         const num = cbGetFeatureCount() + 1;
+        const titleVal = (prefill && prefill.title) || '';
+        const descVal = (prefill && prefill.description) || '';
+        // Store db id if this is an existing record
+        if (prefill && prefill.id) window._cbFeatureDbIds[id] = prefill.id;
         const div = document.createElement('div');
         div.className = 'cb-feature-item';
         div.id = id;
@@ -1312,11 +1734,13 @@
         </div>
         <div class="cb-field">
             <label class="cb-label">Title <span class="req">*</span></label>
-            <input type="text" class="cb-control feat-title" placeholder="e.g. Lightning Fast Performance">
+            <input type="text" class="cb-control feat-title" placeholder="e.g. Lightning Fast Performance"
+                value="${titleVal.replace(/"/g, '&quot;')}" oninput="cbMarkChanged('cb-basic-changed')">
         </div>
         <div class="cb-field" style="margin-bottom:0">
             <label class="cb-label">Description</label>
-            <textarea class="cb-control feat-desc" placeholder="Briefly describe this feature…" rows="3"></textarea>
+            <textarea class="cb-control feat-desc" placeholder="Briefly describe this feature…" rows="3"
+                oninput="cbMarkChanged('cb-basic-changed')">${descVal}</textarea>
         </div>
     `;
         document.getElementById('cb-features-container').appendChild(div);
@@ -1327,18 +1751,17 @@
         const el = document.getElementById(id);
         if (!el) return;
         el.style.animation = 'cbFadeOut 0.18s ease forwards';
+        delete window._cbFeatureDbIds[id];
         setTimeout(() => {
             el.remove();
             cbUpdateFeaturesUI();
             cbRenumberFeatures();
-            if (!document.querySelector('.cb-feature-item'))
-                document.getElementById('cb-features-empty').style.display = 'block';
+            if (!document.querySelector('.cb-feature-item')) document.getElementById('cb-features-empty').style.display = 'block';
         }, 180);
+        cbMarkChanged('cb-basic-changed');
     }
     function cbRenumberFeatures() {
-        document.querySelectorAll('.cb-feature-item .cb-feature-label').forEach((el, i) => {
-            el.textContent = `⭐ Feature ${i + 1}`;
-        });
+        document.querySelectorAll('.cb-feature-item .cb-feature-label').forEach((el, i) => { el.textContent = `⭐ Feature ${i + 1}`; });
     }
 
     // ════════════════════════════════════════
@@ -1368,7 +1791,6 @@
     function cbToast(msg, type = 'info', duration = 3500) {
         const icons = { success: '✅', error: '❌', info: '💬' };
         const toast = document.getElementById('cb-toast');
-        toast.textContent = '';
         toast.innerHTML = `${icons[type] || '💬'} ${msg}`;
         toast.className = `cb-toast ${type} show`;
         clearTimeout(toast._t);
@@ -1376,114 +1798,233 @@
     }
 
     // ════════════════════════════════════════
-    // AXIOS SUBMIT
+    // DELETE MODAL
+    // ════════════════════════════════════════
+    function cbOpenDeleteModal() {
+        document.getElementById('cb-delete-modal').classList.add('show');
+    }
+    function cbCloseDeleteModal() {
+        document.getElementById('cb-delete-modal').classList.remove('show');
+    }
+    document.getElementById('cb-delete-modal').addEventListener('click', function (e) {
+        if (e.target === this) cbCloseDeleteModal();
+    });
+    async function cbConfirmDelete() {
+        const btn = document.getElementById('cb-confirm-delete-btn');
+        btn.textContent = 'Deleting…';
+        btn.disabled = true;
+        try {
+            await axios.delete(`/admin/blogs/delete/${BLOG_ID}`);
+            cbCloseDeleteModal();
+            cbToast('Blog post deleted successfully', 'success', 3000);
+            setTimeout(() => { window.location.href = '/admin/blogs'; }, 1500);
+        } catch (err) {
+            const msg = err.response?.data?.message || err.message || 'Delete failed';
+            cbToast(`Error: ${msg}`, 'error');
+            btn.textContent = 'Yes, Delete';
+            btn.disabled = false;
+            cbCloseDeleteModal();
+            setTimeout(() => { window.location.href = '/admin/blogs'; }, 1);
+
+
+        }
+    }
+
+    // ════════════════════════════════════════
+    // LOAD EXISTING DATA
+    // ════════════════════════════════════════
+    async function cbLoadBlogData() {
+        try {
+            // ── REAL API CALL — uncomment and remove demo data below ──
+            const res = await axios.get(`/admin/blogs/data/${BLOG_ID}`);
+            const blog = res.data.data.blog;
+
+            cbPopulateForm(blog);
+
+        } catch (err) {
+            cbToast('Failed to load blog data. Please refresh.', 'error', 6000);
+        }
+    }
+
+    function cbPopulateForm(blog) {
+        // Basic fields
+        document.getElementById('cb-title').value = blog.title || '';
+        document.getElementById('cb-status').value = blog.status || 'draft';
+
+        // Hero image — API uses `hero_image` field
+        const heroUrl = blog.hero_image || blog.hero_image_url || null;
+        if (heroUrl) {
+            document.getElementById('hero-current-img').src = heroUrl;
+            document.getElementById('hero-current').style.display = 'block';
+            document.getElementById('hero-replace-area').style.display = 'none';
+        } else {
+            cbShowHeroReplace();
+        }
+
+        // Tags — API may not return tags; handle gracefully
+        const tags = blog.tags || [];
+        if (tags.length) {
+            tags.forEach(t => {
+                if (!window._cbAllTags.find(a => a.id === t.id)) window._cbAllTags.push(t);
+                window._cbSelectedTags.push(t);
+            });
+            // Re-render chips
+            const display = document.getElementById('cb-tag-display');
+            const input = document.getElementById('cb-tag-search');
+            window._cbSelectedTags.forEach(tag => {
+                const chip = document.createElement('div');
+                chip.className = 'cb-tag-chip';
+                chip.innerHTML = `${tag.name} <span class="rm" onclick="event.stopPropagation();cbRemoveTag(${tag.id})">×</span>`;
+                display.insertBefore(chip, input);
+            });
+        }
+
+        // Sections — sorted by sort_order, supports section_type field from API
+        const sections = (blog.sections || []).slice().sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+        sections.forEach(s => cbAddSection(s));
+
+        // Features — sorted by sort_order
+        const features = (blog.features || []).slice().sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+        features.forEach(f => cbAddFeature(f));
+
+        // SEO
+        document.getElementById('cb-meta-title').value = blog.meta_title || '';
+        document.getElementById('cb-meta-desc').value = blog.meta_description || '';
+        document.getElementById('cb-meta-keywords').value = blog.meta_keywords || '';
+
+        // Updated at
+        const dateStr = blog.updated_at || blog.created_at;
+        if (dateStr) {
+            const d = new Date(dateStr);
+            document.getElementById('cb-last-updated').textContent = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Preview link — use slug if available
+        const previewPath = blog.preview_url || (blog.slug ? `/blog/${blog.slug}` : '#');
+        document.getElementById('cb-preview-link').href = previewPath;
+    }
+
+    // ════════════════════════════════════════
+    // SUBMIT / UPDATE
     // ════════════════════════════════════════
     async function cbSubmitForm() {
-
-        // ── Validate ──
         const title = document.getElementById('cb-title').value.trim();
         const metaTitle = document.getElementById('cb-meta-title').value.trim();
         const metaDesc = document.getElementById('cb-meta-desc').value.trim();
+        const heroReplaceVisible = document.getElementById('hero-replace-area').style.display !== 'none';
         const heroInput = document.getElementById('hero-input');
 
         if (!title) { cbToast('Blog title is required', 'error'); return; }
-        if (!heroInput.files[0]) { cbToast('Please upload a hero image', 'error'); return; }
+        if (heroReplaceVisible && !heroInput.files[0]) { cbToast('Please upload a replacement hero image or cancel the replacement', 'error'); return; }
         if (!metaTitle) { cbToast('Meta title is required', 'error'); return; }
         if (!metaDesc) { cbToast('Meta description is required', 'error'); return; }
 
         const featCount = cbGetFeatureCount();
-        if (featCount > 0 && featCount < 2) {
-            cbToast('Add at least 2 features, or remove all features', 'error');
-            return;
-        }
+        if (featCount > 0 && featCount < 2) { cbToast('Add at least 2 features, or remove all features', 'error'); return; }
 
-        // Validate feature titles
         let featuresValid = true;
-        document.querySelectorAll('.cb-feature-item').forEach(item => {
-            const t = item.querySelector('.feat-title').value.trim();
-            if (!t) featuresValid = false;
-        });
+        document.querySelectorAll('.cb-feature-item').forEach(item => { if (!item.querySelector('.feat-title').value.trim()) featuresValid = false; });
         if (!featuresValid) { cbToast('Each feature must have a title', 'error'); return; }
 
-        // Validate image sections have files
         let sectionsValid = true;
         document.querySelectorAll('.cb-section-item').forEach(item => {
             const id = item.id;
             const select = item.querySelector('select');
-            if (select.value === 'IMAGE' && !window._cbSectionFiles[id]) {
-                sectionsValid = false;
-            }
+            if (select.value === 'IMAGE' && !window._cbSectionFiles[id] && !window._cbSectionExisting[id]) sectionsValid = false;
         });
         if (!sectionsValid) { cbToast('All image sections must have an image selected', 'error'); return; }
 
-        // ── Build FormData ──
         const fd = new FormData();
-
-        // Basic fields
+        fd.append('_method', 'PUT');
         fd.append('title', title);
         fd.append('status', document.getElementById('cb-status').value);
-        fd.append('hero_image', heroInput.files[0]);
 
-        // Tags
+        if (heroReplaceVisible && heroInput.files[0]) {
+            fd.append('hero_image', heroInput.files[0]);
+        }
+
         window._cbSelectedTags.forEach(t => fd.append('tags[]', t.id));
 
-        // Sections
+        // Sections — use section_type to match API, include db id if existing record
         document.querySelectorAll('.cb-section-item').forEach((item, i) => {
             const id = item.id;
             const type = item.querySelector('select').value;
-            fd.append(`sections[${i}][type]`, type);
+            fd.append(`sections[${i}][section_type]`, type);
+            fd.append(`sections[${i}][sort_order]`, i + 1);
+            // Include db id for existing records (so backend can update vs insert)
+            if (window._cbSectionDbIds[id]) {
+                fd.append(`sections[${i}][id]`, window._cbSectionDbIds[id]);
+            }
             if (type === 'TEXT') {
                 fd.append(`sections[${i}][content]`, item.querySelector('textarea').value);
             } else {
-                fd.append(`sections[${i}][image]`, window._cbSectionFiles[id]);
+                if (window._cbSectionFiles[id]) {
+                    // New file uploaded — replace existing
+                    fd.append(`sections[${i}][image]`, window._cbSectionFiles[id]);
+                } else if (window._cbSectionExisting[id]) {
+                    // No new file — keep existing (send back url + public_id so backend knows)
+                    fd.append(`sections[${i}][image_url]`, window._cbSectionExisting[id].url);
+                    if (window._cbSectionExisting[id].public_id) {
+                        fd.append(`sections[${i}][image_public_id]`, window._cbSectionExisting[id].public_id);
+                    }
+                }
             }
         });
 
-        // Features
+        // Features — include db id for existing records
         document.querySelectorAll('.cb-feature-item').forEach((item, i) => {
+            if (window._cbFeatureDbIds[item.id]) {
+                fd.append(`features[${i}][id]`, window._cbFeatureDbIds[item.id]);
+            }
             fd.append(`features[${i}][title]`, item.querySelector('.feat-title').value.trim());
             fd.append(`features[${i}][description]`, item.querySelector('.feat-desc').value.trim());
+            fd.append(`features[${i}][sort_order]`, i + 1);
         });
 
-        // SEO
         fd.append('meta_title', metaTitle);
         fd.append('meta_description', metaDesc);
         fd.append('meta_keywords', document.getElementById('cb-meta-keywords').value.trim());
 
-        // ── Axios POST with upload progress ──
         const saveBtn = document.getElementById('cb-save-btn');
         saveBtn.classList.add('loading');
         saveBtn.disabled = true;
 
         try {
-            const response = await axios.post('/admin/blogs/create', fd, {
-                headers: {
-                    // Axios sets multipart/form-data + boundary automatically
-                    // DO NOT manually set Content-Type when sending FormData
-                },
+            const response = await axios.put(`/admin/blogs/update/${BLOG_ID}`, fd, {
                 onUploadProgress: (progressEvent) => {
                     if (progressEvent.total) {
                         const pct = Math.round((progressEvent.loaded / progressEvent.total) * 100);
-                        // Optionally update save button text with % during upload
                         document.querySelector('#cb-save-btn .btn-text').textContent = `Uploading… ${pct}%`;
                     }
                 }
             });
 
-            cbToast('Blog post saved successfully! 🎉', 'success', 4000);
-            document.querySelector('#cb-save-btn .btn-text').textContent = '✅ Saved!';
+            cbToast('Blog post updated successfully! 🎉', 'success', 4000);
+            document.querySelector('#cb-save-btn .btn-text').textContent = '✅ Updated!';
+            document.getElementById('cb-basic-changed').style.display = 'none';
 
-            // Redirect after short delay (adjust URL as needed)
-            // setTimeout(() => {
-            //     window.location.href = response.data?.redirectUrl || '/admin/blogs';
-            // }, 1500);
+            // Update "last updated" timestamp
+            document.getElementById('cb-last-updated').textContent = new Date().toLocaleDateString('en-US', {
+                month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+
+            setTimeout(() => {
+                document.querySelector('#cb-save-btn .btn-text').textContent = '✏️ Update Blog Post';
+                saveBtn.classList.remove('loading');
+                saveBtn.disabled = false;
+            }, 2500);
 
         } catch (err) {
             const msg = err.response?.data?.message || err.message || 'Something went wrong';
             cbToast(`Error: ${msg}`, 'error', 5000);
-            document.querySelector('#cb-save-btn .btn-text').textContent = '💾 Save Blog Post';
+            document.querySelector('#cb-save-btn .btn-text').textContent = '✏️ Update Blog Post';
             saveBtn.classList.remove('loading');
             saveBtn.disabled = false;
         }
     }
+
+    // ════════════════════════════════════════
+    // INIT
+    // ════════════════════════════════════════
+    document.addEventListener('DOMContentLoaded', cbLoadBlogData);
 </script>
