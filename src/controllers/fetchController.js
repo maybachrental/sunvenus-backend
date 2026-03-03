@@ -1,6 +1,6 @@
 const { googleDistanceApi } = require("../services/external/google.service");
-const { responseHandler } = require("../utils/helper");
-const { AddOns, Discounts, Brands, CarCategories, FuelTypes } = require("../models");
+const { responseHandler, getPagination } = require("../utils/helper");
+const { AddOns, Discounts, Brands, CarCategories, FuelTypes, Blogs, BlogSections, BlogFeatures } = require("../models");
 const fetchDistanceMatrix = async (req, res, next) => {
   try {
     const results = await googleDistanceApi(req.body);
@@ -55,4 +55,37 @@ const fetchFilterData = async (req, res, next) => {
   }
 };
 
-module.exports = { fetchDistanceMatrix, fetchAddOnsAndDiscount, fetchAllBrands, fetchFilterData };
+const fetchAllBlogs = async (req, res, next) => {
+  try {
+    const { limit, offset, page, pageSize } = getPagination(req.query.page || 1);
+    const blogs = await Blogs.findAndCountAll({
+      distinct: true,
+      subQuery: false,
+      where: {
+        status: "published",
+      },
+      include: [
+        {
+          model: BlogSections,
+          as: "sections",
+          required: false,
+          where: { section_type: "IMAGE" },
+          attributes: ["image_url", "section_type"],
+        },
+      ],
+      limit,
+      offset,
+      order: [["created_at", "desc"]],
+    });
+    responseHandler(res, 200, "Blogs", {
+      blogs: blogs.rows,
+      currentPage: page,
+      totalPage: Math.ceil(blogs.count / limit),
+      totalBlogs: blogs.count,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { fetchDistanceMatrix, fetchAddOnsAndDiscount, fetchAllBrands, fetchFilterData, fetchAllBlogs };
