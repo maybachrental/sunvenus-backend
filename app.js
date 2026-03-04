@@ -41,12 +41,13 @@ app.use(
     name: "admin.sid",
     secret: process.env.SESSION_SECRET,
     resave: false,
-    secure: process.env.NODE_ENV === "production",
+    // secure: process.env.NODE_ENV === "production",
     saveUninitialized: false,
     cookie: {
       maxAge: 2 * 60 * 60 * 1000, // 2 hours in milliseconds
       httpOnly: true,
       secure: false, // true if using HTTPS
+      sameSite: "lax",
     },
   }),
 );
