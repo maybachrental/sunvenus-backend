@@ -4,6 +4,8 @@ router.use("/auth", require("./authRoutes"));
 
 router.use("/cars", require("./carRoutes"));
 
+router.use("/user", require("./userRoutes"));
+
 router.use("/booking", require("./bookingRoutes"));
 
 router.use("/fetch", require("./fetchRoutes"));

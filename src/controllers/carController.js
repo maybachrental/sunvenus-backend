@@ -292,7 +292,7 @@ const fetchSingleCarForBooking = async (req, res, next) => {
     const available = await isCarAvailable(car_id, pickupDateTime, dropDateTime, null, true);
     if (!available) {
       return next(
-        new ErrorHandler(400, "Oops! You are late, Car is no longer available. Please select another Car.", validErrorName.CAR_ALREADY_BOOKED),
+        new ErrorHandler(400, "Oops! This car has beed reserved. Please select another Car.", validErrorName.CAR_ALREADY_BOOKED),
       );
     }
     const whereQuery = {

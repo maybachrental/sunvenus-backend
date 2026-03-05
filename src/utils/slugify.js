@@ -19,13 +19,14 @@ async function generateUniqueSlug(title) {
   return slug;
 }
 
-const publicIdCreation = (file) => {
+const publicIdCreation = (file, id = null) => {
   const ext = path.extname(file.originalname);
-  const baseName = path.basename(file.originalname, ext);
-
+  let baseName = path.basename(file.originalname, ext);
+  if (id) {
+    baseName = `${baseName}_${id}`;
+  }
   const publicId = `${baseName}_${Date.now()}`;
   return publicId;
 };
-
 
 module.exports = { generateUniqueSlug, publicIdCreation };

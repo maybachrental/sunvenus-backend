@@ -1,6 +1,9 @@
 const { Users, Bookings } = require("../models");
+const CloudinaryService = require("../services/external/cloudinary.service");
 const ErrorHandler = require("../utils/ErrorHandler");
 const { responseHandler } = require("../utils/helper");
+const { publicIdCreation } = require("../utils/slugify");
+const { bookingStatus } = require("../utils/staticExport");
 
 module.exports = {
   // GET /api/user/profile
@@ -26,18 +29,31 @@ module.exports = {
   async updateProfile(req, res, next) {
     try {
       const userId = req.user.id;
-      const { name, phone, email } = req.body;
+      const { name } = req.body;
 
       const user = await Users.findByPk(userId);
       if (!user) {
         return next(new ErrorHandler(404, "User not found"));
       }
-
-      await user.update({
+      let result = null;
+      if (req.file) {
+        const publicId = publicIdCreation(req.file, userId);
+        result = await CloudinaryService.uploadFile(req.file, `sunvenus_backend/users/${userId}`, {
+          useUUID: false,
+          publicId,
+        });
+        if (user.public_image_id) {
+          await CloudinaryService.delete(user.public_image_id);
+        }
+      }
+      const body = {
         name: name ?? user.name,
-        phone: phone ?? user.phone,
-        email: email ?? user.email,
-      });
+      };
+      if (result) {
+        body.profile_image = result.secure_url;
+        body.public_image_id = result.public_id;
+      }
+      await user.update(body);
 
       return responseHandler(res, 200, "Profile updated successfully", { user });
     } catch (err) {
@@ -45,36 +61,6 @@ module.exports = {
       return res.status(500).json({ message: "Server error" });
     }
   },
-
-  // PUT /api/user/profile-image
-  //   async updateProfileImage(req, res) {
-  //     try {
-  //       if (!req.file) {
-  //         return res.status(400).json({ message: "Image is required" });
-  //       }
-
-  //       /**
-  //        * req.file contains:
-  //        * - buffer (image binary)
-  //        * - mimetype
-  //        * - originalname
-  //        * - size
-  //        */
-
-  //       // Example: store image buffer in DB (BLOB)
-  //       const user = await Users.findByPk(req.user.id);
-  //       if (!user) return res.status(404).json({ message: "User not found" });
-
-  //       await user.update({
-  //         profile_image: req.file.buffer,
-  //         profile_image_type: req.file.mimetype,
-  //       });
-
-  //       res.json({ message: "Profile image updated successfully" });
-  //     } catch (err) {
-  //       res.status(500).json({ message: "Server error" });
-  //     }
-  //   },
 
   // GET /api/user/bookings
   async getUserBookings(req, res, next) {
@@ -84,22 +70,16 @@ module.exports = {
         return next(new ErrorHandler(400, "User id not found", "ERROR"));
       }
 
-      const { status, from_date, to_date } = req.query;
+      const { booking_status = bookingStatus.COMPLETED } = req.query;
 
       // Dynamic filters
       const where = { user_id: userId };
 
-      if (status) {
-        where.status = status; // e.g. PENDING | CONFIRMED | CANCELLED
+      if (booking_status) {
+        where.booking_status = booking_status; // e.g. PENDING | CONFIRMED | CANCELLED
       }
 
-      if (from_date || to_date) {
-        where.pickup_date = {};
-        if (from_date) where.pickup_date.$gte = new Date(from_date);
-        if (to_date) where.pickup_date.$lte = new Date(to_date);
-      }
-
-      const bookings = await Bookings.findAll({
+      const bookings = await Bookings.findAndCountAll({
         where,
         order: [["created_at", "DESC"]],
       });

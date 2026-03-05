@@ -2,6 +2,9 @@ const cloudinary = require("../../config/cloudinary");
 const streamifier = require("streamifier");
 const { v4: uuidv4 } = require("uuid");
 
+// sunvenus_backend/blogs path like this 
+
+
 class CloudinaryService {
   static allowedMimeTypes = {
     image: ["image/jpeg", "image/png", "image/webp", "image/jpg"],

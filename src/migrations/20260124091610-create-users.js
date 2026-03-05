@@ -41,6 +41,11 @@ module.exports = {
         allowNull: true,
       },
 
+      public_image_id: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+
       auth_provider: {
         type: Sequelize.ENUM("LOCAL", "GOOGLE"),
         allowNull: false,

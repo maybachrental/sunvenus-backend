@@ -46,6 +46,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      public_image_id: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
 
       auth_provider: {
         type: DataTypes.ENUM("LOCAL", "GOOGLE"),
