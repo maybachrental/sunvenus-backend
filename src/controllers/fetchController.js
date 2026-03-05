@@ -1,6 +1,8 @@
 const { googleDistanceApi } = require("../services/external/google.service");
 const { responseHandler, getPagination } = require("../utils/helper");
 const { AddOns, Discounts, Brands, CarCategories, FuelTypes, Blogs, BlogSections, BlogFeatures } = require("../models");
+const ErrorHandler = require("../utils/ErrorHandler");
+const { validErrorName } = require("../utils/staticExport");
 const fetchDistanceMatrix = async (req, res, next) => {
   try {
     const results = await googleDistanceApi(req.body);
@@ -88,4 +90,36 @@ const fetchAllBlogs = async (req, res, next) => {
   }
 };
 
-module.exports = { fetchDistanceMatrix, fetchAddOnsAndDiscount, fetchAllBrands, fetchFilterData, fetchAllBlogs };
+const fetchSingleBlog = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      throw new ErrorHandler(400, "Invalid Request", validErrorName.BAD_REQUEST);
+    }
+    const blog = await Blogs.findOne({
+      subQuery: false,
+      where: {
+        status: "published",
+        id,
+      },
+      include: [
+        {
+          model: BlogSections,
+          as: "sections",
+        },
+        {
+          model: BlogFeatures,
+          as: "features",
+        },
+      ],
+    });
+    if (!blog) {
+      throw new ErrorHandler(404, "Blog not found", validErrorName.NOT_FOUND);
+    }
+    responseHandler(res, 200, "Blog Details", { blog });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { fetchDistanceMatrix, fetchAddOnsAndDiscount, fetchAllBrands, fetchFilterData, fetchAllBlogs, fetchSingleBlog };
