@@ -7,8 +7,11 @@ const {
   createNewPassword,
   resendOTP,
   googleLogin,
+  changePassword,
+  logoutUser,
 } = require("../controllers/authController");
-const { checkIsTokenBlacklist } = require("../middlewares/authMiddleware");
+
+const { checkIsTokenBlacklist, authenicateUser } = require("../middlewares/authMiddleware");
 const {
   validateRegisterBody,
   validateVerifyOTP,
@@ -36,5 +39,9 @@ router.post("/create-new-password", validateNewPassword, checkIsTokenBlacklist, 
 router.post("/resend-otp", validateSendOtp, resendOTP);
 
 router.post("/google-login", googleLogin);
+
+router.post("/change-password",authenicateUser, changePassword);
+
+router.post("/logout", authenicateUser, logoutUser);
 
 module.exports = router;

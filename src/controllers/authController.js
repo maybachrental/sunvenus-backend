@@ -311,4 +311,81 @@ const googleLogin = async (req, res, next) => {
   }
 };
 
-module.exports = { register, verifyingOTPController, loginUser, forgotPassword, forgotPasswordVerifyOTP, createNewPassword, resendOTP, googleLogin };
+const changePassword = async (req, res, next) => {
+  try {
+    const { old_password, new_password, confirm_password } = req.body;
+    const userId = req.user.id; // from auth middleware
+
+    // Validate fields
+    if (!new_password || !confirm_password) return next(new ErrorHandler(400, "Fields missing in request body", validErrorName.INVALID_REQUEST));
+
+    if (new_password !== confirm_password)
+      return next(new ErrorHandler(400, "New password and confirm password do not match", validErrorName.INVALID_REQUEST));
+
+    // Fetch user with password
+    const userExist = await Users.findOne({
+      where: { id: userId },
+      attributes: ["id", "password", "status"],
+    });
+
+    if (!userExist) return next(new ErrorHandler(404, "User not found", validErrorName.USER_NOT_FOUND));
+
+    if (userExist.status !== status.ACTIVE)
+      return next(new ErrorHandler(403, "Access Denied, Please connect with our support team", validErrorName.ACCESS_DENIED));
+
+    const isGoogleUser = !userExist.password || userExist.password === null || userExist.password === "";
+
+    if (!isGoogleUser) {
+      // Normal login user — old_password is required
+      if (!old_password) return next(new ErrorHandler(400, "Old password is required", validErrorName.INVALID_REQUEST));
+
+      if (old_password === new_password)
+        return next(new ErrorHandler(400, "New password cannot be same as old password", validErrorName.INVALID_REQUEST));
+
+      const isMatched = await comparePasswords(old_password, userExist.password);
+      if (!isMatched) return next(new ErrorHandler(400, "Old password is incorrect", validErrorName.INVALID_PASSWORD));
+    }
+
+    // Hash and update new password
+    const hashedPassword = await hashedPasswordCnv(new_password);
+    await Users.update({ password: hashedPassword }, { where: { id: userId } });
+
+    responseHandler(res, 200, "Password changed successfully", null);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const logoutUser = async (req, res, next) => {
+  try {
+    const accessToken = req.headers.authorization?.split(" ")[1];
+    
+    if (!accessToken)
+      return next(new ErrorHandler(400, "Token missing in request", validErrorName.INVALID_REQUEST));
+
+    // Check if already blacklisted
+    const isBlacklisted = await BlacklistTokens.findOne({ where: { access_token: accessToken } });
+    if (isBlacklisted)
+      return next(new ErrorHandler(401, "Unauthorized: This token is blacklisted", validErrorName.BLACKLISTED_TOKEN));
+
+    // Blacklist the token
+    await BlacklistTokens.create({ access_token: accessToken });
+
+    responseHandler(res, 200, "User logged out successfully", null);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  register,
+  verifyingOTPController,
+  loginUser,
+  forgotPassword,
+  forgotPasswordVerifyOTP,
+  createNewPassword,
+  resendOTP,
+  googleLogin,
+  changePassword,
+  logoutUser,
+};
