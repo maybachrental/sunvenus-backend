@@ -77,7 +77,7 @@ const fetchAllCars = async (req, res, next) => {
 const fetchPremiumCars = async (req, res, next) => {
   try {
     const fetchCars = await Cars.findAll({
-      where: { is_premium: true },
+      where: { is_premium: true, is_active: true },
       distinct: true,
       subQuery: false,
       include: [
@@ -254,7 +254,7 @@ const fetchCarDetails = async (req, res, next) => {
     if (!id) return next(new ErrorHandler(404, "Car id not found"));
 
     const carInfo = await Cars.findOne({
-      where: { id },
+      where: { id, is_active: true },
       attributes: {
         exclude: ["created_at", "updated_at"],
       },
@@ -291,9 +291,7 @@ const fetchSingleCarForBooking = async (req, res, next) => {
     const dropDateTime = triptypeCondition(trip_type, pickupDateTime, duration_hours, drop_datetime);
     const available = await isCarAvailable(car_id, pickupDateTime, dropDateTime, null, true);
     if (!available) {
-      return next(
-        new ErrorHandler(400, "Oops! This car has beed reserved. Please select another Car.", validErrorName.CAR_ALREADY_BOOKED),
-      );
+      return next(new ErrorHandler(400, "Oops! This car has beed reserved. Please select another Car.", validErrorName.CAR_ALREADY_BOOKED));
     }
     const whereQuery = {
       is_outstation: trip_type === tripTypes.ROUND_TRIP ? true : false,
@@ -303,7 +301,7 @@ const fetchSingleCarForBooking = async (req, res, next) => {
       whereQuery.included_km = included_km;
     }
     const CarsPricingsInfo = await Cars.findOne({
-      where: { id: car_id },
+      where: { id: car_id, is_active: true },
       include: [
         {
           model: CarsPricings,
