@@ -1,7 +1,7 @@
 const { Users, Bookings } = require("../models");
 const CloudinaryService = require("../services/external/cloudinary.service");
 const ErrorHandler = require("../utils/ErrorHandler");
-const { responseHandler } = require("../utils/helper");
+const { responseHandler, getPagination } = require("../utils/helper");
 const { publicIdCreation } = require("../utils/slugify");
 const { bookingStatus } = require("../utils/staticExport");
 
@@ -69,7 +69,7 @@ module.exports = {
       if (!userId) {
         return next(new ErrorHandler(400, "User id not found", "ERROR"));
       }
-
+      const { limit, page, offset } = getPagination(req.query.page || 1, 5);
       const { booking_status = bookingStatus.COMPLETED } = req.query;
 
       // Dynamic filters
@@ -81,10 +81,17 @@ module.exports = {
 
       const bookings = await Bookings.findAndCountAll({
         where,
+        offset,
+        limit,
         order: [["created_at", "DESC"]],
       });
 
-      return responseHandler(res, 200, "Your Bookings", { bookings });
+      return responseHandler(res, 200, "Your Bookings", {
+        bookings: bookings.rows,
+        currentPage: page,
+        totalPages: Math.ceil(bookings.count / limit),
+        totalBookings: bookings.count,
+      });
     } catch (err) {
       next(err);
     }
