@@ -70,7 +70,7 @@ module.exports = {
         return next(new ErrorHandler(400, "User id not found", "ERROR"));
       }
       const { limit, page, offset } = getPagination(req.query.page || 1, 5);
-      const { booking_status = bookingStatus.COMPLETED } = req.query;
+      const { booking_status } = req.query;
 
       // Dynamic filters
       const where = { user_id: userId };
