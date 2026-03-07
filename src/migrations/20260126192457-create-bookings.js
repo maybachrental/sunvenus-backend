@@ -77,22 +77,22 @@ module.exports = {
       },
 
       base_price: {
-        type: Sequelize.DECIMAL(10, 2),
+        type: Sequelize.DECIMAL(12, 2),
         allowNull: false,
       },
 
       extra_hour_price: {
-        type: Sequelize.DECIMAL(10, 2),
+        type: Sequelize.DECIMAL(12, 2),
         defaultValue: 0,
       },
 
       extra_km_price: {
-        type: Sequelize.DECIMAL(10, 2),
+        type: Sequelize.DECIMAL(12, 2),
         defaultValue: 0,
       },
 
       total_price: {
-        type: Sequelize.DECIMAL(10, 2),
+        type: Sequelize.DECIMAL(12, 2),
         allowNull: false,
       },
 
@@ -113,6 +113,9 @@ module.exports = {
         type: Sequelize.STRING,
       },
       checkout_url: Sequelize.TEXT,
+      full_drop_address: Sequelize.STRING,
+      full_pick_address: Sequelize.STRING,
+      special_instruction: Sequelize.TEXT,
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

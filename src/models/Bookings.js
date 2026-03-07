@@ -72,22 +72,22 @@ module.exports = (sequelize, DataTypes) => {
       },
 
       base_price: {
-        type: DataTypes.DECIMAL(10, 2),
+        type: DataTypes.DECIMAL(12, 2),
         allowNull: false,
       },
 
       extra_hour_price: {
-        type: DataTypes.DECIMAL(10, 2),
+        type: DataTypes.DECIMAL(12, 2),
         defaultValue: 0,
       },
 
       extra_km_price: {
-        type: DataTypes.DECIMAL(10, 2),
+        type: DataTypes.DECIMAL(12, 2),
         defaultValue: 0,
       },
 
       total_price: {
-        type: DataTypes.DECIMAL(10, 2),
+        type: DataTypes.DECIMAL(12, 2),
         allowNull: false,
       },
 
@@ -108,6 +108,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
       },
       checkout_url: DataTypes.TEXT,
+      full_drop_address: DataTypes.STRING,
+      full_pick_address: DataTypes.STRING,
+      special_instruction: DataTypes.TEXT,
     },
     {
       sequelize,

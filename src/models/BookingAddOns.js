@@ -15,15 +15,19 @@ module.exports = (sequelize, DataTypes) => {
     {
       charges: {
         type: DataTypes.DECIMAL(10, 2),
-        allowNull: false,
+        allowNull: true,
       },
       booking_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      add_on_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       add_on_type: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
     },
     {

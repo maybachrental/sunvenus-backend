@@ -11,7 +11,7 @@ module.exports = {
       },
       charges: {
         type: Sequelize.DECIMAL(10, 2),
-        allowNull: false,
+        allowNull: true,
       },
       booking_id: {
         type: Sequelize.BIGINT,
@@ -35,7 +35,7 @@ module.exports = {
       },
       add_on_type: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       created_at: {
         allowNull: false,
