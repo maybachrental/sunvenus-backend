@@ -12,4 +12,6 @@ router.use("/fetch", require("./fetchRoutes"));
 
 router.use("/web", require("./webRoutes"));
 
+router.use("/reviews", require("./reviewsRoutes"));
+
 module.exports = router;
