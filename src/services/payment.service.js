@@ -28,7 +28,6 @@ const handleSuccessfulPayment = async (session) => {
     if (booking.payment_status === paymentStatus.PAID) {
       return; // already processed
     }
-    sendBookingSuccessNotification({ user_id, booking_id });
 
     await Promise.all([
       Bookings.update(
@@ -58,6 +57,7 @@ const handleSuccessfulPayment = async (session) => {
         },
       ),
     ]);
+    sendBookingSuccessNotification({ user_id, booking_id });
     return;
   });
 };
