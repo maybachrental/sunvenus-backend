@@ -57,7 +57,9 @@ const handleSuccessfulPayment = async (session) => {
         },
       ),
     ]);
-    sendBookingSuccessNotification({ user_id, booking_id });
+    setTimeout(() => {
+      sendBookingSuccessNotification({ user_id, booking_id });
+    }, 2000);
     return;
   });
 };
