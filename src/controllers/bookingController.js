@@ -6,6 +6,7 @@ const { createCheckoutSession, stripe } = require("../services/external/stripe.s
 const ErrorHandler = require("../utils/ErrorHandler");
 const { responseHandler } = require("../utils/helper");
 const { validErrorName, paymentToBe, bookingStatus, paymentStatus } = require("../utils/staticExport");
+const { sendBookingSuccessNotification } = require("../services/notification.service");
 
 // const checkAndCreateBooking = async (req, res, next) => {
 //   const transaction = await sequelize.transaction();
@@ -361,6 +362,7 @@ const checkAndCreateBooking = async (req, res, next) => {
     // ─────────────────────────────────────────────────────────────
     if (booking_type === paymentToBe.PAY_LATER) {
       await transaction.commit();
+      sendBookingSuccessNotification({ booking_id: booking.id, user_id: userId });
       return responseHandler(res, 201, "Booking Confirmed", { booking });
     }
 

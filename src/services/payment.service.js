@@ -1,5 +1,6 @@
 const { Bookings, Transactions, sequelize } = require("../models");
 const { paymentStatus, bookingStatus } = require("../utils/staticExport");
+const { sendBookingSuccessNotification } = require("./notification.service");
 
 const handleSuccessfulPayment = async (session) => {
   const booking_id = session.metadata.booking_id;
@@ -27,6 +28,7 @@ const handleSuccessfulPayment = async (session) => {
     if (booking.payment_status === paymentStatus.PAID) {
       return; // already processed
     }
+    sendBookingSuccessNotification({ user_id, booking_id });
 
     await Promise.all([
       Bookings.update(
@@ -44,7 +46,7 @@ const handleSuccessfulPayment = async (session) => {
         {
           res_json: session,
           payment_status: paymentStatus.SUCCESS,
-          status:"SESSION_COMPLETED"
+          status: "SESSION_COMPLETED",
         },
         {
           where: {
