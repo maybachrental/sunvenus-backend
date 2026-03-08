@@ -92,12 +92,12 @@ app.use(express.static(path.join(__dirname, "/public")));
 // APIS
 app.get("/", (req, res) => res.json("Welcome to maybach API!"));
 app.use("/api", require("./src/routes/index"));
-app.use((req, res, next) => {
-  if (req.hostname === "admin.sunvenus.co.in" && !req.url.startsWith("/admin")) {
-    req.url = "/admin" + req.url;
-  }
-  next();
-});
+// app.use((req, res, next) => {
+//   if (req.hostname === "admin.sunvenus.co.in" && !req.url.startsWith("/admin")) {
+//     req.url = "/admin" + req.url;
+//   }
+//   next();
+// });
 app.use("/admin", require("./src/routes/admin/adminRoutes"));
 app.get("/.well-known/appspecific/com.chrome.devtools.json", (req, res) => res.status(200));
 // middlewaare for all
