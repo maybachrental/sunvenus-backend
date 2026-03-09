@@ -9,33 +9,52 @@
 
         <!-- Filters -->
         <form method="GET" class="row g-3 mb-3">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <input type="text" name="search" value="<%= query.search || '' %>" class="form-control"
                     placeholder="Search by car name" />
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <select name="booking_status" class="form-select">
                     <option value="">Booking Status</option>
-                    <option value="CONFIRMED">CONFIRMED</option>
-                    <option value="ONGOING">ONGOING</option>
-                    <option value="COMPLETED">COMPLETED</option>
-                    <option value="CANCELLED">CANCELLED</option>
-                    <option value="PENDING_PAYMENT">PENDING PAYMENT</option>
-                </select>
-            </div>
-
-            <div class="col-md-3">
-                <select name="payment_status" class="form-select">
-                    <option value="">Payment Status</option>
-                    <option value="PAID">PAID</option>
-                    <option value="PENDING">PENDING</option>
-                    <option value="FAILED">FAILED</option>
+                    <option value="CONFIRMED" <%=query.booking_status==='CONFIRMED' ? 'selected' : '' %>>CONFIRMED
+                    </option>
+                    <option value="ONGOING" <%=query.booking_status==='ONGOING' ? 'selected' : '' %>>ONGOING</option>
+                    <option value="COMPLETED" <%=query.booking_status==='COMPLETED' ? 'selected' : '' %>>COMPLETED
+                    </option>
+                    <option value="CANCELLED" <%=query.booking_status==='CANCELLED' ? 'selected' : '' %>>CANCELLED
+                    </option>
+                    <option value="PENDING_PAYMENT" <%=query.booking_status==='PENDING_PAYMENT' ? 'selected' : '' %>
+                        >PENDING PAYMENT</option>
                 </select>
             </div>
 
             <div class="col-md-2">
-                <button class="btn btn-dark w-100">Apply</button>
+                <select name="payment_status" class="form-select">
+                    <option value="">Payment Status</option>
+                    <option value="PAID" <%=query.payment_status==='PAID' ? 'selected' : '' %>>PAID</option>
+                    <option value="PENDING" <%=query.payment_status==='PENDING' ? 'selected' : '' %>>PENDING</option>
+                    <option value="FAILED" <%=query.payment_status==='FAILED' ? 'selected' : '' %>>FAILED</option>
+                </select>
+            </div>
+
+            <div class="col-md-2" style="position: relative;">
+                <label class="form-label text-muted small mb-1" style="position: absolute;top: -50%;">From Date</label>
+                <input type="date" name="date_from" style="background-color: rgb(83, 0, 207); color: #fff;" value="<%= query.date_from || '' %>" class="form-control" />
+            </div>
+
+            <div class="col-md-2 " style="position: relative;">
+                <label class="form-label text-muted small mb-1" style="position: absolute;top: -50%;">To Date</label>
+                <input type="date" name="date_to" style="background-color: rgb(83, 0, 207); color: #fff;" value="<%= query.date_to || '' %>" class="form-control" />
+            </div>
+
+            <div class="col-md-1 d-flex gap-2">
+                <button type="submit" class="btn btn-dark w-50" title="Apply">
+                    <i class="bi bi-search"></i>
+                </button>
+                <a href="?" class="btn btn-outline-secondary w-50" title="Reset">
+                    <i class="bi bi-x-lg"></i>
+                </a>
             </div>
         </form>
 
@@ -66,13 +85,13 @@
                                     <%= b.booking_code %>
                                 </td>
                                 <td>
-                                   
+                                    <%= b?.User?.name || "-" %>
                                 </td>
                                 <td>
-                                    
+                                    <%= b?.Car?.name || "-" %>
                                 </td>
                                 <td>
-                                    <%= b.pickup_datetime %>
+                                    <%= b?.pickup_datetime || "-" %>
                                 </td>
                                 <td>
                                     <span class="badge bg-info">
@@ -104,7 +123,7 @@
                 <% for(let i=1; i <=totalPages; i++) { %>
                     <li class="page-item <%= currentPage === i ? 'active' : '' %>">
                         <a class="page-link"
-                            href="?page=<%= i %>&search=<%= query.search || '' %>&booking_status=<%= query.booking_status || '' %>&payment_status=<%= query.payment_status || '' %>">
+                            href="?page=<%= i %>&search=<%= query.search || '' %>&booking_status=<%= query.booking_status || '' %>&payment_status=<%= query.payment_status || '' %>&date_from=<%= query.date_from || '' %>&date_to=<%= query.date_to || '' %>">
                             <%= i %>
                         </a>
                     </li>
@@ -113,5 +132,4 @@
         </nav>
 
     </div>
-</div>
-  
+</div>  

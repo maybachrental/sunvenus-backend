@@ -1,0 +1,179 @@
+<!-- Flatpickr CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<style>
+    .flatpickr-calendar {
+        font-family: inherit;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        border: none;
+    }
+
+    .flatpickr-day.selected,
+    .flatpickr-day.selected:hover {
+        background: #212529;
+        border-color: #212529;
+    }
+
+    .flatpickr-day:hover {
+        background: #e9ecef;
+    }
+
+    .flatpickr-months .flatpickr-month,
+    .flatpickr-weekdays,
+    span.flatpickr-weekday {
+        background: #212529;
+        color: #fff;
+    }
+
+    .flatpickr-current-month .flatpickr-monthDropdown-months,
+    .flatpickr-current-month input.cur-year {
+        color: #fff;
+    }
+
+    .flatpickr-next-month svg,
+    .flatpickr-prev-month svg {
+        fill: #fff;
+    }
+</style>
+
+<div class="app-content-header">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <h3 class="mb-0 fw-bold">Cars</h3>
+    </div>
+</div>
+
+<div class="app-content">
+    <div class="container-fluid">
+
+        <!-- Filters -->
+        <form method="GET" class="row g-3 mb-3">
+
+            <!-- Search -->
+            <div class="col-md-3">
+                <input type="text" name="search" value="<%= query.search || '' %>" class="form-control"
+                    placeholder="Search by car name or modal" />
+            </div>
+
+            <!-- Fuel Type -->
+            <!-- <div class="col-md-2">
+                <select name="fuel_type" class="form-select">
+                    <option value="">Fuel Type</option>
+                    <option value="PETROL" <%=query.fuel_type==='PETROL' ? 'selected' : '' %>>Petrol</option>
+                    <option value="DIESEL" <%=query.fuel_type==='DIESEL' ? 'selected' : '' %>>Diesel</option>
+                    <option value="ELECTRIC" <%=query.fuel_type==='ELECTRIC' ? 'selected' : '' %>>Electric</option>
+                    <option value="HYBRID" <%=query.fuel_type==='HYBRID' ? 'selected' : '' %>>Hybrid</option>
+                    <option value="CNG" <%=query.fuel_type==='CNG' ? 'selected' : '' %>>CNG</option>
+                </select>
+            </div> -->
+
+            <!-- Availability -->
+            <div class="col-md-2">
+                <select name="is_active" class="form-select">
+                    <option value="">Availability</option>
+                    <option value="true" <%=query.is_active==='true' ? 'selected' : '' %>>Available</option>
+                    <option value="false" <%=query.is_active==='false' ? 'selected' : '' %>>Unavailable</option>
+                </select>
+            </div>
+
+            <!-- Transmission -->
+            <!-- <div class="col-md-2">
+                <select name="transmission" class="form-select">
+                    <option value="">Transmission</option>
+                    <option value="MANUAL" <%=query.transmission==='MANUAL' ? 'selected' : '' %>>Manual</option>
+                    <option value="AUTOMATIC" <%=query.transmission==='AUTOMATIC' ? 'selected' : '' %>>Automatic
+                    </option>
+                </select>
+            </div> -->
+
+            <!-- Buttons -->
+            <div class="col-md-1 d-flex gap-2 align-items-center">
+                <button type="submit" class="btn btn-dark w-50" title="Apply">
+                    <i class="bi bi-search"></i>
+                </button>
+                <a href="?" class="btn btn-outline-secondary w-50" title="Reset">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            </div>
+        </form>
+
+        <!-- Table -->
+        <div class="card card-dark">
+            <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Model</th>
+                            <th>Brand</th>
+                            <th>Fuel</th>
+                            <th>Color</th>
+                            <th>Seats</th>
+                            <!-- <th>Price / Day</th> -->
+                            <th>Availability</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% cars.forEach(c=> { %>
+                            <tr>
+                                <td>
+                                    <%= c.id %>
+                                </td>
+                               
+                                <td>
+                                    <%= c.name || "-" %>
+                                </td>
+                                <td>
+                                    <%= c.model %>
+                                </td>
+                                <td style="text-transform: capitalize;">
+                                    <%= c?.Brand?.brand_name || "-" %>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">
+                                        <%= c?.FuelType?.fuel || "-" %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">
+                                        <%= c.color || "-" %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <%= c.seating_capacity || "-" %>
+                                </td>
+                                </td>
+                                <td>
+                                    <span class="badge bg-<%= c.is_active ? 'success' : 'warning' %>">
+                                        <%= c.is_active ? 'Available' : 'Unavailable' %>
+                                    </span>
+                                </td>
+                            </tr>
+                            <% }) %>
+
+                                <% if (cars.length===0) { %>
+                                    <tr>
+                                        <td colspan="9" class="text-center text-muted py-4">No cars found.</td>
+                                    </tr>
+                                    <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <nav class="mt-3">
+            <ul class="pagination justify-content-end">
+                <% for(let i=1; i <=totalPages; i++) { %>
+                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                        <a class="page-link"
+                            href="?page=<%= i %>&search=<%= query.search || '' %>&fuel_type=<%= query.fuel_type || '' %>&is_active=<%= query.is_active || '' %>&transmission=<%= query.transmission || '' %>">
+                            <%= i %>
+                        </a>
+                    </li>
+                    <% } %>
+            </ul>
+        </nav>
+
+    </div>
+</div>

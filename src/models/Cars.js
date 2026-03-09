@@ -17,6 +17,9 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.FuelTypes, {
         foreignKey: "fuel_type_id",
       });
+      this.belongsTo(models.Brands, {
+        foreignKey: "brand_id",
+      });
       this.hasMany(models.CarImages, {
         foreignKey: "car_id",
         onDelete: "CASCADE",

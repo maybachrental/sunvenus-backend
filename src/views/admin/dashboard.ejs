@@ -77,27 +77,27 @@
                     <div class="card-body p-0">
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item d-flex justify-content-between">
-                                <span>Upcoming</span>
+                                <span>Confirmed</span>
                                 <span class="badge bg-primary">
-                                    <%= bookingStats.upcoming %>
+                                    <%= bookingStats?.confirmed || "-" %>
                                 </span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between">
                                 <span>Ongoing</span>
                                 <span class="badge bg-success">
-                                    <%= bookingStats.ongoing %>
+                                    <%= bookingStats?.ongoing || "-" %>
                                 </span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between">
                                 <span>Completed</span>
                                 <span class="badge bg-secondary">
-                                    <%= bookingStats.completed %>
+                                    <%= bookingStats?.completed || "-" %>
                                 </span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between">
                                 <span>Cancelled</span>
                                 <span class="badge bg-danger">
-                                    <%= bookingStats.cancelled %>
+                                    <%= bookingStats?.cancelled || "-" %>
                                 </span>
                             </li>
                         </ul>
@@ -137,7 +137,7 @@
         </div>
 
         <!-- Recent Bookings -->
-        <div class="row">
+        <div class="row mt-3">
             <div class="col-12">
                 <div class="card card-dark">
                     <div class="card-header">

@@ -1,5 +1,5 @@
-const { Users, Cars, Bookings } = require("../../models");
-const { userRole } = require("../../utils/staticExport");
+const { Users, Cars, Bookings, sequelize } = require("../../models");
+const { userRole, paymentStatus, bookingStatus } = require("../../utils/staticExport");
 
 const dashboardData = async (req, res, next) => {
   try {
@@ -8,87 +8,86 @@ const dashboardData = async (req, res, next) => {
     });
     const totalCars = await Cars.count();
     const totalBookings = await Bookings.count();
+    const totalRevenue = await Bookings.sum("total_price", {
+      where: { payment_status: paymentStatus.PAID },
+    });
+    const confirmedBooking = await Bookings.count({
+      where: { booking_status: bookingStatus.CONFIRMED },
+    });
+    const ongoingBooking = await Bookings.count({
+      where: { booking_status: bookingStatus.ONGOING },
+    });
+    const completedBooking = await Bookings.count({
+      where: { booking_status: bookingStatus.COMPLETED },
+    });
+    const cancelledBooking = await Bookings.count({
+      where: { booking_status: bookingStatus.CANCELLED },
+    });
+    const topCars = await Bookings.findAll({
+      attributes: [
+        [sequelize.col("Car.name"), "name"],
+        [sequelize.fn("COUNT", sequelize.col("Bookings.id")), "bookings"],
+      ],
+      include: [
+        {
+          model: Cars,
+          attributes: [],
+        },
+      ],
+      group: ["Car.id"],
+      order: [[sequelize.literal("bookings"), "DESC"]],
+      limit: 3,
+      raw: true,
+    });
 
+    const recentBookings = await Bookings.findAll({
+      attributes: ["id", "pickup_datetime", "booking_status"],
+      where: { booking_status: bookingStatus.CONFIRMED },
+      include: [
+        {
+          model: Users,
+          attributes: ["name"],
+        },
+        {
+          model: Cars,
+          attributes: ["name"],
+        },
+      ],
+      order: [["created_at", "DESC"]],
+      limit: 5,
+      raw: true,
+      nest: true,
+    });
+    console.log(recentBookings);
+    const parsedBookings = recentBookings.map((e) => {
+      return {
+        id: e?.id || "-",
+        user: e?.User?.name || "-",
+        car: e?.Car?.name || "-",
+        pickupDate: e.pickup_datetime || "-",
+        status: e?.booking_status || "-",
+        statusColor: "primary",
+      };
+    });
     res.render("admin/dashboard", {
       stats: {
         totalBookings,
-        totalRevenue: "18,40,000", // payment table
+        totalRevenue, // payment table
         totalCars,
         totalUsers,
       },
       bookingStats: {
-        upcoming: 18,
-        ongoing: 6,
-        completed: 92,
-        cancelled: 8,
+        confirmed: confirmedBooking,
+        ongoing: ongoingBooking,
+        completed: completedBooking,
+        cancelled: cancelledBooking,
       },
-      topCars: [
-        { name: "BMW M5", bookings: 32 },
-        { name: "Mercedes S-Class", bookings: 28 },
-      ],
-      recentBookings: [
-        {
-          id: 1021,
-          user: "Rahul Sharma",
-          car: "BMW M5",
-          pickupDate: "02 Feb 2026",
-          status: "Upcoming",
-          statusColor: "primary",
-        },
-      ],
+      topCars,
+      recentBookings: parsedBookings,
     });
   } catch (error) {}
 };
 
-const showAllBookings = async (req, res, next) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = 10;
-    const offset = (page - 1) * limit;
 
-    const { search = "", booking_status = "", payment_status = "" } = req.query;
 
-    const bookingWhere = {};
-    const carWhere = {};
-
-    if (booking_status) {
-      bookingWhere.booking_status = booking_status;
-    }
-
-    if (payment_status) {
-      bookingWhere.payment_status = payment_status;
-    }
-
-    if (search) {
-      carWhere.name = { [Op.like]: `%${search}%` };
-    }
-
-    const { rows: bookings, count } = await Bookings.findAndCountAll({
-      // where: bookingWhere,
-      // include: [
-      //   {
-      //     model: Cars,
-      //     where: carWhere,
-      //   },
-      //   {
-      //     model: Users,
-      //   },
-      // ],
-      order: [["created_at", "DESC"]],
-      limit,
-      offset,
-    });
-
-    res.render("admin/showBookings", {
-      bookings,
-      currentPage: page,
-      totalPages: Math.ceil(count / limit),
-      query: req.query,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Something went wrong");
-  }
-};
-
-module.exports = { dashboardData, showAllBookings };
+module.exports = { dashboardData };

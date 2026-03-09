@@ -1,5 +1,14 @@
 const { upload } = require("../../config/multer");
-const { showLoginPage, loginAdmin, logoutAdmin, showAdminRegisterPage, createAdmin } = require("../../controllers/admin/adminController");
+const {
+  showLoginPage,
+  loginAdmin,
+  logoutAdmin,
+  showAdminRegisterPage,
+  createAdmin,
+  showAllBookings,
+  showAllUsers,
+  showAllCars,
+} = require("../../controllers/admin/adminController");
 const {
   listBlogs,
   createBlogPage,
@@ -9,7 +18,7 @@ const {
   updateBlog,
   deleteBlog,
 } = require("../../controllers/admin/blogController");
-const { dashboardData, showAllBookings } = require("../../controllers/admin/dashboardController");
+const { dashboardData, } = require("../../controllers/admin/dashboardController");
 const { isAdminAuth, preventAdminLogin } = require("../../middlewares/adminAuth");
 
 const MAX_SECTIONS = 20;
@@ -36,6 +45,10 @@ router.get("/dashboard", dashboardData);
 
 router.get("/bookings", showAllBookings);
 
+router.get("/users", showAllUsers);
+
+router.get("/cars", showAllCars);
+
 router.get("/blogs", listBlogs);
 
 router.get("/blogs/create", createBlogPage);
@@ -49,6 +62,7 @@ router.get("/blogs/data/:id", blogJsonData);
 router.put("/blogs/update/:id", upload.fields([{ name: "hero_image", maxCount: 1 }, ...sectionFields]), updateBlog);
 
 router.get("/blogs/delete/:id", deleteBlog);
+
 router.delete("/blogs/delete/:id", deleteBlog);
 
 router.use((req, res, next) => {
