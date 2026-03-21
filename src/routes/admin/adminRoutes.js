@@ -7,7 +7,6 @@ const {
   createAdmin,
   showAllBookings,
   showAllUsers,
-  showAllCars,
 } = require("../../controllers/admin/adminController");
 const {
   listBlogs,
@@ -18,8 +17,22 @@ const {
   updateBlog,
   deleteBlog,
 } = require("../../controllers/admin/blogController");
-const { dashboardData, } = require("../../controllers/admin/dashboardController");
+const {
+  showAllCars,
+  createCarPage,
+  createCar,
+  uploadCarImages,
+  deleteCar,
+  getEditCarPage,
+  updateCar,
+  deleteCarImage,
+  setCarImagePrimary,
+  viewCarDetails,
+} = require("../../controllers/admin/carController");
+const { dashboardData } = require("../../controllers/admin/dashboardController");
+const { promoPage, searchUsersForPromo, sendPromoMail } = require("../../controllers/admin/promoController");
 const { isAdminAuth, preventAdminLogin } = require("../../middlewares/adminAuth");
+const { fallback } = require("../../middlewares/adminMiddleware");
 
 const MAX_SECTIONS = 20;
 const sectionFields = Array.from({ length: MAX_SECTIONS }, (_, i) => ({
@@ -47,7 +60,7 @@ router.get("/bookings", showAllBookings);
 
 router.get("/users", showAllUsers);
 
-router.get("/cars", showAllCars);
+// blogs
 
 router.get("/blogs", listBlogs);
 
@@ -65,8 +78,34 @@ router.get("/blogs/delete/:id", deleteBlog);
 
 router.delete("/blogs/delete/:id", deleteBlog);
 
-router.use((req, res, next) => {
-  const referer = req.headers["referer"] || "/admin/dashboard"; // fallback if no referer
-  return res.redirect(referer);
-});
+// cars
+
+router.get("/cars", showAllCars);
+
+router.get("/add-car", createCarPage);
+
+router.post("/add/cars", createCar);
+
+router.post("/car/:id/images", upload.array("images", 20), uploadCarImages); //upload images/videos to Cloudinary
+
+router.delete("/car/delete/:id", deleteCar);
+
+// update routes
+router.get("/car/:id/edit", getEditCarPage);
+router.put("/update/cars/:id", updateCar);
+router.delete("/update/cars/:id/images/:imageId", deleteCarImage);
+router.patch("/update/cars/:id/images/:imageId/primary", setCarImagePrimary);
+
+router.get("/car-details/:id", viewCarDetails);
+
+// promotional mails and pages
+router.get("/promo/emails", promoPage);
+
+router.get("/promo/users/search", searchUsersForPromo);
+
+router.post("/promo/promo-emails/send", sendPromoMail);
+
+// this is the fallback handler 
+router.use(fallback);
+
 module.exports = router;

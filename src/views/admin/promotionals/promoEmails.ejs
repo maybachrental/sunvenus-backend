@@ -1,0 +1,1275 @@
+
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+<style>
+  /* ── Tokens ── */
+  :root {
+    --bg:        #f4f2ee;
+    --surface:   #ffffff;
+    --surface-2: #faf9f7;
+    --border:    #e8e4dc;
+    --border-2:  #d8d2c8;
+    --accent:    #2563eb;
+    --accent-lt: #eff4ff;
+    --green:     #16a34a;
+    --green-lt:  #f0fdf4;
+    --red:       #dc2626;
+    --red-lt:    #fef2f2;
+    --gold:      #b45309;
+    --gold-lt:   #fffbeb;
+    --text:      #1c1917;
+    --text-2:    #78716c;
+    --text-3:    #a8a29e;
+    --radius:    14px;
+    --fh:        'Playfair Display', serif;
+    --fb:        'DM Sans', sans-serif;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+    --shadow:    0 4px 16px rgba(0,0,0,.08), 0 1px 4px rgba(0,0,0,.04);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,.1), 0 2px 8px rgba(0,0,0,.05);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .pe-wrap {
+    font-family: var(--fb);
+    color: var(--text);
+    background: var(--bg);
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  /* ── Header ── */
+  .pe-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 36px 0 30px;
+    margin-bottom: 36px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pe-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), #7c3aed, #db2777);
+  }
+
+  .pe-header-inner {
+    max-width: 1380px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .pe-header-eyebrow {
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .pe-header-title {
+    font-family: var(--fh);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.05;
+    letter-spacing: -.02em;
+  }
+
+  .pe-header-sub {
+    font-size: .85rem;
+    color: var(--text-2);
+    font-weight: 400;
+    margin-top: 4px;
+  }
+
+  /* ── Stats ── */
+  .pe-body {
+    max-width: 1380px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  .pe-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .pe-stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .pe-stat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .pe-stat-icon.blue  { background: var(--accent-lt); color: var(--accent); }
+  .pe-stat-icon.green { background: var(--green-lt);  color: var(--green);  }
+  .pe-stat-icon.gold  { background: var(--gold-lt);   color: var(--gold);   }
+
+  .pe-stat-num {
+    font-family: var(--fh);
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text);
+  }
+
+  .pe-stat-label {
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-top: 2px;
+  }
+
+  /* ── Grid ── */
+  .pe-grid {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  @media (max-width: 1060px) {
+    .pe-grid { grid-template-columns: 1fr; }
+    .pe-stats { grid-template-columns: repeat(3,1fr); }
+  }
+
+  @media (max-width: 600px) {
+    .pe-stats { grid-template-columns: 1fr; }
+    .pe-body { padding: 0 16px; }
+    .pe-header-inner { padding: 0 16px; }
+  }
+
+  /* ── Card ── */
+  .pe-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .pe-card-head {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface-2);
+  }
+
+  .pe-card-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: var(--accent-lt);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .85rem;
+    flex-shrink: 0;
+  }
+
+  .pe-card-title {
+    font-family: var(--fh);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: .01em;
+    color: var(--text);
+  }
+
+  .pe-card-body { padding: 20px; }
+
+  /* ── Tabs ── */
+  .pe-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px;
+  }
+
+  .pe-tab {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 7px;
+    border: none;
+    background: none;
+    color: var(--text-2);
+    font-family: var(--fb);
+    font-size: .8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .18s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  .pe-tab.active {
+    background: var(--surface);
+    color: var(--accent);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* ── Mode banner ── */
+  .pe-mode-banner {
+    display: none;
+    background: var(--green-lt);
+    border: 1px solid #bbf7d0;
+    border-radius: 9px;
+    padding: 10px 14px;
+    font-size: .8rem;
+    color: var(--green);
+    margin-bottom: 14px;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+  }
+
+  .pe-mode-banner.show { display: flex; }
+
+  /* ── Search ── */
+  .pe-search-wrap {
+    position: relative;
+    margin-bottom: 12px;
+    transition: opacity .2s;
+  }
+
+  .pe-search-wrap input {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 40px 10px 38px;
+    color: var(--text);
+    font-family: var(--fb);
+    font-size: .85rem;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+
+  .pe-search-wrap input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+  }
+
+  .pe-search-wrap input::placeholder { color: var(--text-3); }
+
+  .pe-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-3);
+    font-size: .9rem;
+    pointer-events: none;
+  }
+
+  /* ── FIX: spinner — no inline display:none!important ── */
+  .pe-search-spinner {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none; /* controlled purely by JS */
+  }
+
+  /* ── Select bar ── */
+  .pe-select-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 9px 13px;
+    margin-bottom: 10px;
+    gap: 10px;
+    transition: opacity .2s;
+  }
+
+  .pe-select-bar label {
+    font-size: .82rem;
+    font-weight: 500;
+    color: var(--text-2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .pe-count-pill {
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    padding: 3px 10px;
+    border-radius: 100px;
+    background: var(--accent-lt);
+    color: var(--accent);
+    white-space: nowrap;
+    transition: background .2s, color .2s;
+  }
+
+  .pe-count-pill.has-selected {
+    background: var(--green-lt);
+    color: var(--green);
+  }
+
+  /* ── User list ── */
+  .pe-user-list {
+    max-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-right: 2px;
+    transition: opacity .2s;
+  }
+
+  .pe-user-list::-webkit-scrollbar { width: 4px; }
+  .pe-user-list::-webkit-scrollbar-track { background: transparent; }
+  .pe-user-list::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 4px; }
+
+  .pe-user-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: background .14s, border-color .14s;
+    user-select: none;
+  }
+
+  .pe-user-item:hover { background: var(--surface-2); border-color: var(--border); }
+
+  .pe-user-item.selected {
+    background: var(--accent-lt);
+    border-color: rgba(37,99,235,.25);
+  }
+
+  .pe-user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--fh);
+    font-size: .95rem;
+    color: #fff;
+  }
+
+  .pe-user-info { flex: 1; min-width: 0; }
+
+  .pe-user-name {
+    font-size: .84rem;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pe-user-email {
+    font-size: .74rem;
+    color: var(--text-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pe-user-check {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    border: 1.5px solid var(--border-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all .14s;
+    font-size: .65rem;
+    color: #fff;
+  }
+
+  .pe-user-item.selected .pe-user-check {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .pe-empty {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--text-3);
+    font-size: .82rem;
+  }
+
+  .pe-empty i { font-size: 2rem; display: block; margin-bottom: 8px; }
+
+  /* Custom checkbox */
+  .pe-checkbox {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1.5px solid var(--border-2);
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all .15s;
+    position: relative;
+  }
+
+  .pe-checkbox:checked { background: var(--accent); border-color: var(--accent); }
+
+  .pe-checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: .58rem;
+    color: #fff;
+    font-weight: 900;
+  }
+
+  /* ── Chips ── */
+  .pe-chips-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 40px;
+    padding: 8px 12px;
+    background: var(--surface-2);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+
+  .pe-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px 3px 8px;
+    border-radius: 100px;
+    font-size: .72rem;
+    font-weight: 600;
+    background: var(--accent-lt);
+    color: var(--accent);
+    border: 1px solid rgba(37,99,235,.2);
+  }
+
+  .pe-chip.all-chip {
+    background: var(--green-lt);
+    color: var(--green);
+    border-color: #bbf7d0;
+  }
+
+  .pe-chip-remove {
+    cursor: pointer;
+    opacity: .6;
+    font-size: .65rem;
+    transition: opacity .15s;
+    background: none;
+    border: none;
+    color: inherit;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .pe-chip-remove:hover { opacity: 1; }
+
+  .pe-chips-placeholder {
+    color: var(--text-3);
+    font-size: .8rem;
+    font-style: italic;
+  }
+
+  /* ── Composer fields ── */
+  .pe-field { margin-bottom: 18px; }
+
+  .pe-label {
+    display: block;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-2);
+    margin-bottom: 7px;
+  }
+
+  .pe-input {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    color: var(--text);
+    font-family: var(--fb);
+    font-size: .88rem;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+
+  .pe-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+  }
+
+  .pe-input::placeholder { color: var(--text-3); }
+
+  /* ── Rich toolbar ── */
+  .pe-toolbar {
+    display: flex;
+    gap: 2px;
+    flex-wrap: wrap;
+    background: var(--surface-2);
+    border: 1.5px solid var(--border);
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    padding: 7px 10px;
+  }
+
+  .pe-tb-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-2);
+    padding: 5px 9px;
+    border-radius: 6px;
+    font-size: .82rem;
+    transition: background .14s, color .14s;
+    font-family: var(--fb);
+    line-height: 1;
+  }
+
+  .pe-tb-btn:hover { background: var(--border); color: var(--text); }
+
+  .pe-tb-sep {
+    width: 1px;
+    background: var(--border);
+    margin: 4px 4px;
+    flex-shrink: 0;
+  }
+
+  .pe-color-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 7px 10px;
+    background: #fdfcfb;
+    border-left: 1.5px solid var(--border);
+    border-right: 1.5px solid var(--border);
+  }
+
+  .pe-color-label { font-size: .7rem; color: var(--text-3); font-weight: 500; }
+
+  .pe-color-swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform .14s, border-color .14s;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,.15);
+  }
+
+  .pe-color-swatch:hover { transform: scale(1.25); border-color: var(--text); }
+
+  .pe-editor {
+    width: 100%;
+    min-height: 240px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 0 0 10px 10px;
+    padding: 14px;
+    color: var(--text);
+    font-family: var(--fb);
+    font-size: .88rem;
+    outline: none;
+    resize: vertical;
+    line-height: 1.75;
+    transition: border-color .2s, box-shadow .2s;
+  }
+
+  .pe-editor:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37,99,235,.08);
+  }
+
+  .pe-editor:empty::before {
+    content: attr(data-placeholder);
+    color: var(--text-3);
+    pointer-events: none;
+  }
+
+  /* Preview */
+  .pe-preview-wrap {
+    background: #fafafa;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    min-height: 180px;
+    color: #111;
+    font-family: var(--fb);
+    font-size: .9rem;
+    line-height: 1.7;
+    display: none;
+    margin-top: 10px;
+  }
+
+  .pe-preview-wrap.show { display: block; }
+
+  /* ── Send button ── */
+  .pe-send-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #1d4ed8, #2563eb);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-family: var(--fh);
+    font-size: 1rem;
+    letter-spacing: .08em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: opacity .2s, transform .15s, box-shadow .2s;
+    box-shadow: 0 4px 14px rgba(37,99,235,.35);
+    position: relative;
+  }
+
+  .pe-send-btn:hover:not(:disabled) {
+    opacity: .94;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(37,99,235,.4);
+  }
+
+  .pe-send-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* ── Toast ── */
+  #peToast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    box-shadow: var(--shadow-lg);
+    z-index: 99999;
+    max-width: 360px;
+    transform: translateY(120%);
+    transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+    pointer-events: none;
+  }
+
+  #peToast.show { transform: translateY(0); pointer-events: auto; }
+
+  #peToast .toast-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 2px; }
+  #peToast .toast-title { font-weight: 700; font-size: .85rem; margin-bottom: 2px; color: var(--text); }
+  #peToast .toast-msg   { font-size: .78rem; color: var(--text-2); }
+
+  #peToast.success { border-color: #bbf7d0; }
+  #peToast.success .toast-icon { color: var(--green); }
+  #peToast.error   { border-color: #fecaca; }
+  #peToast.error   .toast-icon { color: var(--red); }
+  #peToast.info    .toast-icon { color: var(--accent); }
+
+  /* disabled-section utility */
+  .pe-disabled { opacity: .4; pointer-events: none; }
+</style>
+
+<!-- Page Header -->
+<div class="pe-header">
+  <div class="pe-header-inner">
+    <div>
+      <div class="pe-header-eyebrow">
+        <i class="bi bi-send-fill"></i> Campaign Manager
+      </div>
+      <div class="pe-header-title">Promotional Emails</div>
+      <div class="pe-header-sub">Compose and send targeted campaigns to your users</div>
+    </div>
+  </div>
+</div>
+
+<div class="pe-wrap">
+  <div class="pe-body">
+
+    <!-- Stats -->
+    <div class="pe-stats">
+      <div class="pe-stat">
+        <div class="pe-stat-icon blue"><i class="bi bi-people-fill"></i></div>
+        <div>
+          <div class="pe-stat-num" id="statTotal"><%= typeof users !== 'undefined' ? users.length : 0 %></div>
+          <div class="pe-stat-label">Total Users</div>
+        </div>
+      </div>
+      <div class="pe-stat">
+        <div class="pe-stat-icon green"><i class="bi bi-person-check-fill"></i></div>
+        <div>
+          <div class="pe-stat-num" id="statSelected">0</div>
+          <div class="pe-stat-label">Selected</div>
+        </div>
+      </div>
+      <div class="pe-stat">
+        <div class="pe-stat-icon gold"><i class="bi bi-envelope-check-fill"></i></div>
+        <div>
+          <div class="pe-stat-num" id="statSent">0</div>
+          <div class="pe-stat-label">Sent This Session</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pe-grid">
+
+      <!-- ══ LEFT — Recipients ══ -->
+      <div>
+        <div class="pe-card">
+          <div class="pe-card-head">
+            <div class="pe-card-icon"><i class="bi bi-people-fill"></i></div>
+            <span class="pe-card-title">Select Recipients</span>
+          </div>
+          <div class="pe-card-body">
+
+            <!-- Mode tabs -->
+            <div class="pe-tabs">
+              <button class="pe-tab active" id="tabSpecific" onclick="setMode('specific')">
+                <i class="bi bi-person-check"></i> Specific Users
+              </button>
+              <button class="pe-tab" id="tabAll" onclick="setMode('all')">
+                <i class="bi bi-broadcast"></i> All Users
+              </button>
+            </div>
+
+            <!-- All-users banner -->
+            <div class="pe-mode-banner" id="allModeBanner">
+              <i class="bi bi-broadcast-pin"></i>
+              <span>Email will be sent to <strong>all registered users</strong>.</span>
+            </div>
+
+            <!-- Search — NO inline display:none!important -->
+            <div class="pe-search-wrap" id="searchSection">
+              <i class="bi bi-search pe-search-icon"></i>
+              <input type="text" id="userSearch" placeholder="Search by name or email…" autocomplete="off" />
+              <div class="pe-search-spinner" id="searchSpinner">
+                <div class="spinner-border spinner-border-sm text-primary"
+                     style="width:14px;height:14px;border-width:2px;"></div>
+              </div>
+            </div>
+
+            <!-- Select all bar -->
+            <div class="pe-select-bar" id="selectBar">
+              <label>
+                <input type="checkbox" class="pe-checkbox" id="selectAllCheck"
+                       onchange="toggleSelectAll(this.checked)">
+                Select all visible
+              </label>
+              <span class="pe-count-pill" id="selCountPill">0 selected</span>
+            </div>
+
+            <!-- User list -->
+            <div class="pe-user-list" id="userList"></div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ RIGHT — Composer ══ -->
+      <div>
+        <div class="pe-card">
+          <div class="pe-card-head">
+            <div class="pe-card-icon"><i class="bi bi-envelope-open-fill"></i></div>
+            <span class="pe-card-title">Compose Email</span>
+          </div>
+          <div class="pe-card-body">
+
+            <!-- To chips -->
+            <label class="pe-label">To</label>
+            <div class="pe-chips-wrap" id="chipsWrap">
+              <span class="pe-chips-placeholder" id="chipsPlaceholder">No recipients selected yet…</span>
+            </div>
+
+            <!-- Subject -->
+            <div class="pe-field">
+              <label class="pe-label" for="emailSubject">Subject Line</label>
+              <input type="text" class="pe-input" id="emailSubject"
+                     placeholder="e.g. Exclusive offer just for you 🎉" maxlength="200" />
+            </div>
+
+            <!-- Body -->
+            <div class="pe-field">
+              <label class="pe-label">Message Body</label>
+
+              <div class="pe-toolbar">
+                <button class="pe-tb-btn" onclick="fmt('bold')"    title="Bold"><i class="bi bi-type-bold"></i></button>
+                <button class="pe-tb-btn" onclick="fmt('italic')"  title="Italic"><i class="bi bi-type-italic"></i></button>
+                <button class="pe-tb-btn" onclick="fmt('underline')" title="Underline"><i class="bi bi-type-underline"></i></button>
+                <div class="pe-tb-sep"></div>
+                <button class="pe-tb-btn" onclick="fmt('insertUnorderedList')" title="Bullet list"><i class="bi bi-list-ul"></i></button>
+                <button class="pe-tb-btn" onclick="fmt('insertOrderedList')"   title="Numbered list"><i class="bi bi-list-ol"></i></button>
+                <div class="pe-tb-sep"></div>
+                <button class="pe-tb-btn" onclick="insertLink()"    title="Link"><i class="bi bi-link-45deg"></i></button>
+                <button class="pe-tb-btn" onclick="fmt('justifyLeft')"   title="Left"><i class="bi bi-text-left"></i></button>
+                <button class="pe-tb-btn" onclick="fmt('justifyCenter')" title="Center"><i class="bi bi-text-center"></i></button>
+                <div class="pe-tb-sep"></div>
+                <button class="pe-tb-btn" onclick="insertDivider()" title="Divider"><i class="bi bi-dash-lg"></i></button>
+                <button class="pe-tb-btn" onclick="togglePreview()" id="previewBtn" title="Preview">
+                  <i class="bi bi-eye"></i> Preview
+                </button>
+              </div>
+
+              <!-- Colour swatches -->
+              <div class="pe-color-row">
+                <span class="pe-color-label">Text colour:</span>
+                <% ['#1c1917','#2563eb','#16a34a','#dc2626','#b45309','#7c3aed','#0e7490'].forEach(c => { %>
+                  <div class="pe-color-swatch" style="background:<%= c %>"
+                       onclick="setColor('<%= c %>')" title="<%= c %>"></div>
+                <% }) %>
+                <input type="color"
+                       style="width:20px;height:20px;border-radius:50%;border:none;background:none;cursor:pointer;padding:0;"
+                       title="Custom colour" oninput="setColor(this.value)" />
+              </div>
+
+              <!-- Editor -->
+              <div id="emailBody" class="pe-editor" contenteditable="true"
+                   data-placeholder="Write your promotional message here…"></div>
+
+              <!-- Preview pane -->
+              <div class="pe-preview-wrap" id="previewPane"></div>
+            </div>
+
+            <!-- Send -->
+            <button class="pe-send-btn" id="sendBtn" onclick="sendEmail()">
+              <i class="bi bi-send-fill"></i> SEND CAMPAIGN
+            </button>
+
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /pe-grid -->
+  </div><!-- /pe-body -->
+</div><!-- /pe-wrap -->
+
+<!-- Toast -->
+<div id="peToast">
+  <span class="toast-icon" id="toastIcon"></span>
+  <div class="toast-body">
+    <div class="toast-title" id="toastTitle"></div>
+    <div class="toast-msg"   id="toastMsg"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+
+  /* ═══════════════════════════════
+     STATE
+  ═══════════════════════════════ */
+  let allUsers  = <%- JSON.stringify(typeof users !== 'undefined' ? users : []) %>;
+  let filtered  = [...allUsers];
+  let selected  = new Set();
+  let mode      = 'specific';
+  let sentCount = 0;
+  let previewOn = false;
+  let debounceT = null;
+
+  /* ═══════════════════════════════
+     RENDER LIST
+  ═══════════════════════════════ */
+  function renderList(users) {
+    const list = document.getElementById('userList');
+    if (!users.length) {
+      list.innerHTML = `<div class="pe-empty"><i class="bi bi-inbox"></i>No users found</div>`;
+      return;
+    }
+    list.innerHTML = users.map(u => {
+      const initials = (u.name || u.email || '?').slice(0, 2).toUpperCase();
+      const isSel    = selected.has(u.id);
+      return `
+        <div class="pe-user-item ${isSel ? 'selected' : ''}" onclick="toggleUser(${u.id})" data-id="${u.id}">
+          <div class="pe-user-avatar">${initials}</div>
+          <div class="pe-user-info">
+            <div class="pe-user-name">${escHtml(u.name || '—')}</div>
+            <div class="pe-user-email">${escHtml(u.email)}</div>
+          </div>
+          <div class="pe-user-check">${isSel ? '<i class="bi bi-check-lg"></i>' : ''}</div>
+        </div>`;
+    }).join('');
+    syncSelectAllCheck();
+  }
+
+  /* ═══════════════════════════════
+     TOGGLE USER
+  ═══════════════════════════════ */
+  function toggleUser(id) {
+    if (mode === 'all') return;
+    selected.has(id) ? selected.delete(id) : selected.add(id);
+    renderList(filtered);
+    updateChips();
+    updateStats();
+  }
+  window.toggleUser = toggleUser;
+
+  /* ═══════════════════════════════
+     SELECT ALL
+  ═══════════════════════════════ */
+  function toggleSelectAll(checked) {
+    if (mode === 'all') return;
+    filtered.forEach(u => checked ? selected.add(u.id) : selected.delete(u.id));
+    renderList(filtered);
+    updateChips();
+    updateStats();
+  }
+  window.toggleSelectAll = toggleSelectAll;
+
+  function syncSelectAllCheck() {
+    const cb = document.getElementById('selectAllCheck');
+    if (!filtered.length) { cb.checked = false; cb.indeterminate = false; return; }
+    const selInView = filtered.filter(u => selected.has(u.id)).length;
+    cb.checked       = selInView === filtered.length;
+    cb.indeterminate = selInView > 0 && selInView < filtered.length;
+  }
+
+  /* ═══════════════════════════════
+     MODE SWITCH
+  ═══════════════════════════════ */
+  function setMode(m) {
+    mode = m;
+    document.getElementById('tabSpecific').classList.toggle('active', m === 'specific');
+    document.getElementById('tabAll').classList.toggle('active',      m === 'all');
+    document.getElementById('allModeBanner').classList.toggle('show', m === 'all');
+
+    const disabled = m === 'all';
+    ['searchSection', 'selectBar', 'userList'].forEach(id => {
+      document.getElementById(id).classList.toggle('pe-disabled', disabled);
+    });
+
+    if (m === 'all') selected.clear();
+    renderList(filtered);
+    updateChips();
+    updateStats();
+  }
+  window.setMode = setMode;
+
+  /* ═══════════════════════════════
+     CHIPS
+  ═══════════════════════════════ */
+  function updateChips() {
+    const wrap = document.getElementById('chipsWrap');
+    const ph   = document.getElementById('chipsPlaceholder');
+    wrap.querySelectorAll('.pe-chip').forEach(c => c.remove());
+
+    if (mode === 'all') {
+      ph.style.display = 'none';
+      const chip = document.createElement('span');
+      chip.className = 'pe-chip all-chip';
+      chip.innerHTML = `<i class="bi bi-broadcast-pin"></i> All Users <button class="pe-chip-remove" onclick="setMode('specific')"><i class="bi bi-x"></i></button>`;
+      wrap.appendChild(chip);
+      return;
+    }
+
+    if (selected.size === 0) { ph.style.display = 'inline'; return; }
+    ph.style.display = 'none';
+
+    const usersMap = Object.fromEntries(allUsers.map(u => [u.id, u]));
+    const selArr   = [...selected];
+    const show     = selArr.slice(0, 6);
+    const more     = selArr.length - show.length;
+
+    show.forEach(id => {
+      const u = usersMap[id]; if (!u) return;
+      const chip = document.createElement('span');
+      chip.className = 'pe-chip';
+      chip.innerHTML = `${escHtml(u.name || u.email)} <button class="pe-chip-remove" onclick="removeChip(${id})"><i class="bi bi-x"></i></button>`;
+      wrap.appendChild(chip);
+    });
+
+    if (more > 0) {
+      const chip = document.createElement('span');
+      chip.className = 'pe-chip';
+      chip.textContent = `+${more} more`;
+      wrap.appendChild(chip);
+    }
+  }
+
+  function removeChip(id) {
+    selected.delete(id);
+    renderList(filtered);
+    updateChips();
+    updateStats();
+  }
+  window.removeChip = removeChip;
+
+  /* ═══════════════════════════════
+     STATS
+  ═══════════════════════════════ */
+  function updateStats() {
+    const count = mode === 'all' ? allUsers.length : selected.size;
+    document.getElementById('statSelected').textContent = count;
+    const pill = document.getElementById('selCountPill');
+    pill.textContent = `${count} selected`;
+    pill.classList.toggle('has-selected', count > 0);
+  }
+
+  /* ═══════════════════════════════
+     SEARCH — FIXED DEBOUNCER
+     Bug 1: URL was /admin/promo/users/search — now /admin/api/users/search
+     Bug 2: spinner had display:none!important hardcoded inline — now just display:none in CSS
+  ═══════════════════════════════ */
+  document.getElementById('userSearch').addEventListener('input', function () {
+    clearTimeout(debounceT);
+    const q = this.value.trim();
+
+    if (!q) {
+      filtered = [...allUsers];
+      renderList(filtered);
+      showSpinner(false);
+      return;
+    }
+
+    showSpinner(true);
+
+    debounceT = setTimeout(async () => {
+      try {
+        const res  = await fetch(`/admin/promo/users/search?q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+
+        if (data.success && Array.isArray(data.data)) {
+          /* merge new users into master list so chips resolve */
+          data.data.forEach(u => {
+            if (!allUsers.find(x => x.id === u.id)) allUsers.push(u);
+          });
+          filtered = data.data;
+        } else {
+          filtered = clientFilter(q);
+        }
+      } catch (_) {
+        /* network error — fall back to client-side filter */
+        filtered = clientFilter(q);
+      }
+
+      renderList(filtered);
+      showSpinner(false);
+    }, 350);
+  });
+
+  function clientFilter(q) {
+    const lq = q.toLowerCase();
+    return allUsers.filter(u =>
+      (u.name  || '').toLowerCase().includes(lq) ||
+      (u.email || '').toLowerCase().includes(lq)
+    );
+  }
+
+  /* spinner helper — no !important conflict */
+  function showSpinner(on) {
+    document.getElementById('searchSpinner').style.display = on ? 'block' : 'none';
+  }
+
+  /* ═══════════════════════════════
+     RICH EDITOR
+  ═══════════════════════════════ */
+  function fmt(cmd, val) {
+    document.getElementById('emailBody').focus();
+    document.execCommand(cmd, false, val || null);
+  }
+  window.fmt = fmt;
+
+  function setColor(hex) {
+    document.getElementById('emailBody').focus();
+    document.execCommand('foreColor', false, hex);
+  }
+  window.setColor = setColor;
+
+  function insertLink() {
+    const url = prompt('Enter URL:');
+    if (url) {
+      document.getElementById('emailBody').focus();
+      document.execCommand('createLink', false, url);
+      document.getElementById('emailBody').querySelectorAll('a').forEach(a => a.target = '_blank');
+    }
+  }
+  window.insertLink = insertLink;
+
+  function insertDivider() {
+    document.getElementById('emailBody').focus();
+    document.execCommand('insertHTML', false, '<hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0;">');
+  }
+  window.insertDivider = insertDivider;
+
+  function togglePreview() {
+    previewOn = !previewOn;
+    document.getElementById('previewPane').classList.toggle('show', previewOn);
+    document.getElementById('emailBody').style.display = previewOn ? 'none' : 'block';
+    document.getElementById('previewBtn').innerHTML = previewOn
+      ? '<i class="bi bi-pencil"></i> Edit'
+      : '<i class="bi bi-eye"></i> Preview';
+    if (previewOn) updatePreview();
+  }
+  window.togglePreview = togglePreview;
+
+  function updatePreview() {
+    const subject = document.getElementById('emailSubject').value || '(No subject)';
+    const editor  = document.getElementById('emailBody');
+    document.getElementById('previewPane').innerHTML = `
+      <div style="font-family:'DM Sans',sans-serif;max-width:600px;margin:0 auto;">
+        <div style="background:#1d4ed8;color:#fff;padding:18px 24px;border-radius:8px 8px 0 0;">
+          <div style="font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:4px;">Subject</div>
+          <div style="font-size:1rem;font-weight:700;">${escHtml(subject)}</div>
+        </div>
+        <div style="border:1px solid #e5e7eb;border-top:none;padding:24px;border-radius:0 0 8px 8px;background:#fff;line-height:1.7;">
+          ${editor.innerHTML || '<em style="color:#aaa">No content yet…</em>'}
+        </div>
+      </div>`;
+  }
+
+  document.getElementById('emailBody').addEventListener('input', () => {
+    if (previewOn) updatePreview();
+  });
+
+  /* ═══════════════════════════════
+     SEND
+  ═══════════════════════════════ */
+  async function sendEmail() {
+    const subject = document.getElementById('emailSubject').value.trim();
+    const editor  = document.getElementById('emailBody');
+    const html    = editor.innerHTML.trim();
+
+    if (!subject) { showToast('error', 'Missing Subject',    'Please enter a subject line.'); return; }
+    if (!html)    { showToast('error', 'Empty Body',         'Please write your email message.'); return; }
+
+    let recipients;
+    if (mode === 'all') {
+      recipients = ['all'];
+    } else {
+      if (selected.size === 0) { showToast('error', 'No Recipients', 'Please select at least one user.'); return; }
+      const usersMap = Object.fromEntries(allUsers.map(u => [u.id, u]));
+      recipients = [...selected].map(id => usersMap[id]?.email).filter(Boolean);
+    }
+
+    const btn = document.getElementById('sendBtn');
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" style="width:16px;height:16px;border-width:2px;"></span> SENDING…`;
+
+    try {
+      if (typeof Loader !== 'undefined') Loader.show('Sending campaign…');
+
+      const res  = await fetch('/admin/promo/promo-emails/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject, html, recipients }),
+      });
+      const data = await res.json();
+
+      if (typeof Loader !== 'undefined') Loader.hide();
+
+      if (res.ok && data.success) {
+        sentCount += data.sent || recipients.length;
+        document.getElementById('statSent').textContent = sentCount;
+        showToast('success', 'Campaign Sent!', `${data.sent || recipients.length} email(s) dispatched.`);
+        selected.clear();
+        editor.innerHTML = '';
+        document.getElementById('emailSubject').value = '';
+        if (mode === 'all') setMode('specific');
+        renderList(filtered);
+        updateChips();
+        updateStats();
+      } else {
+        showToast('error', 'Send Failed', data.message || 'Something went wrong.');
+      }
+    } catch (_) {
+      if (typeof Loader !== 'undefined') Loader.hide();
+      showToast('error', 'Network Error', 'Could not reach the server.');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `<i class="bi bi-send-fill"></i> SEND CAMPAIGN`;
+    }
+  }
+  window.sendEmail = sendEmail;
+
+  /* ═══════════════════════════════
+     TOAST
+  ═══════════════════════════════ */
+  let toastT;
+  function showToast(type, title, msg) {
+    const icons = { success: 'bi-check-circle-fill', error: 'bi-x-circle-fill', info: 'bi-info-circle-fill' };
+    const el = document.getElementById('peToast');
+    document.getElementById('toastIcon').className  = `toast-icon bi ${icons[type]}`;
+    document.getElementById('toastTitle').textContent = title;
+    document.getElementById('toastMsg').textContent   = msg;
+    el.className = `show ${type}`;
+    clearTimeout(toastT);
+    toastT = setTimeout(() => el.classList.remove('show'), 4500);
+  }
+
+  /* ═══════════════════════════════
+     UTILS
+  ═══════════════════════════════ */
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* ═══════════════════════════════
+     INIT
+  ═══════════════════════════════ */
+  document.getElementById('statTotal').textContent = allUsers.length;
+  renderList(filtered);
+  updateChips();
+  updateStats();
+
+})();
+</script>

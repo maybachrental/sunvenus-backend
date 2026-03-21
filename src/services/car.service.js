@@ -32,8 +32,7 @@ const roundTripPriceCalculate = (trip_type, drop_datetime, pickup_datetime, cars
     if (!carsPricingData) {
       throw new ErrorHandler(400, "Cars pricing data is required");
     }
-    console.log(distanceData);
-    
+
     if (trip_type === tripTypes.ROUND_TRIP && (!distanceData || !pickup_datetime || !drop_datetime)) {
       throw new ErrorHandler(400, "Pickup, drop datetime and distance are required for round trip");
     }

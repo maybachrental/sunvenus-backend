@@ -1,0 +1,553 @@
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+  
+    :root {
+      --ink:      #0f1117;
+      --ink-2:    #2a2d36;
+      --surface:  #f5f5f7;
+      --card-bg:  #ffffff;
+      --border:   #e4e4e8;
+      --accent:   #c9a84c;        /* gold */
+      --accent-2: #1a1a2e;        /* deep navy */
+      --success:  #1e8a5e;
+      --danger:   #c0392b;
+      --muted:    #7a7d8a;
+      --radius:   14px;
+      --shadow:   0 4px 24px rgba(0,0,0,.07);
+      --shadow-hover: 0 10px 40px rgba(0,0,0,.13);
+    }
+  
+    .cv-wrap { font-family: 'DM Sans', sans-serif; color: var(--ink); }
+  
+    /* ── Hero ── */
+    .cv-hero {
+      position: relative;
+      background: var(--accent-2);
+      border-radius: var(--radius);
+      overflow: hidden;
+      min-height: 340px;
+      display: flex;
+      align-items: flex-end;
+      margin-bottom: 28px;
+    }
+    .cv-hero-bg {
+      position: absolute; inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: .35;
+      transition: opacity .4s;
+    }
+    .cv-hero:hover .cv-hero-bg { opacity: .45; }
+    .cv-hero-gradient {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(15,17,23,.95) 0%, rgba(15,17,23,.3) 60%, transparent 100%);
+    }
+    .cv-hero-content {
+      position: relative;
+      padding: 36px 40px;
+      width: 100%;
+    }
+    .cv-hero-eyebrow {
+      font-family: 'Syne', sans-serif;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .cv-hero-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.1;
+      margin: 0 0 12px;
+    }
+    .cv-hero-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+    .cv-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: .72rem; font-weight: 600; letter-spacing: .04em;
+      padding: 4px 12px; border-radius: 100px;
+    }
+    .cv-badge-gold   { background: var(--accent);   color: #1a1200; }
+    .cv-badge-dark   { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.18); }
+    .cv-badge-green  { background: var(--success);  color: #fff; }
+    .cv-badge-red    { background: var(--danger);   color: #fff; }
+  
+    /* ── Gallery Thumbnails ── */
+    .cv-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .cv-thumb {
+      position: relative;
+      aspect-ratio: 4/3;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color .2s, transform .2s;
+    }
+    .cv-thumb.active { border-color: var(--accent); }
+    .cv-thumb:hover  { transform: translateY(-2px); border-color: var(--accent); }
+    .cv-thumb img    { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .cv-thumb-video  {
+      width: 100%; height: 100%;
+      background: var(--ink);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 1.6rem;
+    }
+    .cv-thumb-primary-dot {
+      position: absolute; top: 5px; right: 5px;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent); border: 1.5px solid #fff;
+    }
+  
+    /* ── Section Card ── */
+    .cv-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      overflow: hidden;
+      transition: box-shadow .2s;
+    }
+    .cv-card:hover { box-shadow: var(--shadow-hover); }
+    .cv-card-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+      background: var(--surface);
+    }
+    .cv-card-header-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--accent-2); color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .9rem;
+    }
+    .cv-card-header h6 {
+      font-family: 'Syne', sans-serif;
+      font-size: .85rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      margin: 0; color: var(--ink);
+    }
+    .cv-card-body { padding: 24px; }
+  
+    /* ── Spec Grid ── */
+    .cv-spec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+    }
+    .cv-spec-item {
+      background: var(--surface);
+      border-radius: 10px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+    }
+    .cv-spec-label {
+      font-size: .68rem; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 5px;
+    }
+    .cv-spec-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem; font-weight: 700; color: var(--ink);
+    }
+    .cv-spec-icon { color: var(--accent); margin-right: 5px; font-size: .9rem; }
+  
+    /* ── Pricing Tiers ── */
+    .cv-pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .cv-pricing-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .cv-pricing-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+    .cv-pricing-card.outstation {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, #fffbf0 0%, #fff9ec 100%);
+    }
+    .cv-pricing-card.outstation::before {
+      content: 'OUTSTATION';
+      position: absolute; top: 12px; right: -18px;
+      background: var(--accent); color: #1a1200;
+      font-size: .58rem; font-weight: 800; letter-spacing: .1em;
+      padding: 3px 28px; transform: rotate(30deg);
+    }
+    .cv-pricing-duration {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem; font-weight: 800; color: var(--ink);
+      line-height: 1;
+    }
+    .cv-pricing-duration span { font-size: .85rem; font-weight: 500; color: var(--muted); }
+    .cv-pricing-base {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem; font-weight: 700; color: var(--accent);
+      margin: 8px 0 12px;
+    }
+    .cv-pricing-meta { display: flex; flex-direction: column; gap: 5px; }
+    .cv-pricing-meta-row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: .78rem; color: var(--muted);
+      border-top: 1px dashed var(--border); padding-top: 5px;
+    }
+    .cv-pricing-meta-row strong { color: var(--ink); font-weight: 600; }
+  
+    /* ── Status pill ── */
+    .cv-status {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .78rem; font-weight: 600;
+      padding: 5px 14px; border-radius: 100px;
+    }
+    .cv-status-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .cv-status.active   { background: #e6f7f1; color: var(--success); }
+    .cv-status.active   .cv-status-dot { background: var(--success); }
+    .cv-status.inactive { background: #fdf0ee; color: var(--danger); }
+    .cv-status.inactive .cv-status-dot { background: var(--danger); }
+  
+    /* ── Action Bar ── */
+    .cv-action-bar {
+      display: flex; gap: 10px; flex-wrap: wrap;
+      padding: 20px 0 8px;
+    }
+  
+    /* ── Lightbox ── */
+    #cvLightbox {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.92); z-index: 10000;
+      align-items: center; justify-content: center; flex-direction: column;
+    }
+    #cvLightbox.open { display: flex; }
+    #cvLightbox img {
+      max-width: 90vw; max-height: 80vh;
+      border-radius: 8px; object-fit: contain;
+      box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    }
+    #cvLightboxClose {
+      position: absolute; top: 20px; right: 24px;
+      color: #fff; font-size: 1.8rem; cursor: pointer;
+      background: none; border: none; opacity: .7;
+      transition: opacity .2s;
+    }
+    #cvLightboxClose:hover { opacity: 1; }
+    #cvLightboxCaption {
+      color: rgba(255,255,255,.6);
+      font-size: .82rem; margin-top: 12px;
+    }
+  </style>
+  
+  <div class="app-content-header">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+      <h3 class="mb-0 fw-bold" style="font-family:'Syne',sans-serif;">Car Details</h3>
+      <span class="text-muted">Cars / View — <%= car.name %></span>
+    </div>
+  </div>
+  
+  <div class="app-content">
+    <div class="container-fluid cv-wrap">
+  
+      <%
+        const images   = car.CarImages   || [];
+        const pricings = car.CarsPricings || [];
+        const primaryImg = images.find(i => i.is_primary) || images[0] || null;
+        const heroBg = primaryImg ? (primaryImg.image_url || primaryImg.image_path) : '';
+      %>
+  
+      <!-- ══ HERO ══ -->
+      <div class="cv-hero">
+        <% if (heroBg) { %>
+          <div class="cv-hero-bg" style="background-image:url('<%= heroBg %>')"></div>
+        <% } else { %>
+          <div class="cv-hero-bg" style="background: linear-gradient(135deg,#1a1a2e,#16213e)"></div>
+        <% } %>
+        <div class="cv-hero-gradient"></div>
+        <div class="cv-hero-content">
+          <div class="cv-hero-eyebrow">
+            <%= car.Brand ? car.Brand.brand_name : '' %>
+          </div>
+          <h1 class="cv-hero-title"><%= car.name %> &nbsp;<span style="opacity:.6;font-weight:400"><%= car.model %></span></h1>
+          <div class="cv-hero-badges">
+            <span class="cv-badge cv-badge-gold"><i class="bi bi-palette2"></i> <%= car.color %></span>
+            <span class="cv-badge cv-badge-dark"><i class="bi bi-people-fill"></i> <%= car.seating_capacity %> seats</span>
+            <span class="cv-badge cv-badge-dark"><i class="bi bi-gear-fill"></i> <%= car.transmission %></span>
+            <% if (car.FuelType) { %>
+              <span class="cv-badge cv-badge-dark"><i class="bi bi-fuel-pump-fill"></i> <%= car.FuelType.fuel %></span>
+            <% } %>
+            <% if (car.is_premium) { %>
+              <span class="cv-badge cv-badge-gold"><i class="bi bi-star-fill"></i> Premium</span>
+            <% } %>
+            <span class="cv-badge <%= car.is_active ? 'cv-badge-green' : 'cv-badge-red' %>">
+              <i class="bi bi-<%= car.is_active ? 'check-circle-fill' : 'x-circle-fill' %>"></i>
+              <%= car.is_active ? 'Active' : 'Inactive' %>
+            </span>
+          </div>
+        </div>
+      </div>
+  
+      <div class="row g-4">
+  
+        <!-- ══ LEFT COL ══ -->
+        <div class="col-lg-8">
+  
+          <!-- Gallery -->
+          <% if (images.length > 0) { %>
+          <div class="cv-card">
+            <div class="cv-card-header">
+              <div class="cv-card-header-icon"><i class="bi bi-images"></i></div>
+              <h6>Gallery <span style="color:var(--muted);font-weight:400">(<%= images.length %> file<%= images.length !== 1 ? 's' : '' %>)</span></h6>
+            </div>
+            <div class="cv-card-body">
+              <div class="cv-gallery">
+                <% images.forEach((img, idx) => { %>
+                  <div
+                    class="cv-thumb <%= img.is_primary ? 'active' : '' %>"
+                    onclick="openLightbox('<%= img.image_url || img.image_path %>','<%= img.image_name %>')"
+                    title="<%= img.image_name %>"
+                  >
+                    <% if (img.file_type === 'VIDEO') { %>
+                      <div class="cv-thumb-video"><i class="bi bi-play-circle-fill"></i></div>
+                    <% } else { %>
+                      <img
+                        src="<%= img.image_url || img.image_path %>"
+                        alt="<%= img.image_name %>"
+                        loading="lazy"
+                        onerror="this.src='https://via.placeholder.com/200x150/dee2e6/6c757d?text=No+Image'"
+                      />
+                    <% } %>
+                    <% if (img.is_primary) { %>
+                      <div class="cv-thumb-primary-dot" title="Primary Image"></div>
+                    <% } %>
+                  </div>
+                <% }) %>
+              </div>
+              <p class="small mb-0" style="color:var(--muted)">
+                <i class="bi bi-info-circle me-1"></i>
+                Click any image to enlarge. <span style="color:var(--accent)">●</span> Gold dot = Primary image.
+              </p>
+            </div>
+          </div>
+          <% } %>
+  
+          <!-- Pricing Tiers -->
+          <div class="cv-card">
+            <div class="cv-card-header">
+              <div class="cv-card-header-icon"><i class="bi bi-currency-rupee"></i></div>
+              <h6>Pricing Tiers <span style="color:var(--muted);font-weight:400">(<%= pricings.length %>)</span></h6>
+            </div>
+            <div class="cv-card-body">
+              <% if (pricings.length > 0) { %>
+                <div class="cv-pricing-grid">
+                  <% pricings.forEach(p => { %>
+                    <div class="cv-pricing-card <%= p.is_outstation ? 'outstation' : '' %>">
+                      <div class="cv-pricing-duration">
+                        <%= p.duration_hours %><span> hrs</span>
+                      </div>
+                      <div class="cv-pricing-base">₹<%= p.base_price?.toLocaleString('en-IN') %></div>
+                      <div class="cv-pricing-meta">
+                        <div class="cv-pricing-meta-row">
+                          <span><i class="bi bi-signpost-2 me-1"></i>Included KM</span>
+                          <strong><%= p.included_km %> km</strong>
+                        </div>
+                        <div class="cv-pricing-meta-row">
+                          <span><i class="bi bi-clock-history me-1"></i>Extra / hr</span>
+                          <strong>₹<%= p.extra_hour_charge?.toLocaleString('en-IN') %></strong>
+                        </div>
+                        <div class="cv-pricing-meta-row">
+                          <span><i class="bi bi-map me-1"></i>Extra / km</span>
+                          <strong>₹<%= p.extra_km_charge?.toLocaleString('en-IN') %></strong>
+                        </div>
+                      </div>
+                    </div>
+                  <% }) %>
+                </div>
+              <% } else { %>
+                <p class="text-muted mb-0"><i class="bi bi-exclamation-circle me-1"></i>No pricing tiers configured.</p>
+              <% } %>
+            </div>
+          </div>
+  
+        </div>
+  
+        <!-- ══ RIGHT COL ══ -->
+        <div class="col-lg-4">
+  
+          <!-- Specifications -->
+          <div class="cv-card">
+            <div class="cv-card-header">
+              <div class="cv-card-header-icon"><i class="bi bi-card-checklist"></i></div>
+              <h6>Specifications</h6>
+            </div>
+            <div class="cv-card-body">
+              <div class="cv-spec-grid" style="grid-template-columns:1fr 1fr;">
+  
+                <div class="cv-spec-item">
+                  <div class="cv-spec-label">Brand</div>
+                  <div class="cv-spec-value">
+                    <i class="bi bi-shield-fill cv-spec-icon"></i>
+                    <%= car.Brand ? car.Brand.brand_name : '—' %>
+                  </div>
+                </div>
+  
+                <div class="cv-spec-item">
+                  <div class="cv-spec-label">Category</div>
+                  <div class="cv-spec-value">
+                    <i class="bi bi-tag-fill cv-spec-icon"></i>
+                    <%= car.CarCategory ? car.CarCategory.category : '—' %>
+                  </div>
+                </div>
+  
+                <div class="cv-spec-item">
+                  <div class="cv-spec-label">Fuel Type</div>
+                  <div class="cv-spec-value">
+                    <i class="bi bi-fuel-pump-fill cv-spec-icon"></i>
+                    <%= car.FuelType ? car.FuelType.fuel : '—' %>
+                  </div>
+                </div>
+  
+                <div class="cv-spec-item">
+                  <div class="cv-spec-label">Transmission</div>
+                  <div class="cv-spec-value">
+                    <i class="bi bi-gear-fill cv-spec-icon"></i>
+                    <%= car.transmission %>
+                  </div>
+                </div>
+  
+                <div class="cv-spec-item">
+                  <div class="cv-spec-label">Seating</div>
+                  <div class="cv-spec-value">
+                    <i class="bi bi-people-fill cv-spec-icon"></i>
+                    <%= car.seating_capacity %> seats
+                  </div>
+                </div>
+  
+                <div class="cv-spec-item">
+                  <div class="cv-spec-label">Color</div>
+                  <div class="cv-spec-value">
+                    <i class="bi bi-palette2 cv-spec-icon"></i>
+                    <%= car.color %>
+                  </div>
+                </div>
+  
+                <div class="cv-spec-item">
+                  <div class="cv-spec-label">Model</div>
+                  <div class="cv-spec-value" style="font-size:.88rem;">
+                    <i class="bi bi-car-front cv-spec-icon"></i>
+                    <%= car.model %>
+                  </div>
+                </div>
+  
+                <div class="cv-spec-item">
+                  <div class="cv-spec-label">Order By</div>
+                  <div class="cv-spec-value">
+                    <i class="bi bi-sort-numeric-up cv-spec-icon"></i>
+                    <%= car.order_by ?? 0 %>
+                  </div>
+                </div>
+  
+              </div>
+            </div>
+          </div>
+  
+          <!-- Status Flags -->
+          <div class="cv-card">
+            <div class="cv-card-header">
+              <div class="cv-card-header-icon"><i class="bi bi-toggle-on"></i></div>
+              <h6>Status & Flags</h6>
+            </div>
+            <div class="cv-card-body d-flex flex-column gap-3">
+  
+              <div class="d-flex justify-content-between align-items-center">
+                <span style="font-size:.85rem;font-weight:500">Availability</span>
+                <span class="cv-status <%= car.is_active ? 'active' : 'inactive' %>">
+                  <span class="cv-status-dot"></span>
+                  <%= car.is_active ? 'Active' : 'Inactive' %>
+                </span>
+              </div>
+  
+              <div class="d-flex justify-content-between align-items-center">
+                <span style="font-size:.85rem;font-weight:500">Premium Tier</span>
+                <span class="cv-status <%= car.is_premium ? 'active' : 'inactive' %>">
+                  <span class="cv-status-dot"></span>
+                  <%= car.is_premium ? 'Yes' : 'No' %>
+                </span>
+              </div>
+  
+              <div class="d-flex justify-content-between align-items-center">
+                <span style="font-size:.85rem;font-weight:500">Total Images</span>
+                <span class="cv-badge cv-badge-dark" style="background:var(--surface);color:var(--ink);border:1px solid var(--border);">
+                  <i class="bi bi-images"></i> <%= images.length %>
+                </span>
+              </div>
+  
+              <div class="d-flex justify-content-between align-items-center">
+                <span style="font-size:.85rem;font-weight:500">Pricing Tiers</span>
+                <span class="cv-badge cv-badge-dark" style="background:var(--surface);color:var(--ink);border:1px solid var(--border);">
+                  <i class="bi bi-currency-rupee"></i> <%= pricings.length %>
+                </span>
+              </div>
+  
+              <div class="d-flex justify-content-between align-items-center">
+                <span style="font-size:.85rem;font-weight:500">Car ID</span>
+                <code style="background:var(--surface);padding:3px 10px;border-radius:6px;font-size:.8rem;">#<%= car.id %></code>
+              </div>
+  
+            </div>
+          </div>
+  
+          <!-- Actions -->
+          <div class="cv-action-bar">
+            <a href="/admin/car/<%= car.id %>/edit" class="btn btn-primary flex-fill">
+              <i class="bi bi-pencil-fill me-1"></i> Edit Car
+            </a>
+            <a href="/admin/cars" class="btn btn-outline-secondary flex-fill">
+              <i class="bi bi-arrow-left me-1"></i> Back
+            </a>
+          </div>
+  
+        </div>
+      </div>
+  
+    </div>
+  </div>
+  
+  <!-- ══ LIGHTBOX ══ -->
+  <div id="cvLightbox">
+    <button id="cvLightboxClose" onclick="closeLightbox()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+    <img id="cvLightboxImg" src="" alt="Car Image" />
+    <div id="cvLightboxCaption"></div>
+  </div>
+  
+  <script>
+    function openLightbox(src, caption) {
+      if (!src) return;
+      document.getElementById("cvLightboxImg").src = src;
+      document.getElementById("cvLightboxCaption").textContent = caption || "";
+      document.getElementById("cvLightbox").classList.add("open");
+    }
+    function closeLightbox() {
+      document.getElementById("cvLightbox").classList.remove("open");
+      document.getElementById("cvLightboxImg").src = "";
+    }
+    // Close on backdrop click
+    document.getElementById("cvLightbox").addEventListener("click", function (e) {
+      if (e.target === this) closeLightbox();
+    });
+    // Close on Escape key
+    document.addEventListener("keydown", e => { if (e.key === "Escape") closeLightbox(); });
+  </script>
+  

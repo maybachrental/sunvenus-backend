@@ -109,8 +109,8 @@
                             <th>Fuel</th>
                             <th>Color</th>
                             <th>Seats</th>
-                            <!-- <th>Price / Day</th> -->
                             <th>Availability</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -119,7 +119,6 @@
                                 <td>
                                     <%= c.id %>
                                 </td>
-                               
                                 <td>
                                     <%= c.name || "-" %>
                                 </td>
@@ -142,11 +141,29 @@
                                 <td>
                                     <%= c.seating_capacity || "-" %>
                                 </td>
-                                </td>
                                 <td>
                                     <span class="badge bg-<%= c.is_active ? 'success' : 'warning' %>">
                                         <%= c.is_active ? 'Available' : 'Unavailable' %>
                                     </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <!-- View -->
+                                        <a href="/admin/car-details/<%= c.id %>" class="btn btn-sm btn-outline-info"
+                                            title="View Car">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <!-- Edit -->
+                                        <a href="/admin/car/<%= c.id %>/edit" class="btn btn-sm btn-outline-primary"
+                                            title="Edit Car">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <!-- Delete -->
+                                        <button class="btn btn-sm btn-outline-danger" title="Delete Car"
+                                            onclick="confirmDelete(<%= c.id %>, '<%= c.name %>')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                             <% }) %>
@@ -177,3 +194,25 @@
 
     </div>
 </div>
+
+<script>
+    function confirmDelete(id, name) {
+        if (!confirm(`Are you sure you want to delete "${name}"?\nThis will also remove all pricing and images. This action cannot be undone.`)) return;
+
+        fetch(`/admin/car/delete/${id}`, { method: "DELETE" })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const toast = document.createElement("div");
+                    toast.className = "alert alert-success position-fixed bottom-0 end-0 m-3 shadow";
+                    toast.style.zIndex = 9999;
+                    toast.textContent = "Car deleted successfully.";
+                    document.body.appendChild(toast);
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    alert(data.message || "Failed to delete car.");
+                }
+            })
+            .catch(() => alert("An unexpected error occurred. Please try again."));
+    }
+</script>

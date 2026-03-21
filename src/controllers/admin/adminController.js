@@ -81,7 +81,7 @@ const loginAdmin = async (req, res) => {
       name: adminUser.name,
     });
     console.log(accessToken);
-    
+
     res.cookie("admin_access_token", accessToken, {
       httpOnly: true,
       // secure: process.env.NODE_ENV === "production",
@@ -220,63 +220,4 @@ const showAllUsers = async (req, res, next) => {
   }
 };
 
-const showAllCars = async (req, res, next) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = 10;
-    const offset = (page - 1) * limit;
-
-    const { search = "", fuel_type = "", is_active = "", transmission = "" } = req.query;
-
-    const carWhere = {};
-
-    // Search by name or brand
-    if (search) {
-      carWhere[Op.or] = [{ name: { [Op.like]: `%${search}%` } }, { model: { [Op.like]: `%${search}%` } }];
-    }
-
-    // Filter by fuel type
-    if (fuel_type) {
-      carWhere.fuel_type = fuel_type;
-    }
-
-    // Filter by availability
-    if (is_active !== "") {
-      carWhere.is_active = is_active === "true";
-    }
-
-    // Filter by transmission
-    if (transmission) {
-      carWhere.transmission = transmission;
-    }
-
-    const { rows: cars, count } = await Cars.findAndCountAll({
-      where: carWhere,
-      include: [
-        {
-          model: Brands,
-          attributes: ["brand_name"],
-        },
-        {
-          model: FuelTypes,
-          attributes: ["fuel"],
-        },
-      ],
-      order: [["created_at", "DESC"]],
-      limit,
-      offset,
-    });
-
-    res.render("admin/showCars", {
-      cars,
-      currentPage: page,
-      totalPages: Math.ceil(count / limit),
-      query: req.query,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Something went wrong");
-  }
-};
-
-module.exports = { showLoginPage, loginAdmin, logoutAdmin, showAdminRegisterPage, createAdmin, showAllBookings, showAllCars, showAllUsers };
+module.exports = { showLoginPage, loginAdmin, logoutAdmin, showAdminRegisterPage, createAdmin, showAllBookings, showAllUsers };

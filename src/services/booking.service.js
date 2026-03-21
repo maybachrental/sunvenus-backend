@@ -109,6 +109,9 @@ const calculatePricingLogic = async (
       });
     }
   }
+  if (whereQuery.is_outstation && destinations) {
+    estimated_price.distanceData = distanceData;
+  }
   return estimated_price;
 };
 const calculateDiscount = (total_price, discountType, discountValue) => {

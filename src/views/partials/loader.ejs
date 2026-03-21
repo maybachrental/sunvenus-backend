@@ -1,0 +1,39 @@
+<!-- Global Loader Overlay -->
+<div id="globalLoader" style="
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+">
+    <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status"></div>
+    <span id="globalLoaderText" style="color: #fff; font-size: 1rem; font-weight: 500;">Please wait...</span>
+</div>
+
+<script>
+    const Loader = {
+        show(message = "Please wait...") {
+            const el = document.getElementById("globalLoader");
+            document.getElementById("globalLoaderText").textContent = message;
+            el.style.display = "flex";
+        },
+        hide() {
+            document.getElementById("globalLoader").style.display = "none";
+        },
+
+        // ✅ Fetch wrapper — auto shows/hides loader around any fetch call
+        async fetch(url, options = {}, message = "Please wait...") {
+            this.show(message);
+            try {
+                const res = await fetch(url, options);
+                return res;
+            } finally {
+                this.hide(); // always hides even if fetch throws
+            }
+        }
+    };
+</script>
