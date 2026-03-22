@@ -51,7 +51,10 @@ const fetchFilterData = async (req, res, next) => {
     const fetchFuelTypes = await FuelTypes.findAll({
       attributes: ["fuel", "id"],
     });
-    responseHandler(res, 200, "Fetched Data", { categories: fetchCategories, fuelTypes: fetchFuelTypes });
+    const fetchBrands = await Brands.findAll({
+      attributes: ["brand_name", "id", "brand_img"],
+    });
+    responseHandler(res, 200, "Fetched Data", { categories: fetchCategories, fuelTypes: fetchFuelTypes, brands: fetchBrands });
   } catch (error) {
     next(error);
   }
