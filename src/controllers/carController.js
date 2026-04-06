@@ -357,6 +357,53 @@ const fetchEstimatePrice = async (req, res, next) => {
   }
 };
 
+const fetchAllPricingWithCar = async (req, res, next) => {
+  try {
+    const { limit, offset, page } = getPagination(req.query.page || 1, 20);
+    const order = buildCarSort(null);
+    const total = await Cars.count({
+      where: { is_active: true },
+    });
+
+    const fetchCars = await Cars.findAll({
+      distinct: true,
+      where: { is_active: true },
+      subQuery: false,
+      include: [
+        {
+          model: CarsPricings,
+          required: true,
+          attributes: {
+            exclude: ["created_at", "updated_at"],
+          },
+        },
+        { model: CarCategories, attributes: ["category"] },
+        { model: FuelTypes, attributes: ["fuel"] },
+        {
+          model: CarImages,
+          attributes: {
+            exclude: ["created_at", "updated_at", "car_id", "image_path"],
+          },
+        },
+      ],
+      limit,
+      offset,
+      order,
+    });
+
+    const totalPages = Math.ceil(total / limit);
+
+    responseHandler(res, 200, "Cars Fetched Successfully", {
+      cars: fetchCars,
+      totalCars: total,
+      totalPages,
+      currentPage: page,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   fetchAllCars,
   checkCarAvailability,
@@ -364,4 +411,5 @@ module.exports = {
   fetchSingleCarForBooking,
   fetchEstimatePrice,
   fetchPremiumCars,
+  fetchAllPricingWithCar,
 };
