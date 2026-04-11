@@ -7,6 +7,7 @@ const ErrorHandler = require("../utils/ErrorHandler");
 const { responseHandler } = require("../utils/helper");
 const { validErrorName, paymentToBe, bookingStatus, paymentStatus } = require("../utils/staticExport");
 const { sendBookingSuccessNotification } = require("../services/notification.service");
+const { razorpay } = require("../config/razorpay");
 
 // const checkAndCreateBooking = async (req, res, next) => {
 //   const transaction = await sequelize.transaction();
@@ -214,6 +215,205 @@ const { sendBookingSuccessNotification } = require("../services/notification.ser
 //   }
 // };
 
+// const checkAndCreateBooking = async (req, res, next) => {
+//   const transaction = await sequelize.transaction();
+//   try {
+//     const {
+//       car_id,
+//       pickup_location,
+//       drop_location,
+//       pickup_datetime,
+//       drop_datetime,
+//       trip_type,
+//       duration_hours,
+//       included_km,
+//       total_price,
+//       booking_type,
+//       addOn = [],
+//       destinations = null,
+//       discounts = [],
+//       full_drop_address = null,
+//       full_pick_address = null,
+//       special_instruction = null,
+//     } = req.body;
+
+//     const userId = req.user.id;
+//     const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
+
+//     if (!pickup_location || !pickup_datetime || !trip_type) {
+//       throw new ErrorHandler(400, "All fields are required", validErrorName.BAD_REQUEST);
+//     }
+
+//     // Extract discount_id safely from array (take first object's id)
+//     const discount_id = Array.isArray(discounts) && discounts.length > 0 ? (discounts[0]?.id ?? null) : null;
+
+//     const pickupDateTime = new Date(pickup_datetime);
+//     const dropDateTime = triptypeCondition(trip_type, pickupDateTime, duration_hours, drop_datetime);
+
+//     // ─────────────────────────────────────────────────────────────
+//     // STEP 1 — SERVER-SIDE PRICE VALIDATION (source of truth)
+//     // Client-sent total_price is never trusted
+//     // ─────────────────────────────────────────────────────────────
+//     const estimated_price = await calculatePricingLogic(
+//       car_id,
+//       trip_type,
+//       duration_hours,
+//       included_km,
+//       addOn,
+//       destinations,
+//       pickup_datetime,
+//       drop_datetime,
+//       discounts,
+//     );
+
+//     if (estimated_price.total_price !== total_price) {
+//       throw new ErrorHandler(400, "Price mismatch. Please reload and try again.");
+//     }
+
+//     // ─────────────────────────────────────────────────────────────
+//     // STEP 2 — DELETE EXISTING PENDING BOOKING FOR THIS USER+CAR
+//     // If one exists within the last 15 mins:
+//     //   → expire its Stripe session (if open)
+//     //   → delete its add-ons
+//     //   → delete the booking itself
+//     // ─────────────────────────────────────────────────────────────
+//     const existing = await Bookings.findOne({
+//       where: {
+//         car_id,
+//         user_id: userId,
+//         booking_status: bookingStatus.PENDING_PAYMENT,
+//         created_at: { [Op.gt]: fifteenMinutesAgo },
+//       },
+//       transaction,
+//       lock: transaction.LOCK.UPDATE,
+//     });
+
+//     if (existing) {
+//       // Expire Stripe session if still open
+//       if (existing.stripe_session_id) {
+//         try {
+//           const session = await stripe.checkout.sessions.retrieve(existing.stripe_session_id);
+//           if (session.status === "open") {
+//             await stripe.checkout.sessions.expire(existing.stripe_session_id);
+//           }
+//         } catch (_) {
+//           // Already expired/invalid on Stripe's end — safe to ignore
+//         }
+//       }
+
+//       // Delete add-ons tied to this booking first (FK constraint)
+//       await BookingAddOns.destroy({
+//         where: { booking_id: existing.id },
+//         transaction,
+//       });
+
+//       // Delete the booking itself
+//       await existing.destroy({ transaction });
+//     }
+
+//     // ─────────────────────────────────────────────────────────────
+//     // STEP 3 — CAR AVAILABILITY CHECK AGAINST OTHER USERS
+//     // ─────────────────────────────────────────────────────────────
+//     const available = await isCarAvailable(car_id, pickupDateTime, dropDateTime, transaction);
+//     if (!available) {
+//       throw new ErrorHandler(400, "Sorry! This car has been reserved. Please select another car.");
+//     }
+
+//     // ─────────────────────────────────────────────────────────────
+//     // STEP 4 — CREATE NEW BOOKING RECORD
+//     // ─────────────────────────────────────────────────────────────
+//     const booking = await Bookings.create(
+//       {
+//         car_id,
+//         pickup_datetime: pickupDateTime,
+//         drop_datetime: dropDateTime,
+//         drop_location,
+//         pickup_location,
+//         trip_type,
+//         booking_hours: duration_hours,
+//         included_km,
+//         base_price: estimated_price.base_price,
+//         total_price: estimated_price.total_price,
+//         user_id: userId,
+//         booking_type,
+//         booking_status: booking_type === paymentToBe.PAY_LATER ? bookingStatus.CONFIRMED : bookingStatus.PENDING_PAYMENT,
+//         payment_status: paymentStatus.PENDING,
+//         full_drop_address,
+//         full_pick_address,
+//         special_instruction,
+//         discount_id,
+//       },
+//       { transaction },
+//     );
+
+//     // ─────────────────────────────────────────────────────────────
+//     // STEP 5 — SAVE ADD-ONS TO SEPARATE TABLE
+//     // ─────────────────────────────────────────────────────────────
+//     if (addOn.length > 0) {
+//       const bookingAddOns = addOn.map((addon) => ({
+//         booking_id: booking.id,
+//         add_on_id: addon.id,
+//       }));
+
+//       await BookingAddOns.bulkCreate(bookingAddOns, { transaction });
+//     }
+
+//     // ─────────────────────────────────────────────────────────────
+//     // STEP 6 — PAY LATER: commit and return confirmed booking
+//     // ─────────────────────────────────────────────────────────────
+//     if (booking_type === paymentToBe.PAY_LATER) {
+//       await transaction.commit();
+//       sendBookingSuccessNotification({ booking_id: booking.id, user_id: userId });
+//       return responseHandler(res, 201, "Booking Confirmed", { booking });
+//     }
+
+//     // ─────────────────────────────────────────────────────────────
+//     // STEP 7 — PAY NOW: create transaction record then Stripe session
+//     // Commit BEFORE calling Stripe (external call must be outside txn)
+//     // ─────────────────────────────────────────────────────────────
+//     const txn = await Transactions.create(
+//       {
+//         currency: "INR",
+//         amount: estimated_price.total_price,
+//         payment_method: "card",
+//         booking_id: booking.id,
+//         user_id: req.user.id,
+//         status: "INITIATED",
+//       },
+//       { transaction },
+//     );
+
+//     await transaction.commit(); // Commit BEFORE calling Stripe
+
+//     const stripeResponse = await createCheckoutSession({
+//       amount: estimated_price.total_price,
+//       booking_id: booking.id,
+//       user_id: req.user.id,
+//       booking_code: booking.booking_code,
+//       email: req.user.email,
+//       transaction_id: txn.id,
+//     });
+
+//     await booking.update({
+//       stripe_session_id: stripeResponse.session.id,
+//       checkout_url: stripeResponse.url,
+//     });
+
+//     await txn.update({
+//       stripe_session_id: stripeResponse.session.id,
+//       status: "SESSION_CREATED",
+//       req_json: stripeResponse,
+//     });
+
+//     return responseHandler(res, 200, "Payment Initiated", { ...stripeResponse });
+//   } catch (err) {
+//     if (!transaction.finished) {
+//       await transaction.rollback();
+//     }
+//     next(err);
+//   }
+// };
+
 const checkAndCreateBooking = async (req, res, next) => {
   const transaction = await sequelize.transaction();
   try {
@@ -243,7 +443,6 @@ const checkAndCreateBooking = async (req, res, next) => {
       throw new ErrorHandler(400, "All fields are required", validErrorName.BAD_REQUEST);
     }
 
-    // Extract discount_id safely from array (take first object's id)
     const discount_id = Array.isArray(discounts) && discounts.length > 0 ? (discounts[0]?.id ?? null) : null;
 
     const pickupDateTime = new Date(pickup_datetime);
@@ -251,7 +450,6 @@ const checkAndCreateBooking = async (req, res, next) => {
 
     // ─────────────────────────────────────────────────────────────
     // STEP 1 — SERVER-SIDE PRICE VALIDATION (source of truth)
-    // Client-sent total_price is never trusted
     // ─────────────────────────────────────────────────────────────
     const estimated_price = await calculatePricingLogic(
       car_id,
@@ -271,10 +469,7 @@ const checkAndCreateBooking = async (req, res, next) => {
 
     // ─────────────────────────────────────────────────────────────
     // STEP 2 — DELETE EXISTING PENDING BOOKING FOR THIS USER+CAR
-    // If one exists within the last 15 mins:
-    //   → expire its Stripe session (if open)
-    //   → delete its add-ons
-    //   → delete the booking itself
+    // Just delete the old booking + its add-ons
     // ─────────────────────────────────────────────────────────────
     const existing = await Bookings.findOne({
       where: {
@@ -288,30 +483,18 @@ const checkAndCreateBooking = async (req, res, next) => {
     });
 
     if (existing) {
-      // Expire Stripe session if still open
-      if (existing.stripe_session_id) {
-        try {
-          const session = await stripe.checkout.sessions.retrieve(existing.stripe_session_id);
-          if (session.status === "open") {
-            await stripe.checkout.sessions.expire(existing.stripe_session_id);
-          }
-        } catch (_) {
-          // Already expired/invalid on Stripe's end — safe to ignore
-        }
-      }
+      // Razorpay orders expire automatically — no action needed here
 
-      // Delete add-ons tied to this booking first (FK constraint)
       await BookingAddOns.destroy({
         where: { booking_id: existing.id },
         transaction,
       });
 
-      // Delete the booking itself
       await existing.destroy({ transaction });
     }
 
     // ─────────────────────────────────────────────────────────────
-    // STEP 3 — CAR AVAILABILITY CHECK AGAINST OTHER USERS
+    // STEP 3 — CAR AVAILABILITY CHECK
     // ─────────────────────────────────────────────────────────────
     const available = await isCarAvailable(car_id, pickupDateTime, dropDateTime, transaction);
     if (!available) {
@@ -346,19 +529,18 @@ const checkAndCreateBooking = async (req, res, next) => {
     );
 
     // ─────────────────────────────────────────────────────────────
-    // STEP 5 — SAVE ADD-ONS TO SEPARATE TABLE
+    // STEP 5 — SAVE ADD-ONS
     // ─────────────────────────────────────────────────────────────
     if (addOn.length > 0) {
       const bookingAddOns = addOn.map((addon) => ({
         booking_id: booking.id,
         add_on_id: addon.id,
       }));
-
       await BookingAddOns.bulkCreate(bookingAddOns, { transaction });
     }
 
     // ─────────────────────────────────────────────────────────────
-    // STEP 6 — PAY LATER: commit and return confirmed booking
+    // STEP 6 — PAY LATER: commit and return
     // ─────────────────────────────────────────────────────────────
     if (booking_type === paymentToBe.PAY_LATER) {
       await transaction.commit();
@@ -367,14 +549,14 @@ const checkAndCreateBooking = async (req, res, next) => {
     }
 
     // ─────────────────────────────────────────────────────────────
-    // STEP 7 — PAY NOW: create transaction record then Stripe session
-    // Commit BEFORE calling Stripe (external call must be outside txn)
+    // STEP 7 — PAY NOW: create transaction record + Razorpay order
+    // Same pattern as before: commit BEFORE the external API call
     // ─────────────────────────────────────────────────────────────
     const txn = await Transactions.create(
       {
         currency: "INR",
         amount: estimated_price.total_price,
-        payment_method: "card",
+        // payment_method: "card",
         booking_id: booking.id,
         user_id: req.user.id,
         status: "INITIATED",
@@ -382,29 +564,42 @@ const checkAndCreateBooking = async (req, res, next) => {
       { transaction },
     );
 
-    await transaction.commit(); // Commit BEFORE calling Stripe
+    await transaction.commit(); // Commit BEFORE calling Razorpay
 
-    const stripeResponse = await createCheckoutSession({
-      amount: estimated_price.total_price,
-      booking_id: booking.id,
-      user_id: req.user.id,
-      booking_code: booking.booking_code,
-      email: req.user.email,
-      transaction_id: txn.id,
+    // REPLACED: createCheckoutSession() → razorpay.orders.create()
+    const razorpayOrder = await razorpay.orders.create({
+      amount: estimated_price.total_price * 100, // paise (₹1 = 100 paise)
+      currency: "INR",
+      receipt: `booking_${booking.id}`,
+      notes: {
+        booking_id: booking.id,
+        booking_code: booking.booking_code,
+        user_id: req.user.id,
+        transaction_id: txn.id,
+      },
     });
 
+    // REPLACED: stripe_session_id + checkout_url → razorpay_order_id
     await booking.update({
-      stripe_session_id: stripeResponse.session.id,
-      checkout_url: stripeResponse.url,
+      razorpay_order_id: razorpayOrder.id,
+      // checkout_url removed — Razorpay is a modal, no redirect URL
     });
 
     await txn.update({
-      stripe_session_id: stripeResponse.session.id,
+      razorpay_order_id: razorpayOrder.id,
       status: "SESSION_CREATED",
-      req_json: stripeResponse,
+      req_json: razorpayOrder,
     });
 
-    return responseHandler(res, 200, "Payment Initiated", { ...stripeResponse });
+    // Return order details — frontend uses razorpay_order_id to open modal
+    return responseHandler(res, 200, "Payment Initiated", {
+      razorpay_order_id: razorpayOrder.id,
+      amount: razorpayOrder.amount, // in paise
+      currency: razorpayOrder.currency,
+      booking_id: booking.id,
+      booking_code: booking.booking_code,
+      key_id: process.env.RAZORPAY_KEY_ID, // send to frontend to init modal
+    });
   } catch (err) {
     if (!transaction.finished) {
       await transaction.rollback();

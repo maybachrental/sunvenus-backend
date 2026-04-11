@@ -109,10 +109,9 @@ module.exports = {
         type: Sequelize.ENUM("PAY_NOW", "PAY_LATER"),
         allowNull: false,
       },
-      stripe_session_id: {
+      razorpay_order_id: {
         type: Sequelize.STRING,
       },
-      checkout_url: Sequelize.TEXT,
       full_drop_address: Sequelize.STRING,
       full_pick_address: Sequelize.STRING,
       special_instruction: Sequelize.TEXT,

@@ -40,7 +40,7 @@ module.exports = {
       invoice_id: Sequelize.STRING,
       amount: Sequelize.INTEGER,
       payment_method: Sequelize.STRING,
-      stripe_session_id: Sequelize.STRING(255),
+      razorpay_order_id: Sequelize.STRING(255),
       status: {
         type: Sequelize.STRING,
       },

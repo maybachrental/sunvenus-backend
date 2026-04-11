@@ -12,6 +12,8 @@ const flash = require("connect-flash");
 const { helperMessage } = require("./src/middlewares/adminAuth");
 const cookieParser = require("cookie-parser");
 const startPendingBookingCleanup = require("./src/cronJobs/cancelBookings");
+const { authenicateUser } = require("./src/middlewares/authMiddleware");
+const { verifyPayment, paymentWebhook } = require("./src/controllers/webhookController");
 
 app.use((req, res, next) => {
   res.set("Cache-Control", "no-store");
@@ -24,13 +26,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: ["http://sunvenus.co.in", "https://sunvenus.co.in", "http://localhost:8080", "https://www.sunvenus.co.in", "https://admin.sunvenus.co.in"],
+    origin: [
+      "http://sunvenus.co.in",
+      "https://sunvenus.co.in",
+      "http://localhost:8080",
+      "https://www.sunvenus.co.in",
+      "https://admin.sunvenus.co.in",
+    ],
   }),
 );
 app.use(cookieParser());
 
-// i want to log the request method and url for every incoming request
+app.post("/verify-payment", authenicateUser, verifyPayment); // called by frontend
+app.post("/webhook", paymentWebhook);
 
+// i want to log the request method and url for every incoming request
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   next();

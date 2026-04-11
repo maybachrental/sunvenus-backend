@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       invoice_id: DataTypes.STRING,
       amount: DataTypes.INTEGER,
       payment_method: DataTypes.STRING,
-      stripe_session_id: DataTypes.STRING(255),
+      razorpay_order_id: DataTypes.STRING(255),
       status: {
         type: DataTypes.STRING,
       },

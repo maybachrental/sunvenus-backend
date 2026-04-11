@@ -106,10 +106,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM("PAY_NOW", "PAY_LATER"),
         allowNull: false,
       },
-      stripe_session_id: {
+      razorpay_order_id: {
         type: DataTypes.STRING,
       },
-      checkout_url: DataTypes.TEXT,
       full_drop_address: DataTypes.STRING,
       full_pick_address: DataTypes.STRING,
       special_instruction: DataTypes.TEXT,
