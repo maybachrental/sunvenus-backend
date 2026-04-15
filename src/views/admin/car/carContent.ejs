@@ -1,0 +1,1551 @@
+<style>
+    .car-content-editor {
+        --bg: #f4f5f7;
+        --surface: #ffffff;
+        --surface2: #f8f9fb;
+        --border: #e2e5ec;
+        --border2: #c8cdd8;
+        --accent: #2563eb;
+        --accent-lt: #eff4ff;
+        --accent2: #d97706;
+        --text: #1a1d27;
+        --muted: #6b7280;
+        --danger: #dc2626;
+        --success: #16a34a;
+        --info: #0284c7;
+        --radius: 10px;
+        --font-head: 'Syne', sans-serif;
+        --font-mono: 'DM Mono', monospace;
+        --font-body: 'DM Sans', sans-serif;
+        --shadow: 0 1px 3px rgba(0, 0, 0, .08), 0 1px 2px rgba(0, 0, 0, .05);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, .08);
+    }
+
+    .car-content-editor,
+    .car-content-editor *,
+    .car-content-editor *::before,
+    .car-content-editor *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* 
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font-body);
+        font-size: 14px;
+        min-height: 100vh;
+    } */
+
+    /* ── TOP BAR ── */
+    .topbar {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        padding: 13px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: var(--shadow);
+    }
+
+    .topbar-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .topbar-back {
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1;
+        transition: color .15s;
+        text-decoration: none;
+    }
+
+    .topbar-back:hover {
+        color: var(--accent);
+    }
+
+    .topbar-badge {
+        background: var(--accent-lt);
+        color: var(--accent);
+        font-family: var(--font-mono);
+        font-size: 10px;
+        font-weight: 500;
+        padding: 3px 9px;
+        border-radius: 20px;
+        letter-spacing: .05em;
+        text-transform: uppercase;
+        border: 1px solid #bfd4fe;
+    }
+
+    .topbar-title {
+        font-family: var(--font-head);
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .topbar-sub {
+        font-size: 11px;
+        color: var(--muted);
+        font-family: var(--font-mono);
+        margin-top: 1px;
+    }
+
+    .btn-save-all {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        font-family: var(--font-head);
+        font-weight: 700;
+        font-size: 13px;
+        padding: 9px 20px;
+        border-radius: var(--radius);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        transition: all .2s;
+        box-shadow: 0 2px 8px rgba(37, 99, 235, .3);
+    }
+
+    .btn-save-all:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, .35);
+    }
+
+    .btn-save-all:disabled {
+        opacity: .7;
+        transform: none;
+        cursor: not-allowed;
+    }
+
+    /* ── LAYOUT ── */
+    .car-content-editor .page-wrap {
+        display: grid;
+        /* grid-template-columns: 232px 1fr; */
+        min-height: calc(100vh - 56px);
+    }
+
+    /* ── SIDEBAR ── */
+    .car-content-editor .editor-sidebar {
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+        padding: 16px 0 20px;
+        position: sticky;
+        top: 56px;
+        height: calc(100vh - 56px);
+        overflow-y: auto;
+    }
+
+    .car-content-editor .editor-sidebar-label {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        font-weight: 500;
+        color: var(--muted);
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        padding: 0 16px 6px;
+        margin-top: 14px;
+    }
+
+    .car-content-editor .editor-nav-item {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 9px 16px;
+        cursor: pointer;
+        border-left: 3px solid transparent;
+        transition: all .15s;
+        font-size: 13px;
+        color: var(--muted);
+        text-decoration: none;
+        font-weight: 400;
+    }
+
+    .car-content-editor .editor-nav-item:hover {
+        background: var(--bg);
+        color: var(--text);
+        border-left-color: var(--border2);
+    }
+
+    .car-content-editor .editor-nav-item.active {
+        background: var(--accent-lt);
+        color: var(--accent);
+        border-left-color: var(--accent);
+        font-weight: 500;
+    }
+
+    .car-content-editor .editor-nav-item i {
+        font-size: 14px;
+        width: 16px;
+        flex-shrink: 0;
+    }
+
+    .car-content-editor .editor-nav-num {
+        font-family: var(--font-mono);
+        font-size: 9px;
+        color: var(--muted);
+        margin-left: auto;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        padding: 1px 5px;
+        border-radius: 3px;
+    }
+
+    .car-content-editor .editor-nav-divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 10px 16px;
+    }
+
+    /* ── CONTENT AREA ── */
+    .car-content-editor .editor-content-area {
+        padding: 28px 32px;
+        max-width: 980px;
+    }
+
+    /* ── ALERT ── */
+    #alertContainer {
+        margin-bottom: 18px;
+    }
+
+    .custom-alert {
+        padding: 11px 16px;
+        border-radius: var(--radius);
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        animation: slideIn .25s ease;
+        font-weight: 500;
+    }
+
+    .custom-alert.success {
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: var(--success);
+    }
+
+    .custom-alert.danger {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: var(--danger);
+    }
+
+    .custom-alert.warning {
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        color: var(--accent2);
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-6px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* ── SECTION BLOCK ── */
+    .section-block {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 24px 26px;
+        margin-bottom: 20px;
+        scroll-margin-top: 76px;
+        box-shadow: var(--shadow);
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 6px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .section-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    .icon-blue {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .icon-amber {
+        background: #fffbeb;
+        color: #d97706;
+    }
+
+    .icon-sky {
+        background: #f0f9ff;
+        color: #0284c7;
+    }
+
+    .icon-orange {
+        background: #fff7ed;
+        color: #ea580c;
+    }
+
+    .icon-green {
+        background: #f0fdf4;
+        color: #16a34a;
+    }
+
+    .icon-violet {
+        background: #f5f3ff;
+        color: #7c3aed;
+    }
+
+    .icon-rose {
+        background: #fff1f2;
+        color: #e11d48;
+    }
+
+    .section-title {
+        font-family: var(--font-head);
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text);
+        flex: 1;
+    }
+
+    .section-num {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--muted);
+        background: var(--bg);
+        border: 1px solid var(--border);
+        padding: 2px 7px;
+        border-radius: 4px;
+    }
+
+    .section-desc {
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 18px;
+        line-height: 1.5;
+    }
+
+    /* ── FORM CONTROLS ── */
+    .form-group {
+        margin-bottom: 14px;
+    }
+
+    .form-label {
+        display: block;
+        font-family: var(--font-mono);
+        font-size: 12px;
+        font-weight: 600;
+        color: black;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+    }
+
+    .form-label .req {
+        color: var(--danger);
+        margin-left: 2px;
+    }
+
+    .form-label .hint {
+        font-size: 10px;
+        color: #adb5bd;
+        margin-left: 5px;
+        text-transform: none;
+        letter-spacing: 0;
+        font-weight: 400;
+    }
+
+    .form-control,
+    .form-select {
+        background: var(--surface) !important;
+        border: 1px solid var(--border2) !important;
+        color: var(--text) !important;
+        font-family: var(--font-body) !important;
+        font-size: 13px !important;
+        border-radius: 7px !important;
+        padding: 8px 12px !important;
+        transition: border-color .15s, box-shadow .15s !important;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, .1) !important;
+        outline: none !important;
+    }
+
+    .form-control::placeholder {
+        color: #c0c5d0 !important;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 76px;
+    }
+
+    /* ── CHAR COUNTER ── */
+    .char-counter {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: #b0b8c8;
+        text-align: right;
+        margin-top: 3px;
+    }
+
+    .char-counter.warn {
+        color: var(--accent2);
+    }
+
+    .char-counter.over {
+        color: var(--danger);
+        font-weight: 600;
+    }
+
+    /* ── SEO PREVIEW ── */
+    .seo-preview-wrap {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin-top: 14px;
+    }
+
+    .seo-preview-label {
+        font-family: var(--font-mono);
+        font-size: 9px;
+        color: var(--muted);
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .seo-preview-label::before {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%234285F4' d='M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z'/%3E%3Cpath fill='%2334A853' d='M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z'/%3E%3Cpath fill='%23FBBC05' d='M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z'/%3E%3Cpath fill='%23EA4335' d='M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z'/%3E%3C/svg%3E") center/contain no-repeat;
+    }
+
+    .seo-preview-url {
+        font-size: 12px;
+        color: #1e6e3e;
+        margin-bottom: 3px;
+        font-family: Arial, sans-serif;
+    }
+
+    .seo-preview-title {
+        font-size: 18px;
+        color: #1a0dab;
+        line-height: 1.3;
+        font-family: Arial, sans-serif;
+        margin-bottom: 4px;
+    }
+
+    .seo-preview-title:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .seo-preview-desc {
+        font-size: 13px;
+        color: #4d5156;
+        font-family: Arial, sans-serif;
+        line-height: 1.5;
+    }
+
+    /* ── REPEATABLE CARD ── */
+    .repeatable-card {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        padding: 16px 18px;
+        margin-bottom: 12px;
+        transition: border-color .15s, box-shadow .15s;
+    }
+
+    .repeatable-card:hover {
+        border-color: var(--border2);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
+    }
+
+    .repeatable-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .card-num-badge {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        background: var(--surface);
+        color: var(--muted);
+        border: 1px solid var(--border);
+        padding: 2px 8px;
+        border-radius: 4px;
+    }
+
+    .btn-remove {
+        background: transparent;
+        border: 1px solid #fca5a5;
+        color: var(--danger);
+        font-size: 11px;
+        padding: 4px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        transition: all .15s;
+        font-family: var(--font-mono);
+    }
+
+    .btn-remove:hover {
+        background: var(--danger);
+        color: #fff;
+        border-color: var(--danger);
+    }
+
+    .btn-add {
+        background: transparent;
+        border: 1.5px dashed var(--border2);
+        color: var(--muted);
+        font-size: 11px;
+        padding: 10px 18px;
+        border-radius: 9px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        width: 100%;
+        justify-content: center;
+        transition: all .2s;
+        font-family: var(--font-mono);
+        letter-spacing: .05em;
+        text-transform: uppercase;
+        margin-top: 4px;
+    }
+
+    .btn-add:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: var(--accent-lt);
+    }
+
+    /* ── SECTION SAVE BTN ── */
+    .btn-mark-done {
+        background: transparent;
+        border: 1px solid var(--border2);
+        color: var(--muted);
+        font-size: 11px;
+        font-family: var(--font-mono);
+        padding: 7px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all .15s;
+        margin-top: 16px;
+    }
+
+    .btn-mark-done:hover {
+        border-color: var(--success);
+        color: var(--success);
+        background: #f0fdf4;
+    }
+
+    /* ── GRIDS ── */
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+    }
+
+    .grid-4 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 12px;
+    }
+
+    @media (max-width: 768px) {
+
+        .grid-2,
+        .grid-3,
+        .grid-4 {
+            grid-template-columns: 1fr;
+        }
+
+        .car-content-editor .page-wrap {
+            grid-template-columns: 1fr;
+        }
+
+        .car-content-editor .editor-sidebar {
+            display: none;
+        }
+
+        .car-content-editor .editor-content-area {
+            padding: 16px;
+        }
+    }
+
+    /* ── TOGGLE ── */
+    .form-check-input {
+        background-color: #d1d5db !important;
+        border-color: #d1d5db !important;
+        cursor: pointer;
+    }
+
+    .form-check-input:checked {
+        background-color: var(--accent) !important;
+        border-color: var(--accent) !important;
+    }
+
+    /* ── EMOJI HINT ── */
+    .emoji-hint {
+        font-size: 10px;
+        color: #adb5bd;
+        margin-top: 3px;
+        font-family: var(--font-mono);
+    }
+
+    /* ── INPUT ICON ── */
+    .input-icon-wrap {
+        position: relative;
+    }
+
+    .input-icon-wrap .icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--muted);
+        font-size: 14px;
+        pointer-events: none;
+    }
+
+    .input-icon-wrap .form-control {
+        padding-right: 32px !important;
+    }
+
+    /* ── SECTION DIVIDER ── */
+    .big-sep {
+        display: none;
+    }
+
+    /* ── SAVE STATUS ── */
+    #saveStatus {
+        font-size: 11px;
+        color: var(--success);
+        font-family: var(--font-mono);
+    }
+
+    /* ── SCROLLBAR ── */
+    .car-content-editor ::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    .car-content-editor ::-webkit-scrollbar-track {
+        background: var(--bg);
+    }
+
+    .car-content-editor ::-webkit-scrollbar-thumb {
+        background: var(--border2);
+        border-radius: 4px;
+    }
+
+    /* ── FIELD HELP TEXT ── */
+    .field-help {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 3px;
+    }
+</style>
+</head>
+
+<body>
+    <div class="car-content-editor">
+
+        <!-- TOP BAR -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <a href="/admin/cars" class="topbar-back"><i class="bi bi-arrow-left"></i></a>
+                <div>
+                    <div class="topbar-title">Car Content Editor</div>
+                    <div class="topbar-sub" id="carLabel">
+                        <%= [car?.name, car?.model, car?.color].filter(Boolean).join(' — ') || ' Car Content' %>
+                    </div>
+                </div>
+                <span class="topbar-badge">Content</span>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;">
+                <span id="saveStatus"></span>
+                <button class="btn-save-all" id="saveAllBtn">
+                    <i class="bi bi-floppy2-fill"></i> Save All Sections
+                </button>
+            </div>
+        </div>
+
+        <!-- PAGE WRAP -->
+        <div class="page-wrap">
+
+            <!-- SIDEBAR -->
+            <!-- <nav class="editor-sidebar">
+                <div class="editor-sidebar-label">Sections</div>
+                <a class="editor-nav-item active" href="#sec-seo" onclick="setActive(this)">
+                    <i class="bi bi-search"></i> SEO Meta Tags <span class="editor-nav-num">§7</span>
+                </a>
+                <a class="editor-nav-item" href="#sec-hero" onclick="setActive(this)">
+                    <i class="bi bi-star-fill"></i> Hero Section <span class="editor-nav-num">§1</span>
+                </a>
+                <a class="editor-nav-item" href="#sec-specs" onclick="setActive(this)">
+                    <i class="bi bi-speedometer2"></i> Spec Cards <span class="editor-nav-num">§2</span>
+                </a>
+                <a class="editor-nav-item" href="#sec-feature-highlight" onclick="setActive(this)">
+                    <i class="bi bi-lightning-fill"></i> Feature Highlight <span class="editor-nav-num">§3</span>
+                </a>
+                <a class="editor-nav-item" href="#sec-premium-cards" onclick="setActive(this)">
+                    <i class="bi bi-grid-3x2-gap-fill"></i> Premium Cards <span class="editor-nav-num">§4</span>
+                </a>
+
+                <hr class="editor-nav-divider" />
+                <div class="editor-sidebar-label">Quick Actions</div>
+                <a class="editor-nav-item" href="/admin/cars">
+                    <i class="bi bi-arrow-left-circle"></i> Back to Cars
+                </a>
+
+            </nav> -->
+
+            <!-- MAIN CONTENT -->
+            <div class="editor-content-area">
+
+                <div id="alertContainer"></div>
+
+                <!-- ══════════════════════════
+           §7 — SEO META TAGS
+      ══════════════════════════ -->
+                <div class="section-block" id="sec-seo">
+                    <div class="section-header">
+                        <div class="section-icon icon-blue"><i class="bi bi-search"></i></div>
+                        <div style="flex:1;">
+                            <div class="section-title">SEO Meta Tags</div>
+                        </div>
+                        <span class="section-num">§ 07</span>
+                    </div>
+                    <p class="section-desc">Controls how this car page ranks and appears in Google search results.</p>
+
+                    <div class="form-group">
+                        <label class="form-label">Page Title <span class="req">*</span> <span class="hint">paste into
+                                &lt;title&gt; tag</span></label>
+                        <input type="text" id="seo_title" class="form-control"
+                            placeholder="e.g. BMW M5 Red on Rent in Mumbai | Chauffeur-Driven | From ₹10,000" />
+                        <div class="char-counter" id="seo_title_count">0 / 60</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Meta Description <span class="req">*</span> <span
+                                class="hint">&lt;meta
+                                name="description"&gt;</span></label>
+                        <textarea id="seo_description" class="form-control" rows="3"
+                            placeholder="Brief description shown in Google results. Keep under 160 characters."></textarea>
+                        <div class="char-counter" id="seo_description_count">0 / 160</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">H1 Heading <span class="req">*</span> <span class="hint">main page
+                                heading
+                                tag</span></label>
+                        <input type="text" id="seo_h1" class="form-control"
+                            placeholder="e.g. BMW M5 Kit Red on Rent in Mumbai — Chauffeur-Driven from ₹10,000" />
+                    </div>
+
+                    <!-- Live Google Preview -->
+                    <div class="seo-preview-wrap">
+                        <div class="seo-preview-label">Google Preview</div>
+                        <div class="seo-preview-url" id="seo_preview_url">sunvenus.com › cars › bmw-m5-red</div>
+                        <div class="seo-preview-title" id="seo_preview_title">Page title will appear here</div>
+                        <div class="seo-preview-desc" id="seo_preview_desc">Meta description will appear here…</div>
+                    </div>
+
+                    <button class="btn-mark-done" onclick="markDone(this)"><i class="bi bi-check2-circle"></i> Mark as
+                        Done</button>
+                </div>
+
+                <!-- ══════════════════════════
+           §1 — HERO SECTION
+      ══════════════════════════ -->
+                <div class="section-block" id="sec-hero">
+                    <div class="section-header">
+                        <div class="section-icon icon-amber"><i class="bi bi-star-fill"></i></div>
+                        <div style="flex:1;">
+                            <div class="section-title">Hero Section</div>
+                        </div>
+                        <span class="section-num">§ 01</span>
+                    </div>
+                    <p class="section-desc">The first thing visitors see — brand, car name, description, pricing, and the
+                        call-to-action.</p>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Brand Name <span class="req">*</span> <span class="hint">large
+                                    bold,
+                                    line 1</span></label>
+                            <input type="text" id="hero_brand" style="cursor: not-allowed;" class="form-control" disabled placeholder="e.g. BMW" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Car Name <span class="req">*</span> <span class="hint">italic,
+                                    line
+                                    2</span></label>
+                            <input type="text" id="hero_car_name" style="cursor: not-allowed;" class="form-control" disabled placeholder="e.g. M5 Kit — Red" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Short Description <span class="req">*</span> <span class="hint">2–3
+                                lines
+                                below Car name</span></label>
+                        <textarea id="hero_description" class="form-control" rows="3"
+                            placeholder="e.g. Mumbai's boldest luxury sedan. A twin-turbo V8 wrapped in an aggressive red body kit — this is the car that commands every road."></textarea>
+                    </div>
+
+                    <div class="grid-3">
+                        <div class="form-group">
+                            <label class="form-label">Star Rating <span class="hint">social proof</span></label>
+                            <input type="text" id="hero_rating" class="form-control"
+                                placeholder="e.g. 4.9 ★ Google Rating" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Verified Bookings <span class="hint">social proof</span></label>
+                            <input type="text" id="hero_bookings" class="form-control"
+                                placeholder="e.g. 200+ Verified Bookings" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Price Displayed <span class="req">*</span></label>
+                            <input type="text" id="hero_price" class="form-control" placeholder="e.g. ₹10,000" />
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Price Label <span class="hint">small text below
+                                    price</span></label>
+                            <input type="text" id="hero_price_label" class="form-control"
+                                placeholder="e.g. 8 HRS / 80 KM" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">CTA Button Text <span class="req">*</span></label>
+                            <input type="text" id="hero_btn_text" class="form-control" placeholder="e.g. Book Now" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">CTA Button Link <span class="req">*</span></label>
+                        <div class="input-icon-wrap">
+                            <input type="text" id="hero_btn_link" class="form-control"
+                                placeholder="e.g. https://wa.me/919892904433" />
+                            <i class="bi bi-link-45deg icon"></i>
+                        </div>
+                    </div>
+
+                    <button class="btn-mark-done" onclick="markDone(this)"><i class="bi bi-check2-circle"></i> Mark as
+                        Done</button>
+                </div>
+
+                <!-- ══════════════════════════
+           §2 — SPEC CARDS
+      ══════════════════════════ -->
+                <div class="section-block" id="sec-specs">
+                    <div class="section-header">
+                        <div class="section-icon icon-sky"><i class="bi bi-speedometer2"></i></div>
+                        <div style="flex:1;">
+                            <div class="section-title">Performance &amp; Spec Cards</div>
+                        </div>
+                        <span class="section-num">§ 02</span>
+                    </div>
+                    <p class="section-desc">Stat cards showing key performance figures. Each needs an emoji icon, a
+                        value,
+                        and a label.</p>
+
+                    <div class="form-group">
+                        <label class="form-label">Section Heading</label>
+                        <input type="text" id="specs_heading" class="form-control"
+                            placeholder="e.g. Performance & Precision" />
+                    </div>
+
+                    <div id="specCardsContainer"></div>
+                    <button class="btn-add" id="addSpecCardBtn"><i class="bi bi-plus-lg"></i> Add Spec Card</button>
+
+                    <button class="btn-mark-done" onclick="markDone(this)"><i class="bi bi-check2-circle"></i> Mark as
+                        Done</button>
+                </div>
+
+                <!-- ══════════════════════════
+           §3 — FEATURE HIGHLIGHT
+      ══════════════════════════ -->
+                <div class="section-block" id="sec-feature-highlight">
+                    <div class="section-header">
+                        <div class="section-icon icon-orange"><i class="bi bi-lightning-fill"></i></div>
+                        <div style="flex:1;">
+                            <div class="section-title">Feature Highlight Section</div>
+                        </div>
+                        <span class="section-num">§ 03</span>
+                    </div>
+                    <p class="section-desc">Full-width dramatic section with a big bold heading, description paragraph,
+                        and
+                        stat callouts.</p>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Heading Line 1 <span class="req">*</span> <span
+                                    class="hint">bold</span></label>
+                            <input type="text" id="fh_heading1" class="form-control" placeholder="e.g. First-Class" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Heading Line 2 <span class="hint">grey / muted</span></label>
+                            <input type="text" id="fh_heading2" class="form-control"
+                                placeholder="e.g. Star of Every Occasion" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description <span class="hint">2–3 lines</span></label>
+                        <textarea id="fh_description" class="form-control" rows="3"
+                            placeholder="Describe the car's presence, occasions it suits best, what makes it stand out..."></textarea>
+                    </div>
+
+                    <div
+                        style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;">
+                        Stat Callouts</div>
+                    <div id="fhStatsContainer"></div>
+                    <button class="btn-add" id="addFhStatBtn"><i class="bi bi-plus-lg"></i> Add Stat</button>
+
+                    <button class="btn-mark-done" onclick="markDone(this)"><i class="bi bi-check2-circle"></i> Mark as
+                        Done</button>
+                </div>
+
+                <!-- ══════════════════════════
+           §4 — PREMIUM FEATURE CARDS
+      ══════════════════════════ -->
+                <div class="section-block" id="sec-premium-cards">
+                    <div class="section-header">
+                        <div class="section-icon icon-green"><i class="bi bi-grid-3x2-gap-fill"></i></div>
+                        <div style="flex:1;">
+                            <div class="section-title">Premium Feature Cards</div>
+                        </div>
+                        <span class="section-num">§ 04</span>
+                    </div>
+                    <p class="section-desc">Numbered cards like "V8 Twin-Turbo Engine", "M Sport Body Kit" etc. Each has
+                        a
+                        title, description, and badge label.</p>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Section Heading</label>
+                            <input type="text" id="pc_heading" class="form-control"
+                                placeholder="e.g. Crafted for the Road" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Section Subtext <span class="hint">right side,
+                                    muted</span></label>
+                            <input type="text" id="pc_subtext" class="form-control"
+                                placeholder="e.g. Every detail engineered for performance and presence." />
+                        </div>
+                    </div>
+
+                    <div id="premiumCardsContainer"></div>
+                    <button class="btn-add" id="addPremiumCardBtn"><i class="bi bi-plus-lg"></i> Add Feature
+                        Card</button>
+
+                    <button class="btn-mark-done" onclick="markDone(this)"><i class="bi bi-check2-circle"></i> Mark as
+                        Done</button>
+                </div>
+
+                <!-- ══════════════════════════
+           §5 — FAQ
+      ══════════════════════════ -->
+                <!-- <div class="section-block" id="sec-faq">
+                <div class="section-header">
+                    <div class="section-icon icon-violet"><i class="bi bi-chat-left-text-fill"></i></div>
+                    <div style="flex:1;">
+                        <div class="section-title">FAQ</div>
+                    </div>
+                    <span class="section-num">§ 05</span>
+                </div>
+                <p class="section-desc">Frequently asked questions for this car page. Helps with SEO and reduces support
+                    queries.</p>
+
+                <div class="form-group">
+                    <label class="form-label">Section Heading</label>
+                    <input type="text" id="faq_heading" class="form-control" value="Frequently Asked Questions" />
+                </div>
+
+                <div id="faqContainer"></div>
+                <button class="btn-add" id="addFaqBtn"><i class="bi bi-plus-lg"></i> Add FAQ Item</button>
+
+                <button class="btn-mark-done" onclick="markDone(this)"><i class="bi bi-check2-circle"></i> Mark as
+                    Done</button>
+            </div> -->
+
+                <!-- ══════════════════════════
+           §6 — TESTIMONIALS
+      ══════════════════════════ -->
+                <!-- <div class="section-block" id="sec-testimonials">
+                <div class="section-header">
+                    <div class="section-icon icon-rose"><i class="bi bi-person-hearts"></i></div>
+                    <div style="flex:1;">
+                        <div class="section-title">Testimonials</div>
+                    </div>
+                    <span class="section-num">§ 06</span>
+                </div>
+                <p class="section-desc">Customer reviews for this specific car. Add as many as needed.</p>
+
+                <div class="form-group">
+                    <label class="form-label">Section Heading</label>
+                    <input type="text" id="test_heading" class="form-control" value="What Our Customers Say" />
+                </div>
+
+                <div id="testimonialsContainer"></div>
+                <button class="btn-add" id="addTestimonialBtn"><i class="bi bi-plus-lg"></i> Add Testimonial</button>
+
+                <button class="btn-mark-done" onclick="markDone(this)"><i class="bi bi-check2-circle"></i> Mark as
+                    Done</button>
+            </div> -->
+
+                <!-- FINAL ROW -->
+                <div style="display:flex;justify-content:flex-end;gap:10px;padding-bottom:50px;margin-top:8px;">
+                    <a href="/admin/cars"
+                        style="background:var(--surface);border:1px solid var(--border2);color:var(--muted);font-size:13px;padding:9px 20px;border-radius:var(--radius);text-decoration:none;display:flex;align-items:center;gap:6px;font-family:var(--font-body);">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
+                    <button class="btn-save-all" id="saveAllBtnBottom">
+                        <i class="bi bi-floppy2-fill"></i> Save All Sections
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ════════════════════════════════════
+       TEMPLATES
+  ════════════════════════════════════ -->
+
+        <template id="tpl-spec-card">
+            <div class="repeatable-card spec-card-item">
+                <div class="repeatable-card-header">
+                    <span class="card-num-badge">Spec #<span class="item-num"></span></span>
+                    <button type="button" class="btn-remove remove-btn"><i class="bi bi-trash3"></i> Remove</button>
+                </div>
+                <div class="grid-3">
+                    <div class="form-group">
+                        <label class="form-label">Emoji Icon <span class="hint">e.g. ⚡ 🔧 💪</span></label>
+                        <input type="text" class="form-control f-icon" placeholder="⚡" maxlength="4"
+                            style="font-size:18px!important;" />
+                        <div class="emoji-hint">Paste any emoji</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Value <span class="req">*</span></label>
+                        <input type="text" class="form-control f-value" placeholder="e.g. 3.9s" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Label <span class="req">*</span></label>
+                        <input type="text" class="form-control f-label" placeholder="e.g. 0–100 km/h" />
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <template id="tpl-fh-stat">
+            <div class="repeatable-card fh-stat-item">
+                <div class="repeatable-card-header">
+                    <span class="card-num-badge">Stat #<span class="item-num"></span></span>
+                    <button type="button" class="btn-remove remove-btn"><i class="bi bi-trash3"></i> Remove</button>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Stat Value <span class="req">*</span></label>
+                        <input type="text" class="form-control f-value" placeholder="e.g. 600 hp" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Stat Label <span class="req">*</span></label>
+                        <input type="text" class="form-control f-label" placeholder="e.g. Twin-Turbo Power" />
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <template id="tpl-premium-card">
+            <div class="repeatable-card premium-card-item">
+                <div class="repeatable-card-header">
+                    <span class="card-num-badge">Card #<span class="item-num"></span></span>
+                    <button type="button" class="btn-remove remove-btn"><i class="bi bi-trash3"></i> Remove</button>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Card Title <span class="req">*</span></label>
+                        <input type="text" class="form-control f-title" placeholder="e.g. V8 Twin-Turbo Engine" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Badge Text</label>
+                        <input type="text" class="form-control f-badge" placeholder="PREMIUM FEATURE"
+                            value="PREMIUM FEATURE" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description <span class="req">*</span></label>
+                    <textarea class="form-control f-description" rows="2"
+                        placeholder="Brief description of this feature..."></textarea>
+                </div>
+            </div>
+        </template>
+
+        <template id="tpl-faq">
+            <div class="repeatable-card faq-item">
+                <div class="repeatable-card-header">
+                    <span class="card-num-badge">FAQ #<span class="item-num"></span></span>
+                    <button type="button" class="btn-remove remove-btn"><i class="bi bi-trash3"></i> Remove</button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Question <span class="req">*</span></label>
+                    <input type="text" class="form-control f-question"
+                        placeholder="e.g. Is fuel included in the booking?" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Answer <span class="req">*</span></label>
+                    <textarea class="form-control f-answer" rows="3" placeholder="Clear, concise answer..."></textarea>
+                </div>
+            </div>
+        </template>
+
+        <template id="tpl-testimonial">
+            <div class="repeatable-card testimonial-item">
+                <div class="repeatable-card-header">
+                    <span class="card-num-badge">Review #<span class="item-num"></span></span>
+                    <button type="button" class="btn-remove remove-btn"><i class="bi bi-trash3"></i> Remove</button>
+                </div>
+                <div class="grid-3">
+                    <div class="form-group">
+                        <label class="form-label">Customer Name <span class="req">*</span></label>
+                        <input type="text" class="form-control f-name" placeholder="e.g. Rahul Mehta" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Location <span class="hint">city</span></label>
+                        <input type="text" class="form-control f-location" placeholder="e.g. Mumbai" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Rating</label>
+                        <select class="form-select f-rating">
+                            <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
+                            <option value="4">⭐⭐⭐⭐ 4 Stars</option>
+                            <option value="3">⭐⭐⭐ 3 Stars</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Review Text <span class="req">*</span></label>
+                    <textarea class="form-control f-review" rows="3"
+                        placeholder="Customer's review in their own words..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date <span class="hint">displayed on site</span></label>
+                    <input type="text" class="form-control f-date" placeholder="e.g. March 2025" />
+                </div>
+            </div>
+        </template>
+
+    </div>
+    <script>
+        (function () {
+            const car = <%- JSON.stringify(car || null) %>;
+
+            const routeContent = <%- existingContent || "null" %>;
+
+            const existingContent = routeContent && typeof routeContent === "object"
+                ? (routeContent.content && typeof routeContent.content === "object" ? routeContent.content : JSON.parse(routeContent.content))
+                : null;
+            const hasExistingContent = !!(
+                existingContent &&
+                typeof existingContent === "object" &&
+                Object.keys(existingContent).length
+            );
+
+            const fallbackContent = {
+                seo: {},
+                hero: {},
+                specs: {
+                    heading: "",
+                    cards: [
+                        { icon: "⚡", value: "3.9s", label: "0–100 km/h" },
+                        { icon: "🔧", value: "V8", label: "Twin-Turbo Engine" },
+                        { icon: "💪", value: "600 hp", label: "Total Power" },
+                        { icon: "👥", value: "5 Seats", label: "Executive Seating" },
+                        { icon: "🧳", value: "3 Bags", label: "Boot Space" },
+                    ],
+                },
+                feature_highlight: {
+                    heading1: "",
+                    heading2: "",
+                    description: "",
+                    stats: [
+                        { value: "600 hp", label: "Twin-Turbo Power" },
+                        { value: "5-Star", label: "Cabin Comfort" },
+                    ],
+                },
+                premium_cards: {
+                    heading: "",
+                    subtext: "",
+                    cards: [
+                        {
+                            title: "V8 Twin-Turbo Engine",
+                            description: "4.4-litre twin-turbo V8 delivering explosive acceleration with effortless highway composure.",
+                            badge: "PREMIUM FEATURE",
+                        },
+                        {
+                            title: "M Sport Red Body Kit",
+                            description: "Factory-fitted front splitter, side skirts, and rear diffuser for an unmistakable visual presence.",
+                            badge: "PREMIUM FEATURE",
+                        },
+                        {
+                            title: "Executive Leather Cabin",
+                            description: "Sport Merino leather seats, ambient lighting, and premium audio for all five passengers.",
+                            badge: "PREMIUM FEATURE",
+                        },
+                    ],
+                },
+            };
+            let initialContent = hasExistingContent ? existingContent : fallbackContent;
+            initialContent = { ...initialContent, car: { ...car } }; // Deep merge can be implemented if needed
+            /* ── HELPERS ── */
+            function showAlert(msg, type = "danger") {
+                const c = document.getElementById("alertContainer");
+                const icon = type === "success" ? "check-circle-fill" : type === "warning" ? "exclamation-triangle-fill" : "x-circle-fill";
+                c.innerHTML = `<div class="custom-alert ${type}"><i class="bi bi-${icon}"></i>${msg}</div>`;
+                c.scrollIntoView({ behavior: "smooth" });
+                setTimeout(() => { c.innerHTML = ""; }, 5000);
+            }
+
+            window.setActive = function (el) {
+                document.querySelectorAll(".editor-nav-item").forEach(n => n.classList.remove("active"));
+                el.classList.add("active");
+            };
+
+            window.markDone = function (btn) {
+                btn.innerHTML = `<i class="bi bi-check2-circle" style="color:var(--success)"></i> <span style="color:var(--success)">Done ✓</span>`;
+                btn.style.borderColor = "var(--success)";
+                setTimeout(() => {
+                    btn.innerHTML = `<i class="bi bi-check2-circle"></i> Mark as Done`;
+                    btn.style.borderColor = "";
+                }, 2500);
+            };
+
+            /* ── GENERIC REPEATABLE ── */
+            function makeRepeatable(containerId, templateId, itemClass, addBtnId) {
+                const container = document.getElementById(containerId);
+                const addBtn = document.getElementById(addBtnId);
+
+                function renumber() {
+                    container.querySelectorAll("." + itemClass).forEach((el, i) => {
+                        el.querySelector(".item-num").textContent = i + 1;
+                    });
+                }
+
+                function addItem(data = {}) {
+                    const clone = document.getElementById(templateId).content.cloneNode(true);
+                    const card = clone.querySelector("." + itemClass);
+                    Object.entries(data).forEach(([key, val]) => {
+                        const el = card.querySelector(".f-" + key);
+                        if (el) el.value = val;
+                    });
+                    card.querySelector(".remove-btn").addEventListener("click", function () {
+                        this.closest("." + itemClass).remove();
+                        renumber();
+                    });
+                    container.appendChild(clone);
+                    renumber();
+                }
+
+                addBtn.addEventListener("click", () => addItem());
+                return { addItem, renumber };
+            }
+
+            /* ── INIT REPEATABLES ── */
+            const specCards = makeRepeatable("specCardsContainer", "tpl-spec-card", "spec-card-item", "addSpecCardBtn");
+            const fhStats = makeRepeatable("fhStatsContainer", "tpl-fh-stat", "fh-stat-item", "addFhStatBtn");
+            const premiumCards = makeRepeatable("premiumCardsContainer", "tpl-premium-card", "premium-card-item", "addPremiumCardBtn");
+            // const faqs = makeRepeatable("faqContainer", "tpl-faq", "faq-item", "addFaqBtn");
+            // const testimonials = makeRepeatable("testimonialsContainer", "tpl-testimonial", "testimonial-item", "addTestimonialBtn");
+
+            function setValue(id, value) {
+                const el = document.getElementById(id);
+                if (el) el.value = value || "";
+            }
+
+            function hydrateFields(data) {
+                console.log(data);
+
+                const seo = data.seo || {};
+                const hero = data.hero || {};
+                const specs = data.specs || {};
+                const featureHighlight = data.feature_highlight || {};
+                const premiumCardsData = data.premium_cards || {};
+                const car = data.car || {};
+                setValue("seo_title", seo.title);
+                setValue("seo_description", seo.description);
+                setValue("seo_h1", seo.h1);
+
+                setValue("hero_brand", car.Brand?.brand_name || "");
+                setValue("hero_car_name", car.name);
+                setValue("hero_description", hero.description);
+                setValue("hero_rating", hero.rating);
+                setValue("hero_bookings", hero.bookings);
+                setValue("hero_price", hero.price);
+                setValue("hero_price_label", hero.price_label);
+                setValue("hero_btn_text", hero.btn_text);
+                setValue("hero_btn_link", hero.btn_link);
+
+                setValue("specs_heading", specs.heading);
+                (Array.isArray(specs.cards) ? specs.cards : []).forEach(card => specCards.addItem(card));
+
+                setValue("fh_heading1", featureHighlight.heading1);
+                setValue("fh_heading2", featureHighlight.heading2);
+                setValue("fh_description", featureHighlight.description);
+                (Array.isArray(featureHighlight.stats) ? featureHighlight.stats : []).forEach(stat => fhStats.addItem(stat));
+
+                setValue("pc_heading", premiumCardsData.heading);
+                setValue("pc_subtext", premiumCardsData.subtext);
+                (Array.isArray(premiumCardsData.cards) ? premiumCardsData.cards : []).forEach(card => premiumCards.addItem(card));
+            }
+
+            function syncSeoPreview() {
+                document.getElementById("seo_preview_title").textContent = document.getElementById("seo_title").value || "Page title will appear here";
+                document.getElementById("seo_preview_desc").textContent = document.getElementById("seo_description").value || "Meta description will appear here…";
+            }
+
+            function updateCounters() {
+                ["seo_title", "seo_description"].forEach(id => {
+                    document.getElementById(id)?.dispatchEvent(new Event("input"));
+                });
+            }
+
+            hydrateFields(initialContent);
+
+            // faqs.addItem({ question: "Is fuel included in the booking?", answer: "Yes, fuel is fully included in all our bookings. No extra charges at the end." });
+            // faqs.addItem({ question: "Do you provide a uniformed chauffeur?", answer: "Absolutely. A professional uniformed chauffeur is included with every booking." });
+
+            // testimonials.addItem({ name: "Rahul Mehta", location: "Mumbai", rating: "5", review: "Absolutely stunning car. The BMW M5 made our wedding convoy unforgettable. Highly recommend Sun Venus!", date: "March 2025" });
+
+            /* ── SEO CHAR COUNTERS ── */
+            function charCounter(inputId, counterId, max) {
+                const input = document.getElementById(inputId);
+                const counter = document.getElementById(counterId);
+                if (!input || !counter) return;
+                input.addEventListener("input", () => {
+                    const len = input.value.length;
+                    counter.textContent = `${len} / ${max}`;
+                    counter.className = "char-counter" + (len > max ? " over" : len > max * .85 ? " warn" : "");
+                });
+            }
+            charCounter("seo_title", "seo_title_count", 60);
+            charCounter("seo_description", "seo_description_count", 160);
+
+            // SEO live preview
+            ["seo_title", "seo_description"].forEach(id => {
+                document.getElementById(id)?.addEventListener("input", () => {
+                    syncSeoPreview();
+                });
+            });
+
+            document.getElementById("seo_preview_url").textContent = car?.slug
+                ? `sunvenus.com › cars › ${car.slug}`
+                : "sunvenus.com › cars › car-slug";
+            updateCounters();
+            syncSeoPreview();
+
+            /* ── COLLECT DATA ── */
+            function collectData() {
+                return {
+                    seo: {
+                        title: document.getElementById("seo_title").value.trim(),
+                        description: document.getElementById("seo_description").value.trim(),
+                        h1: document.getElementById("seo_h1").value.trim(),
+                    },
+                    hero: {
+                        brand: document.getElementById("hero_brand").value.trim(),
+                        car_name: document.getElementById("hero_car_name").value.trim(),
+                        description: document.getElementById("hero_description").value.trim(),
+                        rating: document.getElementById("hero_rating").value.trim(),
+                        bookings: document.getElementById("hero_bookings").value.trim(),
+                        price: document.getElementById("hero_price").value.trim(),
+                        price_label: document.getElementById("hero_price_label").value.trim(),
+                        btn_text: document.getElementById("hero_btn_text").value.trim(),
+                        btn_link: document.getElementById("hero_btn_link").value.trim(),
+                    },
+                    specs: {
+                        heading: document.getElementById("specs_heading").value.trim(),
+                        cards: Array.from(document.querySelectorAll(".spec-card-item")).map(el => ({
+                            icon: el.querySelector(".f-icon").value.trim(),
+                            value: el.querySelector(".f-value").value.trim(),
+                            label: el.querySelector(".f-label").value.trim(),
+                        })),
+                    },
+                    feature_highlight: {
+                        heading1: document.getElementById("fh_heading1").value.trim(),
+                        heading2: document.getElementById("fh_heading2").value.trim(),
+                        description: document.getElementById("fh_description").value.trim(),
+                        stats: Array.from(document.querySelectorAll(".fh-stat-item")).map(el => ({
+                            value: el.querySelector(".f-value").value.trim(),
+                            label: el.querySelector(".f-label").value.trim(),
+                        })),
+                    },
+                    premium_cards: {
+                        heading: document.getElementById("pc_heading").value.trim(),
+                        subtext: document.getElementById("pc_subtext").value.trim(),
+                        cards: Array.from(document.querySelectorAll(".premium-card-item")).map(el => ({
+                            title: el.querySelector(".f-title").value.trim(),
+                            description: el.querySelector(".f-description").value.trim(),
+                            badge: el.querySelector(".f-badge").value.trim(),
+                        })),
+                    },
+                    // faq: {
+                    //     heading: document.getElementById("faq_heading").value.trim(),
+                    //     items: Array.from(document.querySelectorAll(".faq-item")).map(el => ({
+                    //         question: el.querySelector(".f-question").value.trim(),
+                    //         answer: el.querySelector(".f-answer").value.trim(),
+                    //     })),
+                    // },
+                    // testimonials: {
+                    //     heading: document.getElementById("test_heading").value.trim(),
+                    //     items: Array.from(document.querySelectorAll(".testimonial-item")).map(el => ({
+                    //         name: el.querySelector(".f-name").value.trim(),
+                    //         location: el.querySelector(".f-location").value.trim(),
+                    //         rating: parseInt(el.querySelector(".f-rating").value),
+                    //         review: el.querySelector(".f-review").value.trim(),
+                    //         date: el.querySelector(".f-date").value.trim(),
+                    //     })),
+                    // },
+                };
+            }
+
+            /* ── VALIDATE ── */
+            function validate(d) {
+                if (!d.seo.title) return "SEO: Page title is required.";
+                if (!d.seo.description) return "SEO: Meta description is required.";
+                if (!d.seo.h1) return "SEO: H1 heading is required.";
+                if (!d.hero.brand) return "Hero: Brand name is required.";
+                if (!d.hero.car_name) return "Hero: Car name is required.";
+                if (!d.hero.price) return "Hero: Price is required.";
+                if (!d.hero.btn_link) return "Hero: Book Now button link is required.";
+                if (!d.specs.cards.length) return "Specs: Add at least one spec card.";
+                for (let i = 0; i < d.specs.cards.length; i++) {
+                    if (!d.specs.cards[i].value || !d.specs.cards[i].label)
+                        return `Spec Card #${i + 1}: Value and Label are required.`;
+                }
+                for (let i = 0; i < d.premium_cards.cards.length; i++) {
+                    if (!d.premium_cards.cards[i].title || !d.premium_cards.cards[i].description)
+                        return `Premium Card #${i + 1}: Title and Description are required.`;
+                }
+                // for (let i = 0; i < d.faq.items.length; i++) {
+                //     if (!d.faq.items[i].question || !d.faq.items[i].answer)
+                //         return `FAQ #${i + 1}: Question and Answer are required.`;
+                // }
+                // for (let i = 0; i < d.testimonials.items.length; i++) {
+                //     if (!d.testimonials.items[i].name || !d.testimonials.items[i].review)
+                //         return `Testimonial #${i + 1}: Name and Review are required.`;
+                // }
+                return null;
+            }
+
+            /* ── SAVE ALL ── */
+            async function saveAll(btn) {
+                btn.disabled = true;
+                btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1" style="width:13px;height:13px;border-width:2px;"></span> Saving…`;
+
+                const data = collectData();
+                console.log(data);
+                
+                const err = validate(data);
+                if (err) {
+                    showAlert(err, "danger");
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="bi bi-floppy2-fill"></i> Save All Sections`;
+                    return;
+                }
+
+                try {
+                    const carId = car?.id || window.location.pathname.split("/")[3] || "1";
+
+                    const res = await fetch(`/admin/car/${carId}/content`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(data),
+                    });
+                    const json = await res.json().catch(() => ({}));
+
+                    if (!res.ok) {
+                        showAlert(json.message || "Failed to save content.", "danger");
+                    } else {
+                        showAlert("All content saved successfully!", "success");
+                        document.getElementById("saveStatus").textContent = "Saved at " + new Date().toLocaleTimeString();
+                    }
+                } catch (e) {
+                    console.error(e);
+                    showAlert("Network error. Please try again.", "danger");
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="bi bi-floppy2-fill"></i> Save All Sections`;
+                }
+            }
+
+            document.getElementById("saveAllBtn").addEventListener("click", function () { saveAll(this); });
+            document.getElementById("saveAllBtnBottom").addEventListener("click", function () { saveAll(document.getElementById("saveAllBtn")); });
+
+            /* ── SIDEBAR ACTIVE ON SCROLL ── */
+            const sections = ["sec-seo", "sec-hero", "sec-specs", "sec-feature-highlight", "sec-premium-cards", "sec-faq", "sec-testimonials"];
+            const navLinks = document.querySelectorAll(".editor-nav-item[href^='#']");
+            window.addEventListener("scroll", () => {
+                let current = "";
+                sections.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && el.getBoundingClientRect().top <= 100) current = id;
+                });
+                navLinks.forEach(link => {
+                    link.classList.toggle("active", link.getAttribute("href") === "#" + current);
+                });
+            });
+
+        })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { Cars, Brands, FuelTypes, CarCategories, CarsPricings, CarImages, sequelize } = require("../../models");
+const { Cars, Brands, FuelTypes, CarCategories, CarsPricings, CarImages, sequelize, CarContents } = require("../../models");
 const CloudinaryService = require("../../services/external/cloudinary.service");
 const { publicIdCreation } = require("../../utils/slugify");
 
@@ -288,7 +288,7 @@ const deleteCar = async (req, res) => {
     // for (const image of images) {
     // if (image.public_id) {
     try {
-      await CloudinaryService.delete_resources_by_prefix(`sunvenus_backend/cars/${carId}`);
+      await CloudinaryService.delete(`sunvenus_backend/cars/${carId}`);
     } catch (cloudErr) {
       // Log but don't abort — DB cleanup should still proceed
       console.warn(`Cloudinary delete failed for public_id `, cloudErr.message);
@@ -299,6 +299,7 @@ const deleteCar = async (req, res) => {
     // ── Delete DB records in order ──
     await CarsPricings.destroy({ where: { car_id: carId }, transaction: t });
     await CarImages.destroy({ where: { car_id: carId }, transaction: t });
+    await CarContents.destroy({ where: { car_id: carId }, transaction: t });
     await car.destroy({ transaction: t });
 
     await t.commit();
@@ -551,6 +552,180 @@ const viewCarDetails = async (req, res) => {
   res.render("admin/car/viewCarDetails", { car });
 };
 
+const getContentPage = async (req, res) => {
+  try {
+    const carId = parseInt(req.params.id);
+
+    // Fetch the car row so we can show its name/model/color in the topbar
+    const carResult = await Cars.findOne({
+      where: { id: carId },
+      include: [
+        {
+          model: Brands,
+        },
+      ],
+    });
+
+    if (!carResult) {
+      return res.status(404).send("Car not found");
+    }
+
+    const car = carResult;
+
+    // Also fetch existing content (if any) so the form can be pre-filled on page load
+    const contentResult = await CarContents.findOne({ where: { car_id: carId } });
+
+    const existingContent = contentResult || null;
+
+    return res.render("admin/car/carContent", {
+      car,
+      existingContent: JSON.stringify(existingContent), // passed to EJS, used by JS to pre-fill
+    });
+  } catch (err) {
+    console.error("[carContent.getContentPage]", err);
+    return res.status(500).send("Internal server error");
+  }
+};
+
+/* ─────────────────────────────────────────
+   GET /admin/car/:id/content/data
+   Returns existing content as JSON (for AJAX pre-fill if needed)
+───────────────────────────────────────── */
+const getContentData = async (req, res) => {
+  try {
+    const carId = parseInt(req.params.id);
+
+    const result = await db.query(`SELECT content, updated_at FROM car_content WHERE car_id = $1`, [carId]);
+
+    if (!result.rows.length) {
+      return res.json({ success: true, data: null });
+    }
+
+    return res.json({ success: true, data: result.rows[0] });
+  } catch (err) {
+    console.error("[carContent.getContentData]", err);
+    return res.status(500).json({ success: false, message: "Failed to fetch content" });
+  }
+};
+
+const saveContent = async (req, res) => {
+  try {
+    const carId = parseInt(req.params.id);
+    const body = req.body;
+
+    // ── Basic validation ──────────────────────────────────────
+    if (!body || typeof body !== "object") {
+      return res.status(400).json({ success: false, message: "Invalid request body" });
+    }
+
+    const { seo, hero, specs, feature_highlight, premium_cards, faq, testimonials } = body;
+
+    if (!seo?.title || !seo?.description || !seo?.h1) {
+      return res.status(400).json({ success: false, message: "SEO fields (title, description, h1) are required" });
+    }
+    if (!hero?.brand || !hero?.model || !hero?.price || !hero?.btn_link) {
+      return res.status(400).json({ success: false, message: "Hero fields (brand, model, price, btn_link) are required" });
+    }
+    if (!specs?.cards?.length) {
+      return res.status(400).json({ success: false, message: "At least one spec card is required" });
+    }
+
+    // ── Check car exists ──────────────────────────────────────
+    const carCheck = await Cars.findOne({
+      where: { id: carId },
+    });
+    if (!carCheck) {
+      return res.status(404).json({ success: false, message: "Car not found" });
+    }
+
+    // ── Build the content object ───────────────────────────────
+    const contentPayload = {
+      seo: {
+        title: seo.title.trim(),
+        description: seo.description.trim(),
+        h1: seo.h1.trim(),
+      },
+      hero: {
+        brand: hero.brand.trim(),
+        model: hero.model.trim(),
+        description: hero.description?.trim() || "",
+        rating: hero.rating?.trim() || "",
+        bookings: hero.bookings?.trim() || "",
+        price: hero.price.trim(),
+        price_label: hero.price_label?.trim() || "",
+        btn_text: hero.btn_text?.trim() || "Book Now",
+        btn_link: hero.btn_link.trim(),
+      },
+      specs: {
+        heading: specs.heading?.trim() || "Performance & Precision",
+        cards: (specs.cards || []).map((c) => ({
+          icon: c.icon?.trim() || "",
+          value: c.value?.trim() || "",
+          label: c.label?.trim() || "",
+        })),
+      },
+      feature_highlight: {
+        heading1: feature_highlight?.heading1?.trim() || "",
+        heading2: feature_highlight?.heading2?.trim() || "",
+        description: feature_highlight?.description?.trim() || "",
+        stats: (feature_highlight?.stats || []).map((s) => ({
+          value: s.value?.trim() || "",
+          label: s.label?.trim() || "",
+        })),
+      },
+      premium_cards: {
+        heading: premium_cards?.heading?.trim() || "",
+        subtext: premium_cards?.subtext?.trim() || "",
+        cards: (premium_cards?.cards || []).map((c) => ({
+          title: c.title?.trim() || "",
+          description: c.description?.trim() || "",
+          badge: c.badge?.trim() || "PREMIUM FEATURE",
+        })),
+      },
+      // faq: {
+      //   heading: faq?.heading?.trim() || "Frequently Asked Questions",
+      //   items: (faq?.items || []).map((f) => ({
+      //     question: f.question?.trim() || "",
+      //     answer: f.answer?.trim() || "",
+      //   })),
+      // },
+      // testimonials: {
+      //   heading: testimonials?.heading?.trim() || "What Our Customers Say",
+      //   items: (testimonials?.items || []).map((t) => ({
+      //     name: t.name?.trim() || "",
+      //     location: t.location?.trim() || "",
+      //     rating: parseInt(t.rating) || 5,
+      //     review: t.review?.trim() || "",
+      //     date: t.date?.trim() || "",
+      //   })),
+      // },
+    };
+
+    const carContent = await CarContents.findOne({
+      where: { car_id: carId },
+    });
+
+    if (carContent) {
+      carContent.content = contentPayload;
+      await carContent.save();
+    } else {
+      await CarContents.create({
+        car_id: carId,
+        content: contentPayload,
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Content saved successfully",
+      data: { car_id: carId, updated_at: new Date().toISOString() },
+    });
+  } catch (err) {
+    console.error("[carContent.saveContent]", err);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
 module.exports = {
   showAllCars,
   createCarPage,
@@ -562,4 +737,7 @@ module.exports = {
   deleteCarImage,
   setCarImagePrimary,
   viewCarDetails,
+  getContentData,
+  getContentPage,
+  saveContent,
 };

@@ -27,6 +27,9 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(models.Bookings, {
         foreignKey: "car_id",
       });
+      this.hasOne(models.CarContents, {
+        foreignKey: "car_id",
+      });
     }
   }
   Cars.init(
@@ -62,6 +65,8 @@ module.exports = (sequelize, DataTypes) => {
       underscored: true,
       createdAt: "created_at",
       updatedAt: "updated_at",
+      paranoid: true,
+      deletedAt: "deleted_at",
     },
   );
   return Cars;

@@ -28,6 +28,9 @@ const {
   deleteCarImage,
   setCarImagePrimary,
   viewCarDetails,
+  getContentPage,
+  saveContent,
+  getContentData,
 } = require("../../controllers/admin/carController");
 const { dashboardData } = require("../../controllers/admin/dashboardController");
 const { promoPage, searchUsersForPromo, sendPromoMail } = require("../../controllers/admin/promoController");
@@ -98,6 +101,15 @@ router.patch("/update/cars/:id/images/:imageId/primary", setCarImagePrimary);
 
 router.get("/car-details/:id", viewCarDetails);
 
+// GET  /admin/car/:id/content       → render the editor page
+router.get("/car/:id/content", getContentPage);
+
+// POST /admin/car/:id/content       → upsert all sections at once
+router.post("/car/:id/content", saveContent);
+
+// GET  /admin/car/:id/content/data  → fetch existing content as JSON (for pre-fill)
+router.get("/car/:id/content/data", getContentData);
+
 // promotional mails and pages
 router.get("/promo/emails", promoPage);
 
@@ -105,7 +117,7 @@ router.get("/promo/users/search", searchUsersForPromo);
 
 router.post("/promo/promo-emails/send", sendPromoMail);
 
-// this is the fallback handler 
+// this is the fallback handler
 router.use(fallback);
 
 module.exports = router;

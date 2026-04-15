@@ -12,7 +12,7 @@ module.exports = {
       "car_categories",
 
       [
-        { category: "Hatchback" },
+        // { category: "Hatchback" },
         { category: "Luxury Sedan" },
         { category: "Luxury SUV" },
         { category: "Compact SUV" },

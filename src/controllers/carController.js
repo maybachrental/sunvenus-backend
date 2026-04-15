@@ -1,6 +1,6 @@
 const { Op } = require("sequelize");
 const { buildCarWhere, buildCarSort } = require("../dbHelpers/conditionBuilder");
-const { Cars, CarsPricings, CarCategories, FuelTypes, Bookings, CarImages } = require("../models");
+const { Cars, CarsPricings, CarCategories, FuelTypes, Bookings, CarImages, CarContents } = require("../models");
 const { responseHandler, getPagination } = require("../utils/helper");
 const ErrorHandler = require("../utils/ErrorHandler");
 const { validErrorName, tripTypes } = require("../utils/staticExport");
@@ -269,6 +269,7 @@ const fetchCarDetails = async (req, res, next) => {
             exclude: ["created_at", "updated_at", "car_id", "image_path"],
           },
         },
+        { model: CarContents, raw: true, attributes: ["content"] },
       ],
     });
 
