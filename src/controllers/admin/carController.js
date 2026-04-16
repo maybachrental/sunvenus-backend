@@ -623,7 +623,7 @@ const saveContent = async (req, res) => {
     if (!seo?.title || !seo?.description || !seo?.h1) {
       return res.status(400).json({ success: false, message: "SEO fields (title, description, h1) are required" });
     }
-    if (!hero?.brand || !hero?.model || !hero?.price || !hero?.btn_link) {
+    if (!hero?.brand || !hero?.car_name || !hero?.price || !hero?.btn_link) {
       return res.status(400).json({ success: false, message: "Hero fields (brand, model, price, btn_link) are required" });
     }
     if (!specs?.cards?.length) {
