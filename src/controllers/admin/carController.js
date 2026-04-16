@@ -647,7 +647,7 @@ const saveContent = async (req, res) => {
       },
       hero: {
         brand: hero.brand.trim(),
-        model: hero.model.trim(),
+        car_name: hero.car_name.trim(),
         description: hero.description?.trim() || "",
         rating: hero.rating?.trim() || "",
         bookings: hero.bookings?.trim() || "",
