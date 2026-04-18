@@ -6,6 +6,7 @@ const {
   fetchEstimatePrice,
   fetchPremiumCars,
   fetchAllPricingWithCar,
+  fetchCarVideos,
 } = require("../controllers/carController");
 const { validateCarAvailabilityBody, validateSelectedCarData } = require("../validations/carValidator");
 
@@ -24,5 +25,7 @@ router.get("/fetch-car/:car_id/book", validateSelectedCarData, fetchSingleCarFor
 router.post("/estimate-price", fetchEstimatePrice);
 
 router.get("/fetch-all-pricing", fetchAllPricingWithCar);
+
+router.get("/fetch-car-videos", fetchCarVideos);
 
 module.exports = router;

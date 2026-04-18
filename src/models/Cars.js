@@ -30,6 +30,9 @@ module.exports = (sequelize, DataTypes) => {
       this.hasOne(models.CarContents, {
         foreignKey: "car_id",
       });
+      this.hasMany(models.CarVideos, {
+        foreignKey: "car_id",
+      });
     }
   }
   Cars.init(
