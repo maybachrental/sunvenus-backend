@@ -369,7 +369,6 @@ const fetchAllPricingWithCar = async (req, res, next) => {
     const fetchCars = await Cars.findAll({
       distinct: true,
       where: { is_active: true },
-      subQuery: false,
       include: [
         {
           model: CarsPricings,
@@ -414,7 +413,7 @@ const fetchCarVideos = async (req, res, next) => {
     const fetchCars = await Cars.findAll({
       distinct: true,
       where: { is_active: true },
-      subQuery: false,
+      // subQuery: false,
       include: [
         {
           model: CarImages,

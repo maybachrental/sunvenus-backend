@@ -4,6 +4,8 @@ const { comparePasswords, hashedPasswordCnv } = require("../../utils/helper");
 const { loginDetailsForToken } = require("../../services/auth.service");
 const { signAccess } = require("../../config/jwt");
 const { Op } = require("sequelize");
+const { sendMail } = require("../../config/mailer");
+const { bookingStatusUpdateTemplate } = require("../../utils/emailTemplates");
 
 const showAdminRegisterPage = async (req, res, next) => {
   try {
@@ -220,4 +222,77 @@ const showAllUsers = async (req, res, next) => {
   }
 };
 
-module.exports = { showLoginPage, loginAdmin, logoutAdmin, showAdminRegisterPage, createAdmin, showAllBookings, showAllUsers };
+const editBookingPage = async (req, res, next) => {
+  try {
+    const bookingId = req.params.id;
+    const booking = await Bookings.findOne({
+      where: { id: bookingId },
+      include: [
+        { model: Cars },
+        { model: Users }
+      ]
+    });
+
+    if (!booking) {
+      req.flash("error", "Booking not found");
+      return res.redirect("/admin/bookings");
+    }
+
+    res.render("admin/editBooking", { booking });
+  } catch (error) {
+    console.error(error);
+    req.flash("error", "Something went wrong");
+    res.redirect("/admin/bookings");
+  }
+};
+
+const updateBooking = async (req, res, next) => {
+  try {
+    const bookingId = req.params.id;
+    const { booking_status, payment_status } = req.body;
+
+    const booking = await Bookings.findOne({
+      where: { id: bookingId },
+      include: [
+        { model: Cars },
+        { model: Users }
+      ]
+    });
+
+    if (!booking) {
+      req.flash("error", "Booking not found");
+      return res.redirect("/admin/bookings");
+    }
+
+    const previousBookingStatus = booking.booking_status;
+    const previousPaymentStatus = booking.payment_status;
+
+    await booking.update({
+      booking_status,
+      payment_status
+    });
+
+    // Send email to user if status has changed
+    if (previousBookingStatus !== booking_status || previousPaymentStatus !== payment_status) {
+      if (booking.User && booking.User.email) {
+        const html = bookingStatusUpdateTemplate({
+          customerName: booking.User.name || "Customer",
+          bookingId: booking.booking_code,
+          carName: booking.Car ? booking.Car.name : "Car",
+          bookingStatus: booking_status,
+          paymentStatus: payment_status
+        });
+        await sendMail(booking.User.email, `Your Booking Status Update - ${booking.booking_code}`, html);
+      }
+    }
+
+    req.flash("success", "Booking updated successfully");
+    res.redirect("/admin/bookings");
+  } catch (error) {
+    console.error(error);
+    req.flash("error", "Failed to update booking");
+    res.redirect(req.get("referer") || `/admin/bookings/${req.params.id}/edit`);
+  }
+};
+
+module.exports = { showLoginPage, loginAdmin, logoutAdmin, showAdminRegisterPage, createAdmin, showAllBookings, showAllUsers, editBookingPage, updateBooking };

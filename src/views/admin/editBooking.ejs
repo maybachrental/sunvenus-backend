@@ -1,0 +1,75 @@
+<div class="app-content-header">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <h3 class="mb-0 fw-bold">Edit Booking #<%= booking.booking_code %></h3>
+        <a href="/admin/bookings" class="btn btn-secondary">Back</a>
+    </div>
+</div>
+
+<div class="app-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card card-dark">
+                    <div class="card-header">
+                        <h3 class="card-title">Booking Information</h3>
+                    </div>
+                    <form action="/admin/bookings/<%= booking.id %>/edit" method="POST">
+                        <div class="card-body">
+                            
+                            <!-- Readonly fields for context -->
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">User Name</label>
+                                    <input type="text" class="form-control" value="<%= booking?.User?.name || '-' %>" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Car Name</label>
+                                    <input type="text" class="form-control" value="<%= booking?.Car?.name || '-' %>" readonly>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Pickup Date</label>
+                                    <input type="text" class="form-control" value="<%= new Date(booking.pickup_datetime).toLocaleString() %>" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Total Price</label>
+                                    <input type="text" class="form-control" value="₹ <%= booking.total_price %>" readonly>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <!-- Editable fields -->
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Booking Status</label>
+                                    <select name="booking_status" class="form-select" required>
+                                        <option value="PENDING_PAYMENT" <%= booking.booking_status === 'PENDING_PAYMENT' ? 'selected' : '' %>>PENDING PAYMENT</option>
+                                        <option value="CONFIRMED" <%= booking.booking_status === 'CONFIRMED' ? 'selected' : '' %>>CONFIRMED</option>
+                                        <option value="ONGOING" <%= booking.booking_status === 'ONGOING' ? 'selected' : '' %>>ONGOING</option>
+                                        <option value="COMPLETED" <%= booking.booking_status === 'COMPLETED' ? 'selected' : '' %>>COMPLETED</option>
+                                        <option value="CANCELLED" <%= booking.booking_status === 'CANCELLED' ? 'selected' : '' %>>CANCELLED</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Payment Status</label>
+                                    <select name="payment_status" class="form-select" required>
+                                        <option value="PENDING" <%= booking.payment_status === 'PENDING' ? 'selected' : '' %>>PENDING</option>
+                                        <option value="PAID" <%= booking.payment_status === 'PAID' ? 'selected' : '' %>>PAID</option>
+                                        <option value="FAILED" <%= booking.payment_status === 'FAILED' ? 'selected' : '' %>>FAILED</option>
+                                        <option value="REFUNDED" <%= booking.payment_status === 'REFUNDED' ? 'selected' : '' %>>REFUNDED</option>
+                                        <option value="UNPAID" <%= booking.payment_status === 'UNPAID' ? 'selected' : '' %>>UNPAID</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

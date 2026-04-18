@@ -343,5 +343,73 @@ const carRentalConfirmationTemplate = ({
   return html;
 };
 
+const bookingStatusUpdateTemplate = ({
+  customerName,
+  bookingId,
+  carName,
+  bookingStatus,
+  paymentStatus,
+}) => {
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8" />
+      <title>Booking Status Update – ${bookingId}</title>
+    </head>
+    <body style="margin:0; padding:0; background-color:#f0f2f5; font-family:Arial, sans-serif;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f0f2f5; padding:40px 0;">
+        <tr>
+          <td align="center">
+            <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+              
+              <!-- Header -->
+              <tr>
+                <td style="background:linear-gradient(90deg,#4f46e5,#7c3aed); padding:30px; text-align:center;">
+                  <h1 style="color:#ffffff; margin:0; font-size:24px;">Booking Status Update</h1>
+                </td>
+              </tr>
+    
+              <!-- Body -->
+              <tr>
+                <td style="padding:30px;">
+                  <p style="font-size:16px; color:#374151; margin-top:0;">Hi <strong>${customerName}</strong>,</p>
+                  <p style="font-size:16px; color:#374151;">There has been an update to your booking for the <strong>${carName}</strong> (Booking ID: <strong>${bookingId}</strong>).</p>
+                  
+                  <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px; color:#374151; margin-top:20px;">
+                    <tr>
+                      <td style="padding:12px 0; border-bottom:1px solid #e5e7eb;">
+                        <strong style="color:#6b7280;">Booking Status</strong><br/>
+                        <span style="font-size:16px; font-weight:bold; color:#4f46e5;">${bookingStatus}</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding:12px 0; border-bottom:1px solid #e5e7eb;">
+                        <strong style="color:#6b7280;">Payment Status</strong><br/>
+                        <span style="font-size:16px; font-weight:bold; color:#10b981;">${paymentStatus}</span>
+                      </td>
+                    </tr>
+                  </table>
+                  
+                  <p style="font-size:14px; color:#6b7280; margin-top:20px;">If you have any questions or concerns, please contact our support team.</p>
+                </td>
+              </tr>
+    
+              <!-- Footer -->
+              <tr>
+                <td style="background:#f9fafb; padding:20px; text-align:center; font-size:12px; color:#9ca3af;">
+                  © ${new Date().getFullYear()} Sunvenus. All rights reserved.
+                </td>
+              </tr>
+    
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
+  `;
+  return html;
+};
 
-module.exports = { contactFormTemplate, carRentalConfirmationTemplate };
+module.exports = { contactFormTemplate, carRentalConfirmationTemplate, bookingStatusUpdateTemplate };

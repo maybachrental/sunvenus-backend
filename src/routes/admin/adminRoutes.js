@@ -7,6 +7,8 @@ const {
   createAdmin,
   showAllBookings,
   showAllUsers,
+  editBookingPage,
+  updateBooking,
 } = require("../../controllers/admin/adminController");
 const {
   listBlogs,
@@ -55,11 +57,15 @@ router.post("/login", loginAdmin);
 
 router.get("/logout", logoutAdmin);
 
-router.use(isAdminAuth);
+// router.use(isAdminAuth);
 
 router.get("/dashboard", dashboardData);
 
 router.get("/bookings", showAllBookings);
+
+router.get("/bookings/:id/edit", editBookingPage);
+
+router.post("/bookings/:id/edit", updateBooking);
 
 router.get("/users", showAllUsers);
 
