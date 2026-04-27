@@ -128,7 +128,7 @@ const carRentalConfirmationTemplate = ({
                     <tr>
                       <td align="center" style="padding-bottom:24px;">
                         <span style="display:inline-block; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); border-radius:8px; padding:8px 20px;">
-                          <span style="font-size:18px;">🚗</span>
+                        <img src="https://sunvenus.co.in/logo4.png" alt="" style="width:80px; height:auto; display:block;" />
                           <span style="color:#ffffff; font-size:17px; font-weight:700; letter-spacing:1px; vertical-align:middle; margin-left:8px;">Sun<span style="color:#f0c040;">venus</span></span>
                         </span>
                       </td>
@@ -229,14 +229,7 @@ const carRentalConfirmationTemplate = ({
                       <td style="padding:10px 0; border-bottom:1px solid #f0f0f0;">${carName}</td>
                       <td align="right" style="padding:10px 0; border-bottom:1px solid #f0f0f0;">${currency}${basePrice}</td>
                     </tr>
-                    <tr>
-                      <td style="padding:10px 0; border-bottom:1px solid #f0f0f0;">Insurance &amp; Protection</td>
-                      <td align="right" style="padding:10px 0; border-bottom:1px solid #f0f0f0;">${currency}${insuranceFee}</td>
-                    </tr>
-                    <tr>
-                      <td style="padding:10px 0; border-bottom:1px solid #f0f0f0;">Taxes &amp; Fees (GST)</td>
-                      <td align="right" style="padding:10px 0; border-bottom:1px solid #f0f0f0;">${currency}${taxAmount}</td>
-                    </tr>
+                    
 
                   </table>
 
@@ -254,57 +247,6 @@ const carRentalConfirmationTemplate = ({
                 </td>
               </tr>
 
-              <!-- ── WHAT TO BRING ── -->
-              <tr>
-                <td style="background:#f8fafc; padding:28px 40px; border-top:1px solid #edf2f7;">
-                  <p style="margin:0 0 16px; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#f0c040; font-weight:700;">What to Bring</p>
-                  <table width="100%" cellpadding="0" cellspacing="0">
-
-                    <tr>
-                      <td style="padding-bottom:12px;">
-                        <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px;">
-                          <tr>
-                            <td width="52" style="padding:16px 0 16px 18px; font-size:22px; vertical-align:middle;">🪪</td>
-                            <td style="padding:16px 16px 16px 0;">
-                              <p style="margin:0 0 3px; font-size:12px; color:#a0aec0; text-transform:uppercase; letter-spacing:0.5px;">Valid ID &amp; License</p>
-                              <p style="margin:0; font-size:13px; color:#4a5568; line-height:1.5;">Bring your original driver's license and a government-issued photo ID.</p>
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td style="padding-bottom:12px;">
-                        <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px;">
-                          <tr>
-                            <td width="52" style="padding:16px 0 16px 18px; font-size:22px; vertical-align:middle;">💳</td>
-                            <td style="padding:16px 16px 16px 0;">
-                              <p style="margin:0 0 3px; font-size:12px; color:#a0aec0; text-transform:uppercase; letter-spacing:0.5px;">Payment Card</p>
-                              <p style="margin:0; font-size:13px; color:#4a5568; line-height:1.5;">Carry the same card used for booking. A security deposit will be held at pickup.</p>
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td>
-                        <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff; border:1px solid #e2e8f0; border-radius:10px;">
-                          <tr>
-                            <td width="52" style="padding:16px 0 16px 18px; font-size:22px; vertical-align:middle;">📄</td>
-                            <td style="padding:16px 16px 16px 0;">
-                              <p style="margin:0 0 3px; font-size:12px; color:#a0aec0; text-transform:uppercase; letter-spacing:0.5px;">This Confirmation</p>
-                              <p style="margin:0; font-size:13px; color:#4a5568; line-height:1.5;">Show this email at the rental counter with booking ID: <strong style="color:#f0c040;">${bookingId}</strong></p>
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                    </tr>
-
-                  </table>
-                </td>
-              </tr>
 
               <!-- ── CTA ── -->
               <tr>
@@ -312,7 +254,7 @@ const carRentalConfirmationTemplate = ({
                   <a href="https://sunvenus.co.in/" style="display:inline-block; background:linear-gradient(135deg,#f0c040,#d4a017); color:#1a1a2e; font-size:14px; font-weight:700; letter-spacing:1px; text-transform:uppercase; text-decoration:none; padding:15px 48px; border-radius:50px;">
                     Manage My Booking
                   </a>
-                  <p style="margin:14px 0 0; font-size:12px; color:#a0aec0;">Need to modify or cancel? You can do so up to 24 hours before pick-up at no charge.</p>
+                  <p style="margin:14px 0 0; font-size:12px; color:#a0aec0;">Need to modify or cancel? Contact details mentioned below</p>
                 </td>
               </tr>
 
@@ -320,14 +262,12 @@ const carRentalConfirmationTemplate = ({
               <tr>
                 <td style="background:#f8fafc; padding:24px 40px; text-align:center; border-top:1px solid #edf2f7;">
                   <p style="margin:0 0 10px; font-size:13px; color:#4a5568;">
-                    <a href="#" style="color:#718096; text-decoration:none; margin:0 10px;">Help Center</a> |
-                    <a href="#" style="color:#718096; text-decoration:none; margin:0 10px;">Privacy Policy</a> |
-                    <a href="#" style="color:#718096; text-decoration:none; margin:0 10px;">Terms of Service</a>
+                    <a href="https://sunvenus.co.in/contact" style="color:#718096; text-decoration:none; margin:0 10px;">Help Center</a> 
                   </p>
                   <p style="margin:0; font-size:12px; color:#a0aec0; line-height:1.7;">
                     © ${new Date().getFullYear()} <strong style="color:#f0c040;">Sunvenus</strong> — Luxury Car Rentals<br/>
-                    Prestige Tower, Bandra Kurla Complex, Mumbai, MH 400051<br/>
-                    support@driveluxe.com · +91 1800 123 4567
+                    Maybach luxury car rental, 66, 1st Floor, Om Heera Panna Mall, Andheri Link Road, Andheri West, Mumbai 400053<br/>
+                    info@sunvenus.co.in · +91 98929 04433
                   </p>
                 </td>
               </tr>

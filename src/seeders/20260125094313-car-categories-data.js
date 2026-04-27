@@ -15,7 +15,6 @@ module.exports = {
         // { category: "Hatchback" },
         { category: "Luxury Sedan" },
         { category: "Luxury SUV" },
-        { category: "Compact SUV" },
         { category: "Convertible" },
         { category: "Limousine" },
         { category: "Luxury Minivan" },
