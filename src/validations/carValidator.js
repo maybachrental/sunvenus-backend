@@ -28,8 +28,8 @@ exports.validateCarAvailabilityBody = [
     .withMessage("Drop datetime is required")
     .isISO8601({ strict: true })
     .withMessage("Drop datetime must be valid ISO 8601 format"),
-  body("duration_hours").optional().isInt({ min: 1, max: 25 }).isIn([8, 12, 24]).withMessage("Duration hours must be between 1 and 72"),
-  body("included_km").optional().isInt({ min: 1, max: 251 }).isIn([80, 120, 250]).withMessage("Km must be between 1 and 251"),
+  body("duration_hours").optional().isInt({ min: 1, max: 25 }).isIn([4, 8, 12, 24]).withMessage("Duration hours must be between 1 and 72"),
+  body("included_km").optional().isInt({ min: 1, max: 251 }).isIn([40, 80, 120, 250]).withMessage("Km must be between 1 and 251"),
   body("sort_by").optional().isIn(["newest", "oldest", "price_low", "price_high"]).withMessage("Invalid sort_by value"),
   // Custom date-time comparison
   body().custom((value, { req }) => {
@@ -64,8 +64,8 @@ exports.validateSelectedCarData = [
     .withMessage("Drop datetime is required")
     .isISO8601({ strict: true })
     .withMessage("Drop datetime must be valid ISO 8601 format"),
-  query("duration_hours").optional().isNumeric().isIn([8, 12, 24]).withMessage("Duration hours can be 8, 12 or 24"),
-  query("included_km").optional().isNumeric().isIn([80, 120, 250]).withMessage("Km must be 80, 120 or 250"),
+  query("duration_hours").optional().isNumeric().isIn([4, 8, 12, 24]).withMessage("Duration hours can be 8, 12 or 24"),
+  query("included_km").optional().isNumeric().isIn([40, 80, 120, 250]).withMessage("Km must be 80, 120 or 250"),
   param("car_id").notEmpty().isNumeric().withMessage("Car id is required"),
   // Custom date-time comparison
   query().custom((value, { req }) => {
