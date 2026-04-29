@@ -12,6 +12,9 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.Bookings, {
         foreignKey: "booking_id",
       });
+      this.belongsTo(models.AddOns, {
+        foreignKey: "add_on_id",
+      });
     }
   }
   BookingAddOns.init(

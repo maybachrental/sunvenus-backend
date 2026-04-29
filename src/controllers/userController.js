@@ -1,4 +1,4 @@
-const { Users, Bookings, BookingAddOns, Discounts } = require("../models");
+const { Users, Bookings, BookingAddOns, Discounts, AddOns } = require("../models");
 const CloudinaryService = require("../services/external/cloudinary.service");
 const ErrorHandler = require("../utils/ErrorHandler");
 const { responseHandler, getPagination } = require("../utils/helper");
@@ -69,14 +69,14 @@ module.exports = {
       if (!userId) {
         return next(new ErrorHandler(400, "User id not found", "ERROR"));
       }
+
       const { limit, page, offset } = getPagination(req.query.page || 1, 5);
       const { booking_status } = req.query;
 
-      // Dynamic filters
       const where = { user_id: userId };
 
       if (booking_status) {
-        where.booking_status = booking_status; // e.g. PENDING | CONFIRMED | CANCELLED
+        where.booking_status = booking_status;
       }
 
       const bookings = await Bookings.findAndCountAll({
@@ -84,15 +84,17 @@ module.exports = {
         include: [
           {
             model: BookingAddOns,
-            attributes: {
-              exclude: ["created_at", "updated_at"],
-            },
+            attributes: ["id"],
+            include: [
+              {
+                model: AddOns,
+                attributes: ["id", "type", "price", "duration", "extra"],
+              },
+            ],
           },
           {
             model: Discounts,
-            attributes: {
-              exclude: ["created_at", "updated_at"],
-            },
+            attributes: ["id", "code", "type", "value", "expiry_date"],
           },
         ],
         offset,
@@ -100,8 +102,34 @@ module.exports = {
         order: [["created_at", "DESC"]],
       });
 
+      // Transform data
+      const formattedBookings = bookings.rows.map((booking) => {
+        const data = booking.toJSON();
+
+        // Flatten AddOns
+        data.BookingAddOns = data.BookingAddOns.map((item) => ({
+          id: item.id,
+          ...item.AddOn, // merge AddOn directly
+        }));
+
+        // Apply Discount
+        let discount_price = 0;
+
+        if (data.Discount) {
+          if (data.Discount.type === "PERCENTAGE") {
+            discount_price = (parseFloat(data.base_price) * data.Discount.value) / 100;
+          } else if (data.Discount.type === "FLAT") {
+            discount_price = parseFloat(data.Discount.value);
+          }
+        }
+
+        data.discount_price = discount_price;
+
+        return data;
+      });
+
       return responseHandler(res, 200, "Your Bookings", {
-        bookings: bookings.rows,
+        bookings: formattedBookings,
         currentPage: page,
         totalPages: Math.ceil(bookings.count / limit),
         totalBookings: bookings.count,
