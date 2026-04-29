@@ -7,7 +7,7 @@ module.exports = {
       "brands",
       [
         {
-          brand_name: "bmw",
+          brand_name: "BMW",
           brand_img: "bmw.png",
         },
         {

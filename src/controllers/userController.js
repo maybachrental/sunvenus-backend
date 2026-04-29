@@ -1,4 +1,4 @@
-const { Users, Bookings } = require("../models");
+const { Users, Bookings, BookingAddOns, Discounts } = require("../models");
 const CloudinaryService = require("../services/external/cloudinary.service");
 const ErrorHandler = require("../utils/ErrorHandler");
 const { responseHandler, getPagination } = require("../utils/helper");
@@ -81,6 +81,20 @@ module.exports = {
 
       const bookings = await Bookings.findAndCountAll({
         where,
+        include: [
+          {
+            model: BookingAddOns,
+            attributes: {
+              exclude: ["created_at", "updated_at"],
+            },
+          },
+          {
+            model: Discounts,
+            attributes: {
+              exclude: ["created_at", "updated_at"],
+            },
+          },
+        ],
         offset,
         limit,
         order: [["created_at", "DESC"]],

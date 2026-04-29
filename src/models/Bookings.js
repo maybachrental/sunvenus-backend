@@ -15,6 +15,12 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.Users,{
         foreignKey:"user_id"
       })
+      this.hasMany(models.BookingAddOns,{
+        foreignKey:"booking_id"
+      });
+      this.belongsTo(models.Discounts, {
+        foreignKey: "discount_id",
+      });
     }
   }
   Bookings.init(
