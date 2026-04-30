@@ -95,6 +95,7 @@ module.exports = {
           {
             model: Discounts,
             attributes: ["id", "code", "type", "value", "expiry_date"],
+            required:false
           },
         ],
         offset,
@@ -106,20 +107,20 @@ module.exports = {
       const formattedBookings = bookings.rows.map((booking) => {
         const data = booking.toJSON();
 
-        // Flatten AddOns
-        data.BookingAddOns = data.BookingAddOns.map((item) => ({
+        // Flatten AddOns safely
+        data.BookingAddOns = (data.BookingAddOns || []).map((item) => ({
           id: item.id,
-          ...item.AddOn, // merge AddOn directly
+          ...(item.AddOn || {}), // prevent crash if AddOn missing
         }));
 
-        // Apply Discount
+        // Apply Discount safely
         let discount_price = 0;
 
         if (data.Discount) {
           if (data.Discount.type === "PERCENTAGE") {
-            discount_price = (parseFloat(data.base_price) * data.Discount.value) / 100;
+            discount_price = (parseFloat(data.base_price || 0) * data.Discount.value) / 100;
           } else if (data.Discount.type === "FLAT") {
-            discount_price = parseFloat(data.Discount.value);
+            discount_price = parseFloat(data.Discount.value || 0);
           }
         }
 
