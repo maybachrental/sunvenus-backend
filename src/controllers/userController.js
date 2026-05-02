@@ -29,7 +29,7 @@ module.exports = {
   async updateProfile(req, res, next) {
     try {
       const userId = req.user.id;
-      const { name } = req.body;
+      const { name, phone } = req.body;
 
       const user = await Users.findByPk(userId);
       if (!user) {
@@ -48,6 +48,7 @@ module.exports = {
       }
       const body = {
         name: name ?? user.name,
+        phone: phone ?? user.phone,
       };
       if (result) {
         body.profile_image = result.secure_url;
@@ -95,7 +96,7 @@ module.exports = {
           {
             model: Discounts,
             attributes: ["id", "code", "type", "value", "expiry_date"],
-            required:false
+            required: false,
           },
         ],
         offset,
