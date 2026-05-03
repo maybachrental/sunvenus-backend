@@ -296,7 +296,7 @@ const carRentalConfirmationTemplate = ({
             <!-- ── CTA ── -->
             <tr>
               <td style="padding:28px 40px; text-align:center; border-top:1px solid #edf2f7;">
-                <a href="https://sunvenus.co.in/" style="display:inline-block; background:linear-gradient(135deg,#f0c040,#d4a017); color:#1a1a2e; font-size:14px; font-weight:700; letter-spacing:1px; text-transform:uppercase; text-decoration:none; padding:15px 48px; border-radius:50px;">
+                <a href="https://sunvenus.co.in/my-bookings" style="display:inline-block; background:linear-gradient(135deg,#f0c040,#d4a017); color:#1a1a2e; font-size:14px; font-weight:700; letter-spacing:1px; text-transform:uppercase; text-decoration:none; padding:15px 48px; border-radius:50px;">
                   Manage My Booking
                 </a>
                 <p style="margin:14px 0 0; font-size:12px; color:#a0aec0;">Need to modify or cancel? Contact details mentioned below</p>
