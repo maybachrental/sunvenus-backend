@@ -10,13 +10,17 @@ const { googleDistanceApi } = require("../services/external/google.service");
 
 const fetchAllCars = async (req, res, next) => {
   try {
-    const { sort_by = "created_at", duration_hours = 8, min_price, max_price } = req.query;
+    const { sort_by = "created_at", duration_hours = 8, min_price, max_price, fetch_all = false } = req.query;
     const condition = buildCarWhere(req.query);
-    const { limit, offset, page } = getPagination(req.query.page || 1);
+    let { limit, offset, page } = getPagination(req.query.page || 1);
     const order = buildCarSort(sort_by);
     const total = await Cars.count({
       where: { is_active: true },
     });
+    if (fetch_all) {
+      limit = total;
+      offset = 0;
+    }
     // Build pricing filter dynamically
     const pricingWhere = {
       duration_hours,
