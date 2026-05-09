@@ -2,8 +2,7 @@ const cloudinary = require("../../config/cloudinary");
 const streamifier = require("streamifier");
 const { v4: uuidv4 } = require("uuid");
 
-// sunvenus_backend/blogs path like this 
-
+// sunvenus_backend/blogs path like this
 
 class CloudinaryService {
   static allowedMimeTypes = {
@@ -36,6 +35,18 @@ class CloudinaryService {
           resource_type: resourceType,
           public_id: fileName,
           overwrite,
+          // transformation: [
+          //   {
+          //     quality: "auto:good",
+          //     fetch_format: "auto",
+          //     width: 1600,
+          //     crop: "limit",
+          //   },
+          // ],
+          transformation: {
+            quality: "auto:good",
+            fetch_format: "auto",
+          },
           ...transformations,
         },
         (error, result) => {
@@ -74,7 +85,7 @@ class CloudinaryService {
       invalidate: true,
     });
   }
-   
+
   static async deleteFolder(folderPath, resourceType = "image") {
     if (!folderPath) {
       throw new Error("folderPath is required");
