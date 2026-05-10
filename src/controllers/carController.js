@@ -41,7 +41,7 @@ const fetchAllCars = async (req, res, next) => {
     const fetchCars = await Cars.findAll({
       where: condition,
       distinct: true,
-      // subQuery: false,
+      subQuery: false,
       include: [
         {
           model: CarsPricings,
@@ -58,6 +58,7 @@ const fetchAllCars = async (req, res, next) => {
           attributes: {
             exclude: ["created_at", "updated_at", "car_id", "image_path"],
           },
+          where: { is_primary: true },
         },
       ],
       limit,
@@ -83,7 +84,7 @@ const fetchPremiumCars = async (req, res, next) => {
     const fetchCars = await Cars.findAll({
       where: { is_premium: true, is_active: true },
       distinct: true,
-      // subQuery: false,
+      subQuery: false,
       include: [
         {
           model: CarsPricings,
@@ -101,6 +102,7 @@ const fetchPremiumCars = async (req, res, next) => {
           attributes: {
             exclude: ["created_at", "updated_at", "car_id", "image_path"],
           },
+          where: { is_primary: true },
         },
       ],
       limit: 7,
@@ -186,7 +188,7 @@ const checkCarAvailability = async (req, res, next) => {
 
     const availableCars = await Cars.findAndCountAll({
       distinct: true,
-      // subQuery: false, // prevents broken ORDER BY subquery
+      subQuery: false, // prevents broken ORDER BY subquery
       where: {
         is_active: true,
         id: { [Op.notIn]: carIds },
@@ -207,6 +209,7 @@ const checkCarAvailability = async (req, res, next) => {
           attributes: {
             exclude: ["created_at", "updated_at", "car_id", "image_path"],
           },
+          where: { is_primary: true },
         },
       ],
       order,
@@ -417,13 +420,14 @@ const fetchCarVideos = async (req, res, next) => {
     const fetchCars = await Cars.findAll({
       distinct: true,
       where: { is_active: true },
-      // subQuery: false,
+      subQuery: false,
       include: [
         {
           model: CarImages,
           attributes: {
             exclude: ["created_at", "updated_at", "car_id", "image_path"],
           },
+          where: { is_primary: true },
         },
         {
           model: CarVideos,
