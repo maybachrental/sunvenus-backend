@@ -45,8 +45,9 @@ const buildCarSort = (sort_by) => {
       return [[literal("CarsPricings.base_price"), "DESC"]];
 
     case "newest":
-    default:
       return [["created_at", "DESC"]];
+    default:
+      return [["order_by", "ASC"]];
   }
 };
 

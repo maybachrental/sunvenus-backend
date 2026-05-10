@@ -41,7 +41,7 @@ const fetchAllCars = async (req, res, next) => {
     const fetchCars = await Cars.findAll({
       where: condition,
       distinct: true,
-      subQuery: false,
+      // subQuery: false,
       include: [
         {
           model: CarsPricings,
@@ -83,7 +83,7 @@ const fetchPremiumCars = async (req, res, next) => {
     const fetchCars = await Cars.findAll({
       where: { is_premium: true, is_active: true },
       distinct: true,
-      subQuery: false,
+      // subQuery: false,
       include: [
         {
           model: CarsPricings,
@@ -186,7 +186,7 @@ const checkCarAvailability = async (req, res, next) => {
 
     const availableCars = await Cars.findAndCountAll({
       distinct: true,
-      subQuery: false, // prevents broken ORDER BY subquery
+      // subQuery: false, // prevents broken ORDER BY subquery
       where: {
         is_active: true,
         id: { [Op.notIn]: carIds },

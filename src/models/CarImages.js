@@ -48,10 +48,8 @@ module.exports = (sequelize, DataTypes) => {
         get() {
           const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
           const publicId = this.getDataValue("public_id");
-          const imageExt = this.getDataValue("image_name");
-          if (!cloudName || !publicId || !imageExt) return null;
-          const ext = imageExt.split(".")[1];
-          return `https://res.cloudinary.com/${cloudName}/image/upload/${publicId}.${ext}`;
+          if (!cloudName || !publicId) return null;
+          return `https://res.cloudinary.com/${cloudName}/image/upload/q_auto,f_auto/${publicId}`;
         },
       },
     },
