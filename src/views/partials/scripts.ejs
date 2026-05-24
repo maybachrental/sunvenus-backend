@@ -11,4 +11,11 @@
             OverlayScrollbarsGlobal.OverlayScrollbars(sidebar, {});
         }
     });
+    document.addEventListener('wheel', function (event) {
+        const active = document.activeElement;
+
+        if (active && active.type === 'number') {
+            active.blur();// unselect/unfocus the input
+        }
+    }, { passive: true });
 </script>
