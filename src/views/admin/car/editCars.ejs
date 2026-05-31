@@ -132,9 +132,16 @@
                         <div id="pricingRows">
                             <!-- Existing pricing rows injected by JS below -->
                         </div>
+                        <div class="d-flex gap-2 mb-2 mt-2">
+                            <input type="number" id="globalExtraHour" class="form-control form-control-sm"
+                                placeholder="Set all Extra Hour Charge, Just type here" min="0">
+                            <input type="number" id="globalExtraKm" class="form-control form-control-sm"
+                                placeholder="Set all Extra KM Charge, Just type here" min="0">
+                        </div>
                         <button type="button" class="btn btn-outline-primary btn-sm mt-2 mb-4" id="addPricingBtn">
                             <i class="bi bi-plus-circle me-1"></i> Add Pricing Tier
                         </button>
+
 
                         <!-- Existing Images -->
                         <h5 class="fw-semibold text-muted mb-3 border-bottom pb-2">
@@ -416,6 +423,15 @@
         }
 
         document.getElementById("addPricingBtn").addEventListener("click", () => addPricingRow());
+        // Global setters: propagate values to all pricing rows
+        document.getElementById("globalExtraHour").addEventListener("input", function () {
+            const val = this.value;
+            document.querySelectorAll(".pricing-extra_hour_charge").forEach(inp => inp.value = val);
+        });
+        document.getElementById("globalExtraKm").addEventListener("input", function () {
+            const val = this.value;
+            document.querySelectorAll(".pricing-extra_km_charge").forEach(inp => inp.value = val);
+        });
 
         /* ─────────────────────────────────────────
            Existing Image Actions
@@ -618,7 +634,7 @@
                 btn.disabled = false;
                 btn.innerHTML = `<i class="bi bi-check-circle me-1"></i> Save Changes`;
             }
-            finally{
+            finally {
                 Loader.hide();
             }
         });
