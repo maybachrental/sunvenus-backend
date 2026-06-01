@@ -35,10 +35,11 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <%= b.published_at || '-' %>
+                                    <%= b.published_at ? new Date(b.published_at).toLocaleDateString('en-US', {
+                                        year: 'numeric' , month: 'short' , day: 'numeric' }) : '-' %>
                                 </td>
                                 <td>
-                                    <a href="/admin/blogs/show/<%= b.id %>" class="btn btn-sm btn-info">View</a>
+                                    <!-- <a href="/admin/blogs/show/<%= b.id %>" class="btn btn-sm btn-info">View</a> -->
                                     <a href="/admin/blogs/update?id=<%= b.id %>" class="btn btn-sm btn-primary">Edit</a>
                                     <a href="/admin/blogs/delete/<%= b.id %>" onclick="return confirm('Delete?')"
                                         class="btn btn-sm btn-danger">Delete</a>

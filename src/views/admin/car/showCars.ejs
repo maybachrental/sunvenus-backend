@@ -114,10 +114,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% cars.forEach(c=> { %>
+                        <% cars.forEach((c,i)=> { %>
                             <tr>
                                 <td>
-                                    <%= c.id %>
+                                    <%= i+1 %>
                                 </td>
                                 <td>
                                     <%= c.name || "-" %>
@@ -163,7 +163,8 @@
                                             onclick="confirmDelete(<%= c.id %>, '<%= c.name %>')">
                                             <i class="bi bi-trash"></i>
                                         </button>
-                                        <a href="/admin/car/<%= c.id %>/content" class="btn btn-sm btn-outline-primary" title="Edit Car">
+                                        <a href="/admin/car/<%= c.id %>/content" class="btn btn-sm btn-outline-primary"
+                                            title="Edit Car">
                                             Content
                                         </a>
                                     </div>

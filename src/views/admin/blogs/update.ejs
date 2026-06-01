@@ -1156,7 +1156,7 @@
 <div class="cb-header">
     <h3>Update <span>Blog Post</span></h3>
     <div class="cb-header-actions">
-        <a href="#" class="cb-btn-preview" id="cb-preview-link" target="_blank">👁 Preview</a>
+        <!-- <a href="#" class="cb-btn-preview" id="cb-preview-link" target="_blank">👁 Preview</a> -->
         <span class="breadcrumb"><a href="/admin">Admin</a> / <a href="/admin/blogs">Blogs</a> / Edit</span>
     </div>
 </div>
@@ -1900,8 +1900,8 @@
         }
 
         // Preview link — use slug if available
-        const previewPath = blog.preview_url || (blog.slug ? `/blog/${blog.slug}` : '#');
-        document.getElementById('cb-preview-link').href = previewPath;
+        // const previewPath = blog.preview_url || (blog.slug ? `/blog/${blog.slug}` : '#');
+        // document.getElementById('cb-preview-link').href = previewPath;
     }
 
     // ════════════════════════════════════════
@@ -1915,7 +1915,7 @@
         const heroInput = document.getElementById('hero-input');
 
         if (!title) { cbToast('Blog title is required', 'error'); return; }
-        if (heroReplaceVisible && !heroInput.files[0]) { cbToast('Please upload a replacement hero image or cancel the replacement', 'error'); return; }
+        // Hero image replacement is optional; keep existing if not changed
         if (!metaTitle) { cbToast('Meta title is required', 'error'); return; }
         if (!metaDesc) { cbToast('Meta description is required', 'error'); return; }
 

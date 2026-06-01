@@ -45,7 +45,7 @@ const showAllCars = async (req, res, next) => {
           attributes: ["fuel"],
         },
       ],
-      order: [["created_at", "DESC"]],
+      order: [["created_at", "ASC"]],
       limit,
       offset,
     });

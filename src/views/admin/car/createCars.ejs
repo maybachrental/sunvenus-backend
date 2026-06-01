@@ -404,6 +404,15 @@
                     return;
                 }
 
+                // Ensure at least one image is selected
+                const validImageFiles = selectedFiles.filter(f => f !== null);
+                if (validImageFiles.length === 0) {
+                    showAlert("Please upload at least one image for the car.");
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="bi bi-check-circle me-1"></i> Create Car`;
+                    return;
+                }
+
                 for (let i = 0; i < pricings.length; i++) {
                     const p = pricings[i];
                     if (!p.base_price || !p.duration_hours || !p.included_km || !p.extra_hour_charge || !p.extra_km_charge) {

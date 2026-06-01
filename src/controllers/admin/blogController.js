@@ -131,6 +131,7 @@ const createBlog = async (req, res) => {
         meta_description,
         meta_keywords: meta_keywords || null,
         status: status || "draft",
+        published_at: status === "published" ? new Date() : null,
       },
       { transaction: t },
     );
@@ -371,6 +372,7 @@ const updateBlog = async (req, res) => {
         meta_description,
         meta_keywords: meta_keywords || null,
         status: status || "draft",
+        published_at: status === "published" ? new Date() : null,
       },
       { transaction: t },
     );

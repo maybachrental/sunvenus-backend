@@ -14,13 +14,13 @@ transporter.verify((error, success) => {
   }
 });
 
-async function sendMail(to, subject, html) {
-//   logger.info("sending Mail from sendMail Function log");
+async function sendMail(to, subject, html, text = null) {
   return transporter.sendMail({
     from: process.env.MAIL_FROM,
     to,
     subject,
     html,
+    ...(text ? { text } : {}),
   });
 }
 

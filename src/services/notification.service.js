@@ -52,6 +52,7 @@ const sendBookingSuccessNotification = async (data) => {
       user.email, // client's email from env
       "Your Booking has been confirmed ",
       html,
+      "Your Booking has been confirmed ",
     );
   } catch (error) {
     console.log(error);

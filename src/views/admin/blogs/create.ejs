@@ -847,7 +847,7 @@
                     required>
             </div>
             <div class="cb-field">
-                <label class="cb-label">Hero Image <span class="req">*</span></label>
+                <label class="cb-label">Hero Image</label>
                 <!-- Hero image uses same picker component -->
                 <div class="cb-drop-zone" id="hero-drop" ondragover="cbDragOver(event, 'hero-drop')"
                     ondragleave="cbDragLeave('hero-drop')"
@@ -1387,7 +1387,7 @@
         const heroInput = document.getElementById('hero-input');
 
         if (!title) { cbToast('Blog title is required', 'error'); return; }
-        if (!heroInput.files[0]) { cbToast('Please upload a hero image', 'error'); return; }
+
         if (!metaTitle) { cbToast('Meta title is required', 'error'); return; }
         if (!metaDesc) { cbToast('Meta description is required', 'error'); return; }
 
@@ -1422,7 +1422,9 @@
         // Basic fields
         fd.append('title', title);
         fd.append('status', document.getElementById('cb-status').value);
-        fd.append('hero_image', heroInput.files[0]);
+        if (heroInput.files[0]) {
+            fd.append('hero_image', heroInput.files[0]);
+        }
 
         // Tags
         window._cbSelectedTags.forEach(t => fd.append('tags[]', t.id));
@@ -1474,9 +1476,9 @@
             document.querySelector('#cb-save-btn .btn-text').textContent = '✅ Saved!';
 
             // Redirect after short delay (adjust URL as needed)
-            // setTimeout(() => {
-            //     window.location.href = response.data?.redirectUrl || '/admin/blogs';
-            // }, 1500);
+            setTimeout(() => {
+                window.location.href = '/admin/blogs';
+            }, 1500);
 
         } catch (err) {
             const msg = err.response?.data?.message || err.message || 'Something went wrong';
